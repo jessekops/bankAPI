@@ -1,0 +1,298 @@
+swagger: "2.0"
+info:
+  description: This is a Bank API
+  version: 1.0.2
+  title: Bank API
+  contact:
+    email: 662781@student.inholland.nl
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+tags:
+  - name: admins
+    description: Secured Admin-only calls
+  - name: developers
+    description: Operations available to regular developers
+#All API request URIs
+paths:
+  /users:
+    get:
+      tags:
+        - admin
+      summary: Gets all users from the DB
+      operationId: getAllUsers
+      description: |
+        By sending this request, an admin can see all the users registered in the DB
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/User"
+  /users/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        description: Input User ID
+        type: integer
+        format: int32
+        minimum: 1
+    get:
+      tags:
+        - developer
+      summary: Gets one user by ID from the DB
+      operationId: getUserByID
+      description: |
+        By sending this request, a developer can retrieve information from one user with the given ID
+      produces:
+        - application/json
+      responses:
+        200:
+          description: User ID found
+          schema:
+            $ref: "#/definitions/User"
+        400:
+          description: invalid User ID
+    put:
+      tags:
+        - admin
+      summary: Updates one user's info
+      operationId: updateUser
+      description: |
+        By sending this request, an admin can update information from one user with the given ID
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        200:
+          description: User found and updated
+          schema:
+            $ref: "#/definitions/User"
+        400:
+          description: invalid User ID
+  #Retrieves a User object with which another user can search IBAN's linked to that User's username        
+  /users/getByUsername/{username}:
+    parameters:
+        - in: path
+          name: username
+          required: true
+          description: Input username
+          type: string
+    get:
+        tags:
+          - developer
+        summary: Gets one user object by username from the DB
+        operationId: getUserByUsername
+        description: |
+          By sending this request, a developer can retrieve information from one user with the given username
+        produces:
+          - application/json
+        responses:
+          200:
+            description: User with given username found
+            schema:
+              $ref: "#/definitions/User"
+          400:
+            description: invalid username
+  /accounts:
+    post:
+      tags:
+      - admin
+      summary: Add a new bank account
+      operationId: addAccount
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: Account
+        description: account object that needs to be added to the bank
+        required: true
+        schema:
+          $ref: '#/definitions/Account'
+      responses:
+        405:
+          description: Invalid input     
+    get:
+      tags:
+      - admin 
+      summary: Get all accounts
+      operationId: getAllAccounts
+      description: |
+        Get all the bank accounts
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Get all bank accounts from all users
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Account'
+  /accounts/{userId}:
+    parameters:
+      - in: path
+        name: userId
+        required: true
+        description: Input User ID
+        type: string
+        format: uuid
+    get:
+      tags:
+        - admin
+      summary: Gets all registered bank accounts of one user with the given User ID
+      operationId: getAllAccountsFromUser
+      description: |
+        By sending this request, an admin can retrieve information from all of one user's bank accounts with the given ID
+      produces:
+        - application/json
+      responses:
+        200:
+          description: User ID and accouts found
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Account"
+        400:
+          description: invalid User ID
+  /accounts/{userId}/transactions:
+    parameters:
+      - in: path
+        name: userId
+        required: true
+        description: Input User ID
+        type: string
+        format: uuid
+  /transactions:
+    post: 
+      tags:
+      - developer
+      summary: Create a new transaction
+      operationId: createTransaction
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: transaction
+        description: transaction object with details about the new transaction
+        required: true
+        schema:
+          $ref: '#/definitions/Transaction'
+      responses:
+        201:
+          description: Transaction created
+        400:
+          description: Invalid transaction
+#All defined Objects
+definitions:
+  User:
+    type: object
+    required:
+      - id
+      - userType
+      - name
+      - address
+      - email
+      - registeredOn
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      userType:
+        $ref: "#/definitions/UserType"
+      name:
+        type: string
+        example: Mr J. Doe
+      address:
+        type: string
+        example: Wolkenweg 15 8324AD Haarlem
+      phone:
+        type: string
+        example: 06-34534565
+      registeredOn:
+        type: string
+        format: date-time
+        example: "2022-04-24 12:57:00"
+  UserType:
+    type: string
+    enum:
+      - employee
+      - customer
+  Account:
+    type: object
+    required:
+      - iban
+      - userId
+      - balance
+    properties:
+      iban:
+        type: string
+        example: NLxxINHO0xxxxxxxxx
+      userId:
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      balance:
+        type: number
+        format: double
+        example: 3.21
+  CurrentAccount:
+    allOf:
+      - $ref: "#/definitions/Account"
+    type: object
+    required:
+      - absLimit
+      - dayLimit
+      - transLimit
+  SavingsAccount:
+    allOf:
+      - $ref: "#/definitions/Account"
+    type: object
+  Transaction:
+    type: object
+    required:
+      - id
+      - timestamp
+      - from
+      - to
+      - amount
+      - maximum
+      - userPerforming
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      timestamp:
+        type: string
+        format: date-time
+        example: "2022-04-24 12:57:00"
+      from:
+        $ref: "#/definitions/Account"
+      to:
+        $ref: "#/definitions/Account"
+      amount:
+        type: number
+        format: double
+        example: 3.20
+      maximum:
+        type: number
+        format: double
+        example: 234.23
+      userPerforming:
+        $ref: "#/definitions/User"
+
+# Added by API Auto Mocking Plugin
+host: virtserver.swaggerhub.com
+basePath: /PG05_PCG/test/1.0.2
+schemes:
+  - https
