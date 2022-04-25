@@ -1,0 +1,130 @@
+swagger: "2.0"
+info:
+  description: This is a Bank API
+  version: '1.2'
+  title: Bank API
+  contact:
+    email: 662781@student.inholland.nl
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+tags:
+  - name: Employee
+    description: Operations available to employees
+  - name: Customer
+    description: Operations available to customers
+    
+#All API request URIs
+paths:
+  
+#All defined Objects
+definitions:
+  User:
+    type: object
+    required:
+      - userType
+      - name
+      - address
+      - email
+      - phone
+      - dayLimit
+      - transLimit
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      userType:
+        $ref: "#/definitions/UserType"
+      name:
+        type: string
+        example: Mr J. Doe
+      address:
+        type: string
+        example: Wolkenweg 15 8324AD Haarlem
+      email:
+        type: string
+        example: johndoe@example.com
+      phone:
+        type: string
+        example: 06-34534565
+      registeredOn:
+        type: string
+        format: date-time
+        example: "2022-04-24 12:57:00"
+      dayLimit:
+        type: number
+        format: double
+        example: 5000.00
+      transLimit:
+        type: number
+        format: double
+        example: 2000.00
+  UserType:
+    type: string
+    enum:
+      - employee
+      - customer
+  Account:
+    type: object
+    required:
+      - ownerId
+      - accountType
+      - balance
+      - absLimit
+    properties:
+      iban:
+        type: string
+        example: NLxxINHO0xxxxxxxxx
+      accountType:
+        $ref: "#/definitions/AccountType"
+      userId:
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      balance:
+        type: number
+        format: double
+        example: 3.21
+      absLimit:
+        type: number
+        format: double
+        example: -100
+  AccountType:
+    type: string
+    enum:
+      - savings
+      - current
+  Transaction:
+    type: object
+    required:
+      - from
+      - to
+      - amount
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      timestamp:
+        type: string
+        format: date-time
+        example: "2022-04-24 12:57:00"
+      from:
+        $ref: "#/definitions/Account"
+      to:
+        $ref: "#/definitions/Account"
+      amount:
+        type: number
+        format: double
+        example: 3.20
+      userPerforming:
+        $ref: "#/definitions/User"
+
+# Added by API Auto Mocking Plugin
+host: virtserver.swaggerhub.com
+# basePath: /PG05_PCG/test/1.0.2
+schemes:
+  - https
+# Added by API Auto Mocking Plugin
+basePath: /PG05_PCG/BankAPI/1.2
