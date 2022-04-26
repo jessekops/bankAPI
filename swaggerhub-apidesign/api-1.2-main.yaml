@@ -16,6 +16,30 @@ tags:
     
 #All API request URIs
 paths:
+  /users:
+    post:
+      tags:
+      - Customer
+      summary: Register User Data
+      operationId: addUser
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: New User
+        description: New user object
+        required: true
+        schema:
+          $ref: '#/definitions/UserDTO'
+      responses:
+        201:
+          description: User created
+          schema:
+              $ref: "#/definitions/UserDTO"
+        400:
+          description: Invalid user object
   /users/getByPhone/{phone}:
     parameters:
         - in: path
@@ -34,7 +58,7 @@ paths:
         200:
           description: User found
           schema:
-            $ref: "#/definitions/User"
+            $ref: "#/definitions/UserDTO"
         404:
           description: User not found
         418:
@@ -57,7 +81,7 @@ paths:
         200:
           description: User found
           schema:
-            $ref: "#/definitions/User"
+            $ref: "#/definitions/UserDTO"
         404:
           description: User not found
         418:
@@ -93,7 +117,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/Account'
+              $ref: '#/definitions/AccountDTO'
         400:
           description: bad input parameter
     post:
@@ -111,12 +135,12 @@ paths:
         description: New account object
         required: true
         schema:
-          $ref: '#/definitions/Account'
+          $ref: '#/definitions/AccountDTO'
       responses:
         201:
           description: Account created
           schema:
-              $ref: "#/definitions/Account"
+              $ref: "#/definitions/AccountDTO"
         400:
           description: Invalid account object
   /accounts/{iban}:
@@ -138,11 +162,36 @@ paths:
         200:
           description: Account found
           schema:
-              $ref: "#/definitions/Account"
+              $ref: "#/definitions/AccountDTO"
         404:
           description: Account not found
         418:
           description: I'm a tea pot
+    put:
+      tags:
+      - Employee
+      summary: Updates an account
+      operationId: updateAccount
+      description: |
+        By sending this request, an employee can update the account information with the given IBAN
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+      - in: body
+        name: Updated Account
+        description: New Account object
+        required: true
+        schema:
+          $ref: "#/definitions/AccountDTO"
+      responses:
+        200:
+          description: Account found and updated
+          schema:
+             $ref: "#/definitions/AccountDTO"
+        404:
+          description: Account IBAN not found
   /transactions:
     post: 
       tags:
@@ -160,20 +209,19 @@ paths:
         description: transaction object with details about the new transaction
         required: true
         schema:
-          $ref: '#/definitions/Transaction'
+          $ref: '#/definitions/TransactionDTO'
       responses:
         201:
           description: Transaction created
           schema:
-              $ref: "#/definitions/Transaction"
+              $ref: "#/definitions/TransactionDTO"
         400:
           description: Invalid transaction
 #All defined Objects
 definitions:
-  User:
+  UserDTO:
     type: object
     required:
-      - userType
       - username
       - firstname
       - lastname
@@ -181,8 +229,6 @@ definitions:
       - address
       - email
       - phone
-      - dayLimit
-      - transLimit
     properties:
       id:
         type: string
@@ -229,7 +275,7 @@ definitions:
     enum:
       - employee
       - customer
-  Account:
+  AccountDTO:
     type: object
     required:
       - accountType
@@ -261,7 +307,7 @@ definitions:
     enum:
       - savings
       - current
-  Transaction:
+  TransactionDTO:
     type: object
     required:
       - from
@@ -286,6 +332,7 @@ definitions:
         type: number
         format: double
         example: 3.20
+        description: Amount of Euros
       userPerforming:
         type: string
         format: uuid

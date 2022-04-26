@@ -75,66 +75,66 @@ paths:
             $ref: "#/definitions/User"
         400:
           description: invalid User ID
-  #Retrieves a User object with which another user can search IBAN's linked to that User's username        
+  #Retrieves a User object with which another user can search IBAN's linked to that User's username
   /users/getByUsername/{username}:
     parameters:
-        - in: path
-          name: username
-          required: true
-          description: Input username
-          type: string
+      - in: path
+        name: username
+        required: true
+        description: Input username
+        type: string
     get:
-        tags:
-          - developer
-        summary: Gets one user object by username from the DB
-        operationId: getUserByUsername
-        description: |
-          By sending this request, a developer can retrieve information from one user with the given username
-        produces:
-          - application/json
-        responses:
-          200:
-            description: User with given username found
-            schema:
-              $ref: "#/definitions/User"
-          400:
-            description: invalid username
+      tags:
+        - developer
+      summary: Gets one user object by username from the DB
+      operationId: getUserByUsername
+      description: |
+        By sending this request, a developer can retrieve information from one user with the given username
+      produces:
+        - application/json
+      responses:
+        200:
+          description: User with given username found
+          schema:
+            $ref: "#/definitions/User"
+        400:
+          description: invalid username
   /accounts:
     post:
       tags:
-      - admin
+        - admin
       summary: Add a new bank account
       operationId: addAccount
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
+        - application/json
       parameters:
-      - in: body
-        name: Account
-        description: account object that needs to be added to the bank
-        required: true
-        schema:
-          $ref: '#/definitions/Account'
+        - in: body
+          name: Account
+          description: account object that needs to be added to the bank
+          required: true
+          schema:
+            $ref: "#/definitions/Account"
       responses:
         405:
-          description: Invalid input     
+          description: Invalid input
     get:
       tags:
-      - admin 
+        - admin
       summary: Get all accounts
       operationId: getAllAccounts
       description: |
         Get all the bank accounts
       produces:
-      - application/json
+        - application/json
       responses:
         200:
           description: Get all bank accounts from all users
           schema:
             type: array
             items:
-              $ref: '#/definitions/Account'
+              $ref: "#/definitions/Account"
   /accounts/{userId}:
     parameters:
       - in: path
@@ -170,22 +170,22 @@ paths:
         type: string
         format: uuid
   /transactions:
-    post: 
+    post:
       tags:
-      - developer
+        - developer
       summary: Create a new transaction
       operationId: createTransaction
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
+        - application/json
       parameters:
-      - in: body
-        name: transaction
-        description: transaction object with details about the new transaction
-        required: true
-        schema:
-          $ref: '#/definitions/Transaction'
+        - in: body
+          name: transaction
+          description: transaction object with details about the new transaction
+          required: true
+          schema:
+            $ref: "#/definitions/Transaction"
       responses:
         201:
           description: Transaction created
