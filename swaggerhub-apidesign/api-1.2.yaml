@@ -16,14 +16,168 @@ tags:
     
 #All API request URIs
 paths:
-  
+  /users/getByPhone/{phone}:
+    parameters:
+        - in: path
+          name: phone
+          required: true
+          description: Phone Number input
+          type: string
+    get:
+      tags:
+      - Employee
+      summary: Search a user list on phone number
+      operationId: getUserByPhone
+      produces:
+      - application/json
+      responses:
+        200:
+          description: User found
+          schema:
+            $ref: "#/definitions/User"
+        404:
+          description: User not found
+        418:
+          description: I'm a tea pot
+  /users/getByUsername/{username}:
+    parameters:
+        - in: path
+          name: username
+          required: true
+          description: Username input
+          type: string
+    get:
+      tags:
+      - Employee
+      summary: Search a user list on username
+      operationId: getUserByUsername
+      produces:
+      - application/json
+      responses:
+        200:
+          description: User found
+          schema:
+            $ref: "#/definitions/User"
+        404:
+          description: User not found
+        418:
+          description: I'm a tea pot
+  /accounts:
+    get:
+      tags:
+      - Employee
+      summary: Search account list
+      operationId: getAccounts
+      description: |
+        By passing in the appropriate options, you can search for
+        accounts in the DB
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: skip
+        description: Number of records to skip for pagination
+        type: integer
+        format: int32
+        minimum: 0
+      - in: query
+        name: limit
+        description: Maximum number of records to return
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 200000
+      responses:
+        200:
+          description: Search results matching criteria
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Account'
+        400:
+          description: bad input parameter
+    post:
+      tags:
+      - Employee
+      summary: Add a new bank account
+      operationId: addAccount
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: New Account
+        description: New account object
+        required: true
+        schema:
+          $ref: '#/definitions/Account'
+      responses:
+        201:
+          description: Account created
+          schema:
+              $ref: "#/definitions/Account"
+        400:
+          description: Invalid account object
+  /accounts/{iban}:
+    parameters:
+        - in: path
+          name: iban
+          required: true
+          description: IBAN input
+          type: string
+    get:
+      tags:
+      - Employee
+      - Customer
+      summary: Search an account list on IBAN
+      operationId: getByIBAN
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Account found
+          schema:
+              $ref: "#/definitions/Account"
+        404:
+          description: Account not found
+        418:
+          description: I'm a tea pot
+  /transactions:
+    post: 
+      tags:
+      - Employee
+      - Customer
+      summary: Create a new transaction
+      operationId: createTransaction
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: transaction
+        description: transaction object with details about the new transaction
+        required: true
+        schema:
+          $ref: '#/definitions/Transaction'
+      responses:
+        201:
+          description: Transaction created
+          schema:
+              $ref: "#/definitions/Transaction"
+        400:
+          description: Invalid transaction
 #All defined Objects
 definitions:
   User:
     type: object
     required:
       - userType
-      - name
+      - username
+      - firstname
+      - lastname
+      - dob
       - address
       - email
       - phone
@@ -36,9 +190,19 @@ definitions:
         example: d290f1ee-6c54-4b01-90e6-d701748f0851
       userType:
         $ref: "#/definitions/UserType"
-      name:
+      username:
         type: string
-        example: Mr J. Doe
+        example: FluffyUnicorn77
+      firstname:
+        type: string
+        example: John
+      lastname:
+        type: string
+        example: Doe 
+      dob:
+        type: string
+        format: date
+        example: "1956-04-24"
       address:
         type: string
         example: Wolkenweg 15 8324AD Haarlem
@@ -47,7 +211,7 @@ definitions:
         example: johndoe@example.com
       phone:
         type: string
-        example: 06-34534565
+        example: +31 0634534565
       registeredOn:
         type: string
         format: date-time
@@ -68,17 +232,17 @@ definitions:
   Account:
     type: object
     required:
-      - ownerId
       - accountType
       - balance
       - absLimit
+      - active
     properties:
       iban:
         type: string
         example: NLxxINHO0xxxxxxxxx
       accountType:
         $ref: "#/definitions/AccountType"
-      userId:
+      ownerId:
         type: string
         format: uuid
         example: d290f1ee-6c54-4b01-90e6-d701748f0851
@@ -90,6 +254,8 @@ definitions:
         type: number
         format: double
         example: -100
+      active:
+        type: boolean
   AccountType:
     type: string
     enum:
@@ -111,15 +277,19 @@ definitions:
         format: date-time
         example: "2022-04-24 12:57:00"
       from:
-        $ref: "#/definitions/Account"
+        type: string
+        example: NLxxINHO0xxxxxxxxx
       to:
-        $ref: "#/definitions/Account"
+        type: string
+        example: NLxxINHO0xxxxxxxxx
       amount:
         type: number
         format: double
         example: 3.20
       userPerforming:
-        $ref: "#/definitions/User"
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
 
 # Added by API Auto Mocking Plugin
 host: virtserver.swaggerhub.com
