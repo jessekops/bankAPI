@@ -90,7 +90,7 @@ paths:
     get:
       tags:
       - Employee
-      summary: Search account list
+      summary: Search account list with pagination
       operationId: getAccounts
       description: |
         By passing in the appropriate options, you can search for
@@ -217,6 +217,12 @@ paths:
               $ref: "#/definitions/TransactionDTO"
         400:
           description: Invalid transaction
+securityDefinitions:
+  bearerAuth:
+    name: Authorization
+    in: header
+    type: apiKey
+    description: JWT Authorization header
 #All defined Objects
 definitions:
   UserDTO:
@@ -340,7 +346,7 @@ definitions:
 
 # Added by API Auto Mocking Plugin
 host: virtserver.swaggerhub.com
-# basePath: /PG05_PCG/test/1.0.2
+# basePath: /PG05_PCG/test/1.2
 schemes:
   - https
 # Added by API Auto Mocking Plugin
