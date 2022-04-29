@@ -22,6 +22,7 @@ security:
 paths:
   /users:
     post:
+      security: []
       tags:
         - Customer
       summary: Register User Data
