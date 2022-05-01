@@ -66,7 +66,11 @@ paths:
               schema:
                 type: string
         401:
-          $ref: "#/components/responses/UnauthorizedError"
+          description: Request not authorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/responses/UnauthorizedError"
   /users/getByPhone/{phone}:
     parameters:
       - in: path
