@@ -89,8 +89,6 @@ paths:
                 $ref: "#/components/schemas/UserDTO"
         404:
           description: User not found
-        418:
-          description: I'm a tea pot
   /users/getByUsername/{username}:
     parameters:
       - in: path
@@ -113,8 +111,6 @@ paths:
                 $ref: "#/components/schemas/UserDTO"
         404:
           description: User not found
-        418:
-          description: I'm a tea pot
     put:
       tags:
         - Employee
@@ -139,8 +135,6 @@ paths:
                 $ref: "#/components/schemas/UserDTO"
         404:
           description: User not found
-        418:
-          description: I'm a tea pot
   /accounts:
     get:
       tags:
@@ -221,8 +215,6 @@ paths:
                 $ref: "#/components/schemas/AccountDTO"
         404:
           description: Account not found
-        418:
-          description: I'm a tea pot
     put:
       tags:
         - Employee
@@ -247,19 +239,6 @@ paths:
                 $ref: "#/components/schemas/AccountDTO"
         404:
           description: Account IBAN not found
-    delete:
-      tags:
-        - Employee
-        - Customer
-      summary: Delete an account on IBAN
-      operationId: deleteAccount
-      responses:
-        204:
-          description: Account deleted
-        404:
-          description: Account not found
-        418:
-          description: I'm a tea pot
   /transactions:
     post:
       tags:
@@ -307,8 +286,6 @@ paths:
                 $ref: "#/components/schemas/TransactionDTO"
         404:
           description: Transaction not found
-        418:
-          description: I'm a tea pot
     put:
       tags:
         - Employee
@@ -344,8 +321,6 @@ paths:
           description: Scheduled transaction deleted
         404:
           description: Transaction not found
-        418:
-          description: I'm a tea pot
 components:
   securitySchemes:
     bearerAuth:
@@ -414,6 +389,8 @@ components:
           type: number
           format: double
           example: 2000.00
+        active:
+          type: boolean
     UserType:
       type: string
       enum:
