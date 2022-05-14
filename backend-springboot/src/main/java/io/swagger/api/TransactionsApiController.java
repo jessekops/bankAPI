@@ -1,6 +1,5 @@
 package io.swagger.api;
 
-import io.swagger.annotations.Api;
 import io.swagger.model.TransactionDTO;
 import java.util.UUID;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,9 +33,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-04T10:45:44.270Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-14T10:32:11.943Z[GMT]")
 @RestController
-@Api(tags = {"Customer", "Employee"})
 public class TransactionsApiController implements TransactionsApi {
 
     private static final Logger log = LoggerFactory.getLogger(TransactionsApiController.class);

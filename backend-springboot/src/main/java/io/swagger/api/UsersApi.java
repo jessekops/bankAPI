@@ -33,7 +33,7 @@ import javax.validation.constraints.*;
 import java.util.List;
 import java.util.Map;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-04T10:45:44.270Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-14T10:32:11.943Z[GMT]")
 @Validated
 public interface UsersApi {
 
@@ -54,9 +54,7 @@ public interface UsersApi {
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "User found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
         
-        @ApiResponse(responseCode = "404", description = "User not found"),
-        
-        @ApiResponse(responseCode = "418", description = "I'm a tea pot") })
+        @ApiResponse(responseCode = "404", description = "User not found") })
     @RequestMapping(value = "/users/getByPhone/{phone}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
@@ -68,9 +66,7 @@ public interface UsersApi {
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "User found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
         
-        @ApiResponse(responseCode = "404", description = "User not found"),
-        
-        @ApiResponse(responseCode = "418", description = "I'm a tea pot") })
+        @ApiResponse(responseCode = "404", description = "User not found") })
     @RequestMapping(value = "/users/getByUsername/{username}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
@@ -94,9 +90,7 @@ public interface UsersApi {
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "User found and updated", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
         
-        @ApiResponse(responseCode = "404", description = "User not found"),
-        
-        @ApiResponse(responseCode = "418", description = "I'm a tea pot") })
+        @ApiResponse(responseCode = "404", description = "User not found") })
     @RequestMapping(value = "/users/getByUsername/{username}",
         produces = { "application/json" }, 
         consumes = { "application/json" }, 

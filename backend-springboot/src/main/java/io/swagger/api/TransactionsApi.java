@@ -33,7 +33,7 @@ import javax.validation.constraints.*;
 import java.util.List;
 import java.util.Map;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-04T10:45:44.270Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-14T10:32:11.943Z[GMT]")
 @Validated
 public interface TransactionsApi {
 
@@ -55,9 +55,7 @@ public interface TransactionsApi {
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "204", description = "Scheduled transaction deleted"),
         
-        @ApiResponse(responseCode = "404", description = "Transaction not found"),
-        
-        @ApiResponse(responseCode = "418", description = "I'm a tea pot") })
+        @ApiResponse(responseCode = "404", description = "Transaction not found") })
     @RequestMapping(value = "/transactions/{id}",
         method = RequestMethod.DELETE)
     ResponseEntity<Void> deleteTransaction(@Parameter(in = ParameterIn.PATH, description = "Transaction ID input", required=true, schema=@Schema()) @PathVariable("id") UUID id);
@@ -68,9 +66,7 @@ public interface TransactionsApi {
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Transaction found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TransactionDTO.class))),
         
-        @ApiResponse(responseCode = "404", description = "Transaction not found"),
-        
-        @ApiResponse(responseCode = "418", description = "I'm a tea pot") })
+        @ApiResponse(responseCode = "404", description = "Transaction not found") })
     @RequestMapping(value = "/transactions/{id}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)

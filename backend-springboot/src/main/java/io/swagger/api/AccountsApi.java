@@ -32,7 +32,7 @@ import javax.validation.constraints.*;
 import java.util.List;
 import java.util.Map;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-04T10:45:44.270Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-14T10:32:11.943Z[GMT]")
 @Validated
 public interface AccountsApi {
 
@@ -49,27 +49,12 @@ public interface AccountsApi {
     ResponseEntity<AccountDTO> addAccount(@Parameter(in = ParameterIn.DEFAULT, description = "New account object", required=true, schema=@Schema()) @Valid @RequestBody AccountDTO body);
 
 
-    @Operation(summary = "Delete an account on IBAN", description = "", security = {
-        @SecurityRequirement(name = "bearerAuth")    }, tags={ "Employee", "Customer" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "204", description = "Account deleted"),
-        
-        @ApiResponse(responseCode = "404", description = "Account not found"),
-        
-        @ApiResponse(responseCode = "418", description = "I'm a tea pot") })
-    @RequestMapping(value = "/accounts/{iban}",
-        method = RequestMethod.DELETE)
-    ResponseEntity<Void> deleteAccount(@Parameter(in = ParameterIn.PATH, description = "IBAN input", required=true, schema=@Schema()) @PathVariable("iban") String iban);
-
-
     @Operation(summary = "Search an account list on IBAN", description = "", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "Employee", "Customer" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Account found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AccountDTO.class))),
         
-        @ApiResponse(responseCode = "404", description = "Account not found"),
-        
-        @ApiResponse(responseCode = "418", description = "I'm a tea pot") })
+        @ApiResponse(responseCode = "404", description = "Account not found") })
     @RequestMapping(value = "/accounts/{iban}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)

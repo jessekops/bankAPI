@@ -16,7 +16,7 @@ import javax.validation.constraints.*;
  * UserDTO
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-04T10:45:44.270Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-14T10:32:11.943Z[GMT]")
 
 
 public class UserDTO   {
@@ -55,6 +55,9 @@ public class UserDTO   {
 
   @JsonProperty("transLimit")
   private Double transLimit = null;
+
+  @JsonProperty("active")
+  private Boolean active = null;
 
   public UserDTO id(UUID id) {
     this.id = id;
@@ -295,6 +298,25 @@ public class UserDTO   {
     this.transLimit = transLimit;
   }
 
+  public UserDTO active(Boolean active) {
+    this.active = active;
+    return this;
+  }
+
+  /**
+   * Get active
+   * @return active
+   **/
+  @Schema(description = "")
+  
+    public Boolean isActive() {
+    return active;
+  }
+
+  public void setActive(Boolean active) {
+    this.active = active;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -316,12 +338,13 @@ public class UserDTO   {
         Objects.equals(this.phone, userDTO.phone) &&
         Objects.equals(this.registeredOn, userDTO.registeredOn) &&
         Objects.equals(this.dayLimit, userDTO.dayLimit) &&
-        Objects.equals(this.transLimit, userDTO.transLimit);
+        Objects.equals(this.transLimit, userDTO.transLimit) &&
+        Objects.equals(this.active, userDTO.active);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, userType, username, firstname, lastname, dob, address, email, phone, registeredOn, dayLimit, transLimit);
+    return Objects.hash(id, userType, username, firstname, lastname, dob, address, email, phone, registeredOn, dayLimit, transLimit, active);
   }
 
   @Override
@@ -341,6 +364,7 @@ public class UserDTO   {
     sb.append("    registeredOn: ").append(toIndentedString(registeredOn)).append("\n");
     sb.append("    dayLimit: ").append(toIndentedString(dayLimit)).append("\n");
     sb.append("    transLimit: ").append(toIndentedString(transLimit)).append("\n");
+    sb.append("    active: ").append(toIndentedString(active)).append("\n");
     sb.append("}");
     return sb.toString();
   }
