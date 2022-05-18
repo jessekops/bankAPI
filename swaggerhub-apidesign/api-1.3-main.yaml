@@ -52,19 +52,19 @@ paths:
       summary: User Login
       operationId: login
       requestBody:
-        description: User object to compare to existing user
+        description: Object with username and password to compare to existing data in DB
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UserDTO"
+              $ref: "#/components/schemas/LoginDTO"
       responses:
         200:
           description: User login successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/LoginResponseDTO"
+                $ref: "#/components/schemas/TokenDTO"
         401:
           description: Request not authorized - Access token is missing or invalid
   /users/getByPhone/{phone}:
@@ -331,8 +331,23 @@ components:
     UnauthorizedError:
       description: Access token is missing or invalid
   schemas:
-    LoginResponseDTO:
-      description: Request body for login responses
+    LoginDTO:
+      description: Object with user login credentials
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          example: FluffyUnicorn77
+        password:
+          type: string
+          format: password
+          minLength: 10
+          example: SeCrEt!334
+    TokenDTO:
+      description: Request body for login responses with JWT
       type: object
       properties:
         token:
