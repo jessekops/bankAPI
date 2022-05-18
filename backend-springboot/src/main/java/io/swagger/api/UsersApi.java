@@ -5,7 +5,8 @@
  */
 package io.swagger.api;
 
-import io.swagger.model.dto.LoginResponseDTO;
+import io.swagger.model.dto.LoginDTO;
+import io.swagger.model.dto.TokenDTO;
 import io.swagger.model.dto.UserDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-14T10:32:11.943Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-18T15:53:51.610Z[GMT]")
 @Validated
 public interface UsersApi {
 
@@ -66,14 +67,14 @@ public interface UsersApi {
 
     @Operation(summary = "User Login", description = "", tags={ "Employee", "Customer" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "User login successful", content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoginResponseDTO.class))),
+        @ApiResponse(responseCode = "200", description = "User login successful", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TokenDTO.class))),
         
         @ApiResponse(responseCode = "401", description = "Request not authorized - Access token is missing or invalid") })
     @RequestMapping(value = "/users/login",
         produces = { "application/json" }, 
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<LoginResponseDTO> login(@Parameter(in = ParameterIn.DEFAULT, description = "User object to compare to existing user", required=true, schema=@Schema()) @Valid @RequestBody UserDTO body);
+    ResponseEntity<TokenDTO> login(@Parameter(in = ParameterIn.DEFAULT, description = "Object with username and password to compare to existing data in DB", required=true, schema=@Schema()) @Valid @RequestBody LoginDTO body);
 
 
     @Operation(summary = "Updates a user", description = "By sending this request, an employee or customer can update the information of one user ", security = {
