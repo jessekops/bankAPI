@@ -6,18 +6,18 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 /**
- * Request body for login responses
+ * Request body for login responses with JWT
  */
-@Schema(description = "Request body for login responses")
+@Schema(description = "Request body for login responses with JWT")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-14T10:32:11.943Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-18T15:53:51.610Z[GMT]")
 
 
-public class LoginResponseDTO   {
+public class TokenDTO   {
   @JsonProperty("token")
   private String token = null;
 
-  public LoginResponseDTO token(String token) {
+  public TokenDTO token(String token) {
     this.token = token;
     return this;
   }
@@ -45,8 +45,8 @@ public class LoginResponseDTO   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    LoginResponseDTO loginResponseDTO = (LoginResponseDTO) o;
-    return Objects.equals(this.token, loginResponseDTO.token);
+    TokenDTO tokenDTO = (TokenDTO) o;
+    return Objects.equals(this.token, tokenDTO.token);
   }
 
   @Override
@@ -57,7 +57,7 @@ public class LoginResponseDTO   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class LoginResponseDTO {\n");
+    sb.append("class TokenDTO {\n");
     
     sb.append("    token: ").append(toIndentedString(token)).append("\n");
     sb.append("}");
