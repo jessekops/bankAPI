@@ -1,5 +1,6 @@
 package io.swagger.api;
 
+import io.swagger.annotations.Api;
 import io.swagger.model.dto.LoginDTO;
 import io.swagger.model.dto.TokenDTO;
 import io.swagger.model.dto.UserDTO;
@@ -21,6 +22,7 @@ import java.io.IOException;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-18T15:53:51.610Z[GMT]")
 @RestController
+@Api(tags = {"Employee", "Customer"})
 public class UsersApiController implements UsersApi {
 
     private static final Logger log = LoggerFactory.getLogger(UsersApiController.class);
