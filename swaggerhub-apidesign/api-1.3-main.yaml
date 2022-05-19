@@ -373,6 +373,11 @@ components:
         username:
           type: string
           example: FluffyUnicorn77
+        password:
+          type: string
+          format: password
+          minLength: 10
+          example: SeCrEt!334
         firstname:
           type: string
           example: John
