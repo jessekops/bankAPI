@@ -2,6 +2,7 @@ package io.swagger.model.dto;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.model.enumeration.AccountType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.UUID;
 import org.springframework.validation.annotation.Validated;

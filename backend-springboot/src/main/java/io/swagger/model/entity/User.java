@@ -1,7 +1,6 @@
 package io.swagger.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.model.dto.UserType;
+import io.swagger.model.enumeration.UserType;
 import lombok.Data;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.OffsetDateTime;

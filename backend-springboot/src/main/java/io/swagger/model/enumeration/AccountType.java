@@ -1,4 +1,4 @@
-package io.swagger.model.dto;
+package io.swagger.model.enumeration;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
