@@ -6,6 +6,7 @@ import org.threeten.bp.LocalDate;
 import org.threeten.bp.OffsetDateTime;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -16,8 +17,13 @@ public class User {
     @GeneratedValue
     private UUID id;
     private String name;
-    private UserType userType;
+
+    //Makes sure a User can have mutiple UserTypes and fills in a users UserType automatically when getting from the DB
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<UserType> userTypes;
+
     private String username;
+    private String password;
     private String firstname;
     private String lastname;
     private LocalDate dob;
@@ -31,4 +37,6 @@ public class User {
 
     @ManyToOne(cascade = CascadeType.ALL)
     private Account account;
+
+
 }

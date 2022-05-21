@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,6 +38,7 @@ public class UsersApiController implements UsersApi {
         this.request = request;
     }
 
+
     public ResponseEntity<UserDTO> addUser(@Parameter(in = ParameterIn.DEFAULT, description = "New user object", required=true, schema=@Schema()) @Valid @RequestBody UserDTO body) {
 
         return new ResponseEntity<UserDTO>(HttpStatus.NOT_IMPLEMENTED);
@@ -57,6 +59,7 @@ public class UsersApiController implements UsersApi {
         return new ResponseEntity<TokenDTO>(HttpStatus.NOT_IMPLEMENTED);
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<UserDTO> updateUser(@Parameter(in = ParameterIn.PATH, description = "Username input", required=true, schema=@Schema()) @PathVariable("username") String username,@Parameter(in = ParameterIn.DEFAULT, description = "Updated user object", required=true, schema=@Schema()) @Valid @RequestBody UserDTO body) {
 
         return new ResponseEntity<UserDTO>(HttpStatus.NOT_IMPLEMENTED);
