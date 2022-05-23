@@ -1,39 +1,26 @@
 package io.swagger.api;
 
-import io.swagger.model.UserDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.annotations.Api;
+import io.swagger.model.dto.UserDTO;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.*;
-import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import javax.validation.Valid;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-23T13:04:25.984Z[GMT]")
 @RestController
+@Api(tags = {"Employee", "Customer"})
 public class UsersApiController implements UsersApi {
 
     private static final Logger log = LoggerFactory.getLogger(UsersApiController.class);
@@ -49,58 +36,21 @@ public class UsersApiController implements UsersApi {
     }
 
     public ResponseEntity<UserDTO> addUser(@Parameter(in = ParameterIn.DEFAULT, description = "New user object", required=true, schema=@Schema()) @Valid @RequestBody UserDTO body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<UserDTO>(objectMapper.readValue("{\n  \"firstname\" : \"John\",\n  \"address\" : \"Wolkenweg 15 8324AD Haarlem\",\n  \"active\" : true,\n  \"transLimit\" : 2000,\n  \"lastname\" : \"Doe\",\n  \"password\" : \"SeCrEt!334\",\n  \"dayLimit\" : 5000,\n  \"phone\" : \"+31 0634534565\",\n  \"dob\" : \"1956-04-24T00:00:00.000+00:00\",\n  \"id\" : \"d290f1ee-6c54-4b01-90e6-d701748f0851\",\n  \"userType\" : \"employee\",\n  \"registeredOn\" : \"2000-01-23T04:56:07.000+00:00\",\n  \"email\" : \"johndoe@example.com\",\n  \"username\" : \"FluffyUnicorn77\"\n}", UserDTO.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<UserDTO>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
 
         return new ResponseEntity<UserDTO>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     public ResponseEntity<UserDTO> getByEmail(@Parameter(in = ParameterIn.PATH, description = "Email input", required=true, schema=@Schema()) @PathVariable("email") String email) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<UserDTO>(objectMapper.readValue("{\n  \"firstname\" : \"John\",\n  \"address\" : \"Wolkenweg 15 8324AD Haarlem\",\n  \"active\" : true,\n  \"transLimit\" : 2000,\n  \"lastname\" : \"Doe\",\n  \"password\" : \"SeCrEt!334\",\n  \"dayLimit\" : 5000,\n  \"phone\" : \"+31 0634534565\",\n  \"dob\" : \"1956-04-24T00:00:00.000+00:00\",\n  \"id\" : \"d290f1ee-6c54-4b01-90e6-d701748f0851\",\n  \"userType\" : \"employee\",\n  \"registeredOn\" : \"2000-01-23T04:56:07.000+00:00\",\n  \"email\" : \"johndoe@example.com\",\n  \"username\" : \"FluffyUnicorn77\"\n}", UserDTO.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<UserDTO>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
 
         return new ResponseEntity<UserDTO>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     public ResponseEntity<UserDTO> getByUsername(@Parameter(in = ParameterIn.PATH, description = "Username input", required=true, schema=@Schema()) @PathVariable("username") String username) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<UserDTO>(objectMapper.readValue("{\n  \"firstname\" : \"John\",\n  \"address\" : \"Wolkenweg 15 8324AD Haarlem\",\n  \"active\" : true,\n  \"transLimit\" : 2000,\n  \"lastname\" : \"Doe\",\n  \"password\" : \"SeCrEt!334\",\n  \"dayLimit\" : 5000,\n  \"phone\" : \"+31 0634534565\",\n  \"dob\" : \"1956-04-24T00:00:00.000+00:00\",\n  \"id\" : \"d290f1ee-6c54-4b01-90e6-d701748f0851\",\n  \"userType\" : \"employee\",\n  \"registeredOn\" : \"2000-01-23T04:56:07.000+00:00\",\n  \"email\" : \"johndoe@example.com\",\n  \"username\" : \"FluffyUnicorn77\"\n}", UserDTO.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<UserDTO>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
         return new ResponseEntity<UserDTO>(HttpStatus.NOT_IMPLEMENTED);
     }
 
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<UserDTO> updateUser(@Parameter(in = ParameterIn.PATH, description = "Username input", required=true, schema=@Schema()) @PathVariable("username") String username,@Parameter(in = ParameterIn.DEFAULT, description = "Updated user object", required=true, schema=@Schema()) @Valid @RequestBody UserDTO body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<UserDTO>(objectMapper.readValue("{\n  \"firstname\" : \"John\",\n  \"address\" : \"Wolkenweg 15 8324AD Haarlem\",\n  \"active\" : true,\n  \"transLimit\" : 2000,\n  \"lastname\" : \"Doe\",\n  \"password\" : \"SeCrEt!334\",\n  \"dayLimit\" : 5000,\n  \"phone\" : \"+31 0634534565\",\n  \"dob\" : \"1956-04-24T00:00:00.000+00:00\",\n  \"id\" : \"d290f1ee-6c54-4b01-90e6-d701748f0851\",\n  \"userType\" : \"employee\",\n  \"registeredOn\" : \"2000-01-23T04:56:07.000+00:00\",\n  \"email\" : \"johndoe@example.com\",\n  \"username\" : \"FluffyUnicorn77\"\n}", UserDTO.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<UserDTO>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
         return new ResponseEntity<UserDTO>(HttpStatus.NOT_IMPLEMENTED);
     }
 

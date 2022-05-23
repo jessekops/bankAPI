@@ -1,8 +1,10 @@
 package io.swagger.model.entity;
 
 import lombok.Data;
-import javax.persistence.*;
-import java.util.UUID;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 @Entity
 @Data

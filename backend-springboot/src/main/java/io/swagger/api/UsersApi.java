@@ -5,7 +5,7 @@
  */
 package io.swagger.api;
 
-import io.swagger.model.UserDTO;
+import io.swagger.model.dto.UserDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
