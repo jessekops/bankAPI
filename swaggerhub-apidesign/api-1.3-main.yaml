@@ -379,6 +379,7 @@ components:
           format: password
           minLength: 10
           example: SeCrEt!334
+          writeOnly: true
         firstname:
           type: string
           example: John
