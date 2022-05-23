@@ -20,30 +20,7 @@ tags:
 security:
   - bearerAuth: []
 paths:
-  /users:
-    post:
-      security: []
-      tags:
-        - Customer
-      summary: Register User Data
-      operationId: addUser
-      requestBody:
-        description: New user object
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/UserDTO"
-      responses:
-        201:
-          description: User created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UserDTO"
-        400:
-          description: Invalid user object
-  /users/login:
+  /login:
     post:
       security: []
       tags:
@@ -67,6 +44,29 @@ paths:
                 $ref: "#/components/schemas/TokenDTO"
         401:
           description: Request not authorized - Access token is missing or invalid
+  /users:
+    post:
+      security: []
+      tags:
+        - Customer
+      summary: Register User Data
+      operationId: addUser
+      requestBody:
+        description: New user object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserDTO"
+      responses:
+        201:
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDTO"
+        400:
+          description: Invalid user object
   /users/getByEmail/{email}:
     parameters:
       - in: path
