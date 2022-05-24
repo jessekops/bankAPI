@@ -1,15 +1,16 @@
-package io.swagger.model.dto;
+package io.swagger.model.enumeration;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import org.springframework.security.core.GrantedAuthority;
 
 /**
  * Gets or Sets UserType
  */
-public enum UserType {
-  EMPLOYEE("employee"),
-    CUSTOMER("customer");
+public enum UserType implements GrantedAuthority {
+  ROLE_EMPLOYEE("employee"),
+    ROLE_CUSTOMER("customer");
 
   private String value;
 
@@ -31,5 +32,10 @@ public enum UserType {
       }
     }
     return null;
+  }
+
+  @Override
+  public String getAuthority() {
+    return name();
   }
 }
