@@ -2,6 +2,7 @@ package io.swagger.model.dto;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.model.enumeration.UserType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.UUID;
 import org.threeten.bp.LocalDate;
@@ -14,7 +15,7 @@ import javax.validation.constraints.*;
  * UserDTO
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-18T15:53:51.610Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-21T14:10:30.648Z[GMT]")
 
 
 public class UserDTO   {
@@ -26,6 +27,9 @@ public class UserDTO   {
 
   @JsonProperty("username")
   private String username = null;
+
+  @JsonProperty("password")
+  private String password = null;
 
   @JsonProperty("firstname")
   private String firstname = null;
@@ -115,6 +119,25 @@ public class UserDTO   {
 
   public void setUsername(String username) {
     this.username = username;
+  }
+
+  public UserDTO password(String password) {
+    this.password = password;
+    return this;
+  }
+
+  /**
+   * Get password
+   * @return password
+   **/
+  @Schema(example = "SeCrEt!334", description = "")
+  
+    public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
   }
 
   public UserDTO firstname(String firstname) {
@@ -328,6 +351,7 @@ public class UserDTO   {
     return Objects.equals(this.id, userDTO.id) &&
         Objects.equals(this.userType, userDTO.userType) &&
         Objects.equals(this.username, userDTO.username) &&
+        Objects.equals(this.password, userDTO.password) &&
         Objects.equals(this.firstname, userDTO.firstname) &&
         Objects.equals(this.lastname, userDTO.lastname) &&
         Objects.equals(this.dob, userDTO.dob) &&
@@ -342,7 +366,7 @@ public class UserDTO   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, userType, username, firstname, lastname, dob, address, email, phone, registeredOn, dayLimit, transLimit, active);
+    return Objects.hash(id, userType, username, password, firstname, lastname, dob, address, email, phone, registeredOn, dayLimit, transLimit, active);
   }
 
   @Override
@@ -353,6 +377,7 @@ public class UserDTO   {
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    userType: ").append(toIndentedString(userType)).append("\n");
     sb.append("    username: ").append(toIndentedString(username)).append("\n");
+    sb.append("    password: ").append(toIndentedString(password)).append("\n");
     sb.append("    firstname: ").append(toIndentedString(firstname)).append("\n");
     sb.append("    lastname: ").append(toIndentedString(lastname)).append("\n");
     sb.append("    dob: ").append(toIndentedString(dob)).append("\n");
