@@ -24,13 +24,14 @@ public class CustomWebSecurityConfig extends WebSecurityConfigurerAdapter {
     private JwtTokenFilter tokenFilter;
 
     private static final String[] AUTH_WHITELIST = {
-            "/users/login",
+            "/login",
             "/users",
             "/h2-console/**/**",
             "/swagger-ui.html",
             "/webjars/**",
             "/api-docs/**",
-            "/swagger-ui/**"
+            "/swagger-ui/**",
+            "/662781/BankAPI/1.3/"
     };
 
     @Override

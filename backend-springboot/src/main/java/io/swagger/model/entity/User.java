@@ -1,5 +1,4 @@
 package io.swagger.model.entity;
-
 import io.swagger.model.enumeration.UserType;
 import lombok.Data;
 import org.threeten.bp.LocalDate;
@@ -35,8 +34,8 @@ public class User {
     private Double transLimit;
     private Boolean active;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    private Account account;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Account> accounts;
 
 
 }
