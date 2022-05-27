@@ -40,7 +40,7 @@ public class CustomWebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        /*// Force the use of HTTPS via Heroku. Uncomment this code if you are deploying this there!
+        /*// Force the use of HTTPS via Heroku. Uncomment this code if you are deploying the application there!
         http.requiresChannel()
                 .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null)
                 .requiresSecure();*/
