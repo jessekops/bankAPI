@@ -15,9 +15,8 @@ public class User {
     @Id
     @GeneratedValue
     private UUID id;
-    private String name;
 
-    //Makes sure a User can have mutiple UserTypes and fills in a users UserType automatically when getting from the DB
+    //Makes sure a User can have multiple UserTypes and fills in a users UserType automatically when getting from the DB
     @ElementCollection(fetch = FetchType.EAGER)
     private List<UserType> userTypes;
 
