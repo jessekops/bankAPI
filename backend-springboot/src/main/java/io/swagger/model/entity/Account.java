@@ -2,10 +2,7 @@ package io.swagger.model.entity;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
@@ -16,7 +13,12 @@ public class Account {
     @GeneratedValue
     private String iban;
 
-    @ManyToMany(mappedBy = "accounts")
+    @ManyToOne(cascade = CascadeType.ALL)
+    private User user;
+
+    @OneToMany(mappedBy = "account")
     private List<Transaction> transactions;
+
+
 
 }
