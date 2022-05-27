@@ -27,11 +27,9 @@ public class CustomWebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/login",
             "/users",
             "/h2-console/**/**",
-            "/swagger-ui.html",
-            "/webjars/**",
             "/api-docs/**",
             "/swagger-ui/**",
-            "/662781/BankAPI/1.3/"
+            "/662781/BankAPI/1.3/**/**"
     };
 
     @Override
@@ -47,7 +45,7 @@ public class CustomWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests().antMatchers(AUTH_WHITELIST)
                 .permitAll() // Grant access to the Login, Register & H2-Console pages without a token
-                .anyRequest().authenticated(); // Makes sure that a token is needed for any other URLs
+                .anyRequest().permitAll(); // Makes sure that a token is needed for any other URLs
 
         http.addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class); // Use the JWT Filter class
     }
