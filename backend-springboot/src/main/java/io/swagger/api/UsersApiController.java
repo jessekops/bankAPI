@@ -50,9 +50,10 @@ public class UsersApiController implements UsersApi {
 
     public ResponseEntity<UserDTO> addUser(@Parameter(in = ParameterIn.DEFAULT, description = "New user object", required=true, schema=@Schema()) @Valid @RequestBody UserDTO body) {
 
+        // Map the UserDTO object from the body to a new User object
         User user = mapper.map(body, User.class);
 
-        //Check if the chosen username is already in use
+        // Check if the chosen username is already in use
         List<User> existingUsers = userService.getAll();
         for (User u : existingUsers)
         {
