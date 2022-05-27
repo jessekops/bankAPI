@@ -40,6 +40,11 @@ public class CustomWebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
+        /*// Force the use of HTTPS via Heroku. Uncomment this code if you are deploying this there!
+        http.requiresChannel()
+                .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null)
+                .requiresSecure();*/
+
         http.csrf().disable(); // Make this API available to remote clients
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // Creates a session per http request and deletes it afterwards
 
