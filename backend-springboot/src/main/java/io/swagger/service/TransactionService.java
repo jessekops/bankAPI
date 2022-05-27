@@ -15,11 +15,15 @@ public class TransactionService {
     @Autowired
     private TransactionRepo transactionRepo;
 
+    public Transaction createTransaction(Transaction trans){
+        return transactionRepo.save(trans);
+    }
+
     public List<Transaction> getAll(){
         return transactionRepo.findAll();
     }
 
-    public Transaction findByTransactionFrom(String from) {
-        return transactionRepo.findByTransactionFrom(from);
+    public Transaction findTransactionByFrom(String from) {
+        return transactionRepo.findTransactionByFrom(from);
     }
 }
