@@ -33,7 +33,7 @@ public class User {
     private Double transLimit;
     private Boolean active;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user")
     private List<Account> accounts;
 
 
