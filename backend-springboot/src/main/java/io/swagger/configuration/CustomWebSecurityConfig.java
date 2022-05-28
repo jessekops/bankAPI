@@ -29,7 +29,14 @@ public class CustomWebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/h2-console/**/**",
             "/api-docs/**",
             "/swagger-ui/**",
-            "/**"
+            "/",
+            "/v2/api-docs",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**"
     };
 
     @Override

@@ -41,7 +41,7 @@ public class UsersApiController implements UsersApi {
 
     private final HttpServletRequest request;
 
-    @org.springframework.beans.factory.annotation.Autowired
+    @Autowired
     public UsersApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.mapper = new ModelMapper();
@@ -62,8 +62,10 @@ public class UsersApiController implements UsersApi {
             }
         }
 
+        // Add the user to the DB
         user = userService.addUser(user);
 
+        // Respond with the new User, mapped to a UserDTO object
         UserDTO response = mapper.map(user, UserDTO.class);
         return new ResponseEntity<UserDTO>(response,HttpStatus.CREATED);
     }
