@@ -41,7 +41,7 @@ public class CustomWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers(AUTH_WHITELIST); // Makes sure that the HTML pages are shown
+        web.ignoring().antMatchers(AUTH_WHITELIST); // Makes sure that the HTML pages of the whitelisted URLs are shown
     }
 
     @Override

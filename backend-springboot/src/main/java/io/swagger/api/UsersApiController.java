@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -89,14 +88,14 @@ public class UsersApiController implements UsersApi {
     }
 
     // Does the JpaRepo just know which record in the DB to override??
-    @PreAuthorize("hasRole({'CUSTOMER', 'EMPLOYEE'})")
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<UserDTO> updateUser(@Parameter(in = ParameterIn.PATH, description = "Username input", required=true, schema=@Schema()) @PathVariable("username") String username,@Parameter(in = ParameterIn.DEFAULT, description = "Updated user object", required=true, schema=@Schema()) @Valid @RequestBody UserDTO body) {
 
         User user = mapper.map(body, User.class);
         user = userService.updateUser(user);
 
         UserDTO response = mapper.map(user, UserDTO.class);
-        return new ResponseEntity<UserDTO>(response,HttpStatus.CREATED);
+        return new ResponseEntity<UserDTO>(response, HttpStatus.CREATED);
     }
 
 }

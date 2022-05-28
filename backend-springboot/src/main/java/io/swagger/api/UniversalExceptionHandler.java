@@ -20,6 +20,6 @@ public class UniversalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = { ResponseStatusException.class })
     protected ResponseEntity<Object> handleResponseStatusException(ResponseStatusException ex, WebRequest request) {
         ExceptionDTO dto = new ExceptionDTO(ex.getReason());
-        return handleExceptionInternal(ex, dto, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+        return handleExceptionInternal(ex, dto, new HttpHeaders(), ex.getStatus(), request);
     }
 }
