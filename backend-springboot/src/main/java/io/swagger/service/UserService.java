@@ -12,7 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Arrays;
+
 import java.util.List;
 
 @Service
@@ -64,6 +64,8 @@ public class UserService {
 
     public User updateUser(User updatedUser){
         return userRepo.save(updatedUser);
+        //userRepo.updateUserTypes(updatedUser.getUserTypes(), updatedUser.getId());
+        //return userRepo.updateUser(updatedUser.getUsername(), updatedUser.getPassword(), updatedUser.getFirstname(), updatedUser.getLastname(), updatedUser.getDob(), updatedUser.getAddress(), updatedUser.getEmail(), updatedUser.getPhone(), updatedUser.getRegisteredOn(), updatedUser.getDayLimit(), updatedUser.getTransLimit(), updatedUser.getActive(), updatedUser.getId());
     }
 
     public List<User> getAll()

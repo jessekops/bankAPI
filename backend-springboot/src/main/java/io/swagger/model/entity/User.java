@@ -1,8 +1,8 @@
 package io.swagger.model.entity;
 import io.swagger.model.enumeration.UserType;
 import lombok.Data;
-import org.threeten.bp.LocalDate;
-import org.threeten.bp.OffsetDateTime;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
 
 import javax.persistence.*;
 import java.util.List;

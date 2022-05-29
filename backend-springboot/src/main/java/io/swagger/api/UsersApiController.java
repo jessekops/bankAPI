@@ -87,7 +87,7 @@ public class UsersApiController implements UsersApi {
         return new ResponseEntity<UserDTO>(response, HttpStatus.OK);
     }
 
-    // Does the JpaRepo just know which record in the DB to override??
+    // Does the JpaRepo just know which record in the DB to override?? --> Nope!
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<UserDTO> updateUser(@Parameter(in = ParameterIn.PATH, description = "Username input", required=true, schema=@Schema()) @PathVariable("username") String username,@Parameter(in = ParameterIn.DEFAULT, description = "Updated user object", required=true, schema=@Schema()) @Valid @RequestBody UserDTO body) {
 
