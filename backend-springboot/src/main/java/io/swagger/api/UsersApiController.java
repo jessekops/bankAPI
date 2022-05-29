@@ -69,6 +69,7 @@ public class UsersApiController implements UsersApi {
         return new ResponseEntity<UserDTO>(response,HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserDTO> getByEmail(@Parameter(in = ParameterIn.PATH, description = "Email input", required=true, schema=@Schema()) @PathVariable("email") String email) {
 
         User searchResult = userService.findByEmail(email);
@@ -78,6 +79,7 @@ public class UsersApiController implements UsersApi {
         return new ResponseEntity<UserDTO>(response, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserDTO> getByUsername(@Parameter(in = ParameterIn.PATH, description = "Username input", required=true, schema=@Schema()) @PathVariable("username") String username) {
 
         User searchResult = userService.findByUsername(username);
@@ -88,7 +90,7 @@ public class UsersApiController implements UsersApi {
     }
 
     // Does the JpaRepo just know which record in the DB to override?? --> Nope!
-    @PreAuthorize("hasRole('CUSTOMER')")
+    @PreAuthorize("hasAnyRole('EMPLOYEE', 'CUSTOMER')") //hasAnyRole('EMPLOYEE', 'CUSTOMER') //hasRole('CUSTOMER')
     public ResponseEntity<UserDTO> updateUser(@Parameter(in = ParameterIn.PATH, description = "Username input", required=true, schema=@Schema()) @PathVariable("username") String username,@Parameter(in = ParameterIn.DEFAULT, description = "Updated user object", required=true, schema=@Schema()) @Valid @RequestBody UserDTO body) {
 
         User user = mapper.map(body, User.class);
