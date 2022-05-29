@@ -53,7 +53,7 @@ public class TransactionsApiController implements TransactionsApi {
         trans = transService.createTransaction(trans);
 
         TransactionDTO response = mapper.map(trans, TransactionDTO.class);
-        return new ResponseEntity<TransactionDTO>(HttpStatus.CREATED);
+        return new ResponseEntity<TransactionDTO>(response, HttpStatus.CREATED);
     }
 
     public ResponseEntity<Void> deleteTransaction(@Parameter(in = ParameterIn.PATH, description = "Transaction ID input", required=true, schema=@Schema()) @PathVariable("id") UUID id) {
