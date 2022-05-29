@@ -19,6 +19,7 @@ public class User {
     //Makes sure a User can have multiple UserTypes and fills in a users UserType automatically when getting from the DB
     @ElementCollection(fetch = FetchType.EAGER)
     private List<UserType> userTypes;
+    // private UserType userType;
 
     private String username;
     private String password;
