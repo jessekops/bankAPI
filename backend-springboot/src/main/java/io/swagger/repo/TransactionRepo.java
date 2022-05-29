@@ -10,4 +10,8 @@ import java.util.UUID;
 public interface TransactionRepo extends JpaRepository<Transaction, UUID> {
 
     Transaction findTransactionByFrom(String from);
+
+    Transaction findTransactionByTo(String to);
+
+    Transaction findTransactionById(UUID id);
 }
