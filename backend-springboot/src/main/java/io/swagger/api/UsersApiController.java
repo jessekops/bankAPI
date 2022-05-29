@@ -52,12 +52,23 @@ public class UsersApiController implements UsersApi {
         // Map the UserDTO object from the body to a new User object
         User user = mapper.map(body, User.class);
 
-        // Check if the chosen username is already in use
+
         List<User> existingUsers = userService.getAll();
         for (User u : existingUsers)
         {
+            // Check if the chosen username is already in use
             if(u.getUsername().equals(user.getUsername())){
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Username is already in use! Please try again");
+            }
+
+            // Check if the chosen email address is already in use
+            if(u.getEmail().equals(user.getEmail())){
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Email address is already in use! Please try again");
+            }
+
+            // Check if the chosen phone number is already in use
+            if(u.getPhone().equals(user.getPhone())){
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Phone number is already in use! Please try again");
             }
         }
 
@@ -69,26 +80,40 @@ public class UsersApiController implements UsersApi {
         return new ResponseEntity<UserDTO>(response,HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserDTO> getByEmail(@Parameter(in = ParameterIn.PATH, description = "Email input", required=true, schema=@Schema()) @PathVariable("email") String email) {
 
-        User searchResult = userService.findByEmail(email);
+        try{
+            User searchResult = userService.findByEmail(email);
 
-        UserDTO response = mapper.map(searchResult, UserDTO.class);
+            UserDTO response = mapper.map(searchResult, UserDTO.class);
 
-        return new ResponseEntity<UserDTO>(response, HttpStatus.OK);
+            return new ResponseEntity<UserDTO>(response, HttpStatus.OK);
+        }
+        catch (IllegalArgumentException ex){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with given email address not found.");
+        }
+
+
     }
 
+    @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserDTO> getByUsername(@Parameter(in = ParameterIn.PATH, description = "Username input", required=true, schema=@Schema()) @PathVariable("username") String username) {
 
-        User searchResult = userService.findByUsername(username);
+        try{
+            User searchResult = userService.findByUsername(username);
 
-        UserDTO response = mapper.map(searchResult, UserDTO.class);
+            UserDTO response = mapper.map(searchResult, UserDTO.class);
 
-        return new ResponseEntity<UserDTO>(response, HttpStatus.OK);
+            return new ResponseEntity<UserDTO>(response, HttpStatus.OK);
+        }
+        catch (IllegalArgumentException ex){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with given username not found.");
+        }
     }
 
-    // Does the JpaRepo just know which record in the DB to override??
-    @PreAuthorize("hasRole('CUSTOMER')")
+    // Does the JpaRepo just know which record in the DB to override?? --> Nope!
+    @PreAuthorize("hasAnyRole('EMPLOYEE', 'CUSTOMER')") //hasAnyRole('EMPLOYEE', 'CUSTOMER') //hasRole('CUSTOMER')
     public ResponseEntity<UserDTO> updateUser(@Parameter(in = ParameterIn.PATH, description = "Username input", required=true, schema=@Schema()) @PathVariable("username") String username,@Parameter(in = ParameterIn.DEFAULT, description = "Updated user object", required=true, schema=@Schema()) @Valid @RequestBody UserDTO body) {
 
         User user = mapper.map(body, User.class);
