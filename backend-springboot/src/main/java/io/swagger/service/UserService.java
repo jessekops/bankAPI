@@ -53,8 +53,20 @@ public class UserService {
         return userRepo.save(user);
     }
 
-    public List<User> getAll(){
-        return userRepo.findAll();
+    public User findByUsername(String username){
+        return userRepo.findByUsername(username);
     }
 
+    public User findByEmail(String email){
+        return userRepo.findByEmail(email);
+    }
+
+    public User updateUser(User updatedUser){
+        return userRepo.save(updatedUser);
+    }
+
+    public List<User> getAll()
+    {
+        return userRepo.findAll();
+    }
 }
