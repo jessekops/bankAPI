@@ -9,5 +9,12 @@ import java.util.UUID;
 @Repository
 public interface UserRepo extends JpaRepository<User, UUID> {
 
+    // AddUser (uses .save() in UserService)
+
+    // UpdateUser (uses .save() in UserService)
+
     User findByUsername(String username);
+
+    User findByEmail(String email);
+
 }

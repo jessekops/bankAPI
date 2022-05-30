@@ -1,29 +1,33 @@
 package io.swagger.model.dto;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.model.enumeration.UserType;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.util.UUID;
-import org.threeten.bp.LocalDate;
-import org.threeten.bp.OffsetDateTime;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 /**
  * UserDTO
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-21T14:10:30.648Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-29T11:11:46.904Z[GMT]")
 
 
 public class UserDTO   {
   @JsonProperty("id")
   private UUID id = null;
 
-  @JsonProperty("userType")
-  private UserType userType = null;
+  @JsonProperty("userTypes")
+  @Valid
+  private List<UserType> userTypes = null;
 
   @JsonProperty("username")
   private String username = null;
@@ -81,24 +85,31 @@ public class UserDTO   {
     this.id = id;
   }
 
-  public UserDTO userType(UserType userType) {
-    this.userType = userType;
+  public UserDTO userTypes(List<UserType> userTypes) {
+    this.userTypes = userTypes;
+    return this;
+  }
+
+  public UserDTO addUserTypesItem(UserType userTypesItem) {
+    if (this.userTypes == null) {
+      this.userTypes = new ArrayList<UserType>();
+    }
+    this.userTypes.add(userTypesItem);
     return this;
   }
 
   /**
-   * Get userType
-   * @return userType
+   * Get userTypes
+   * @return userTypes
    **/
   @Schema(description = "")
-  
-    @Valid
-    public UserType getUserType() {
-    return userType;
+      @Valid
+    public List<UserType> getUserTypes() {
+    return userTypes;
   }
 
-  public void setUserType(UserType userType) {
-    this.userType = userType;
+  public void setUserTypes(List<UserType> userTypes) {
+    this.userTypes = userTypes;
   }
 
   public UserDTO username(String username) {
@@ -349,7 +360,7 @@ public class UserDTO   {
     }
     UserDTO userDTO = (UserDTO) o;
     return Objects.equals(this.id, userDTO.id) &&
-        Objects.equals(this.userType, userDTO.userType) &&
+        Objects.equals(this.userTypes, userDTO.userTypes) &&
         Objects.equals(this.username, userDTO.username) &&
         Objects.equals(this.password, userDTO.password) &&
         Objects.equals(this.firstname, userDTO.firstname) &&
@@ -366,7 +377,7 @@ public class UserDTO   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, userType, username, password, firstname, lastname, dob, address, email, phone, registeredOn, dayLimit, transLimit, active);
+    return Objects.hash(id, userTypes, username, password, firstname, lastname, dob, address, email, phone, registeredOn, dayLimit, transLimit, active);
   }
 
   @Override
@@ -375,7 +386,7 @@ public class UserDTO   {
     sb.append("class UserDTO {\n");
     
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
-    sb.append("    userType: ").append(toIndentedString(userType)).append("\n");
+    sb.append("    userTypes: ").append(toIndentedString(userTypes)).append("\n");
     sb.append("    username: ").append(toIndentedString(username)).append("\n");
     sb.append("    password: ").append(toIndentedString(password)).append("\n");
     sb.append("    firstname: ").append(toIndentedString(firstname)).append("\n");

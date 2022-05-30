@@ -29,23 +29,35 @@ public class CustomWebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/h2-console/**/**",
             "/api-docs/**",
             "/swagger-ui/**",
-            "/662781/BankAPI/1.3/**/**"
+            "/",
+            "/v2/api-docs",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**"
     };
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers(AUTH_WHITELIST); // Makes sure that the HTML pages are shown
+        web.ignoring().antMatchers(AUTH_WHITELIST); // Makes sure that the HTML pages of the whitelisted URLs are shown
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
+        /*// Force the use of HTTPS via Heroku. Uncomment this code if you are deploying the application there!
+        http.requiresChannel()
+                .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null)
+                .requiresSecure();*/
 
         http.csrf().disable(); // Make this API available to remote clients
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // Creates a session per http request and deletes it afterwards
 
         http.authorizeRequests().antMatchers(AUTH_WHITELIST)
                 .permitAll() // Grant access to the Login, Register & H2-Console pages without a token
-                .anyRequest().permitAll(); // Makes sure that a token is needed for any other URLs
+                .anyRequest().authenticated(); // Makes sure that a token is needed for any other URLs
 
         http.addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class); // Use the JWT Filter class
     }

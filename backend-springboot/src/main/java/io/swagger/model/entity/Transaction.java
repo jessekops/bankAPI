@@ -15,12 +15,13 @@ public class Transaction {
     private UUID id;
 
     private OffsetDateTime timestamp;
-    private String from;
+
+    @ManyToOne
+    private Account from;
+
     private String to;
     private Double amount;
     private UUID userPerforming;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    private Account account;
 
 }
