@@ -4,11 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.model.enumeration.UserType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
-import org.threeten.bp.LocalDate;
-import org.threeten.bp.OffsetDateTime;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -16,15 +18,16 @@ import java.util.UUID;
  * UserDTO
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-27T10:02:17.546Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-29T11:11:46.904Z[GMT]")
 
 
 public class UserDTO   {
   @JsonProperty("id")
   private UUID id = null;
 
-  @JsonProperty("userType")
-  private UserType userType = null;
+  @JsonProperty("userTypes")
+  @Valid
+  private List<UserType> userTypes = null;
 
   @JsonProperty("username")
   private String username = null;
@@ -72,9 +75,9 @@ public class UserDTO   {
    * @return id
    **/
   @Schema(example = "d290f1ee-6c54-4b01-90e6-d701748f0851", description = "")
-
-  @Valid
-  public UUID getId() {
+  
+    @Valid
+    public UUID getId() {
     return id;
   }
 
@@ -82,24 +85,31 @@ public class UserDTO   {
     this.id = id;
   }
 
-  public UserDTO userType(UserType userType) {
-    this.userType = userType;
+  public UserDTO userTypes(List<UserType> userTypes) {
+    this.userTypes = userTypes;
+    return this;
+  }
+
+  public UserDTO addUserTypesItem(UserType userTypesItem) {
+    if (this.userTypes == null) {
+      this.userTypes = new ArrayList<UserType>();
+    }
+    this.userTypes.add(userTypesItem);
     return this;
   }
 
   /**
-   * Get userType
-   * @return userType
+   * Get userTypes
+   * @return userTypes
    **/
   @Schema(description = "")
-
-  @Valid
-  public UserType getUserType() {
-    return userType;
+      @Valid
+    public List<UserType> getUserTypes() {
+    return userTypes;
   }
 
-  public void setUserType(UserType userType) {
-    this.userType = userType;
+  public void setUserTypes(List<UserType> userTypes) {
+    this.userTypes = userTypes;
   }
 
   public UserDTO username(String username) {
@@ -112,9 +122,9 @@ public class UserDTO   {
    * @return username
    **/
   @Schema(example = "FluffyUnicorn77", required = true, description = "")
-  @NotNull
+      @NotNull
 
-  public String getUsername() {
+    public String getUsername() {
     return username;
   }
 
@@ -132,8 +142,8 @@ public class UserDTO   {
    * @return password
    **/
   @Schema(example = "SeCrEt!334", description = "")
-
-  public String getPassword() {
+  
+    public String getPassword() {
     return password;
   }
 
@@ -151,9 +161,9 @@ public class UserDTO   {
    * @return firstname
    **/
   @Schema(example = "John", required = true, description = "")
-  @NotNull
+      @NotNull
 
-  public String getFirstname() {
+    public String getFirstname() {
     return firstname;
   }
 
@@ -171,9 +181,9 @@ public class UserDTO   {
    * @return lastname
    **/
   @Schema(example = "Doe", required = true, description = "")
-  @NotNull
+      @NotNull
 
-  public String getLastname() {
+    public String getLastname() {
     return lastname;
   }
 
@@ -191,10 +201,10 @@ public class UserDTO   {
    * @return dob
    **/
   @Schema(example = "Tue Apr 24 00:00:00 GMT 1956", required = true, description = "")
-  @NotNull
+      @NotNull
 
-  @Valid
-  public LocalDate getDob() {
+    @Valid
+    public LocalDate getDob() {
     return dob;
   }
 
@@ -212,9 +222,9 @@ public class UserDTO   {
    * @return address
    **/
   @Schema(example = "Wolkenweg 15 8324AD Haarlem", required = true, description = "")
-  @NotNull
+      @NotNull
 
-  public String getAddress() {
+    public String getAddress() {
     return address;
   }
 
@@ -232,9 +242,9 @@ public class UserDTO   {
    * @return email
    **/
   @Schema(example = "johndoe@example.com", required = true, description = "")
-  @NotNull
+      @NotNull
 
-  public String getEmail() {
+    public String getEmail() {
     return email;
   }
 
@@ -252,9 +262,9 @@ public class UserDTO   {
    * @return phone
    **/
   @Schema(example = "+31 0634534565", required = true, description = "")
-  @NotNull
+      @NotNull
 
-  public String getPhone() {
+    public String getPhone() {
     return phone;
   }
 
@@ -272,9 +282,9 @@ public class UserDTO   {
    * @return registeredOn
    **/
   @Schema(description = "")
-
-  @Valid
-  public OffsetDateTime getRegisteredOn() {
+  
+    @Valid
+    public OffsetDateTime getRegisteredOn() {
     return registeredOn;
   }
 
@@ -292,8 +302,8 @@ public class UserDTO   {
    * @return dayLimit
    **/
   @Schema(example = "5000", description = "")
-
-  public Double getDayLimit() {
+  
+    public Double getDayLimit() {
     return dayLimit;
   }
 
@@ -311,8 +321,8 @@ public class UserDTO   {
    * @return transLimit
    **/
   @Schema(example = "2000", description = "")
-
-  public Double getTransLimit() {
+  
+    public Double getTransLimit() {
     return transLimit;
   }
 
@@ -330,8 +340,8 @@ public class UserDTO   {
    * @return active
    **/
   @Schema(description = "")
-
-  public Boolean isActive() {
+  
+    public Boolean isActive() {
     return active;
   }
 
@@ -350,33 +360,33 @@ public class UserDTO   {
     }
     UserDTO userDTO = (UserDTO) o;
     return Objects.equals(this.id, userDTO.id) &&
-            Objects.equals(this.userType, userDTO.userType) &&
-            Objects.equals(this.username, userDTO.username) &&
-            Objects.equals(this.password, userDTO.password) &&
-            Objects.equals(this.firstname, userDTO.firstname) &&
-            Objects.equals(this.lastname, userDTO.lastname) &&
-            Objects.equals(this.dob, userDTO.dob) &&
-            Objects.equals(this.address, userDTO.address) &&
-            Objects.equals(this.email, userDTO.email) &&
-            Objects.equals(this.phone, userDTO.phone) &&
-            Objects.equals(this.registeredOn, userDTO.registeredOn) &&
-            Objects.equals(this.dayLimit, userDTO.dayLimit) &&
-            Objects.equals(this.transLimit, userDTO.transLimit) &&
-            Objects.equals(this.active, userDTO.active);
+        Objects.equals(this.userTypes, userDTO.userTypes) &&
+        Objects.equals(this.username, userDTO.username) &&
+        Objects.equals(this.password, userDTO.password) &&
+        Objects.equals(this.firstname, userDTO.firstname) &&
+        Objects.equals(this.lastname, userDTO.lastname) &&
+        Objects.equals(this.dob, userDTO.dob) &&
+        Objects.equals(this.address, userDTO.address) &&
+        Objects.equals(this.email, userDTO.email) &&
+        Objects.equals(this.phone, userDTO.phone) &&
+        Objects.equals(this.registeredOn, userDTO.registeredOn) &&
+        Objects.equals(this.dayLimit, userDTO.dayLimit) &&
+        Objects.equals(this.transLimit, userDTO.transLimit) &&
+        Objects.equals(this.active, userDTO.active);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, userType, username, password, firstname, lastname, dob, address, email, phone, registeredOn, dayLimit, transLimit, active);
+    return Objects.hash(id, userTypes, username, password, firstname, lastname, dob, address, email, phone, registeredOn, dayLimit, transLimit, active);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class UserDTO {\n");
-
+    
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
-    sb.append("    userType: ").append(toIndentedString(userType)).append("\n");
+    sb.append("    userTypes: ").append(toIndentedString(userTypes)).append("\n");
     sb.append("    username: ").append(toIndentedString(username)).append("\n");
     sb.append("    password: ").append(toIndentedString(password)).append("\n");
     sb.append("    firstname: ").append(toIndentedString(firstname)).append("\n");
