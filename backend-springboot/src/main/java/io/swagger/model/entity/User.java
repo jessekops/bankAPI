@@ -1,10 +1,11 @@
 package io.swagger.model.entity;
+
 import io.swagger.model.enumeration.UserType;
 import lombok.Data;
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,7 +20,6 @@ public class User {
     //Makes sure a User can have multiple UserTypes and fills in a users UserType automatically when getting from the DB
     @ElementCollection(fetch = FetchType.EAGER)
     private List<UserType> userTypes;
-    // private UserType userType;
 
     private String username;
     private String password;

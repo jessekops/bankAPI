@@ -64,8 +64,6 @@ public class UserService {
 
     public User updateUser(User updatedUser){
         return userRepo.save(updatedUser);
-        //userRepo.updateUserTypes(updatedUser.getUserTypes(), updatedUser.getId());
-        //return userRepo.updateUser(updatedUser.getUsername(), updatedUser.getPassword(), updatedUser.getFirstname(), updatedUser.getLastname(), updatedUser.getDob(), updatedUser.getAddress(), updatedUser.getEmail(), updatedUser.getPhone(), updatedUser.getRegisteredOn(), updatedUser.getDayLimit(), updatedUser.getTransLimit(), updatedUser.getActive(), updatedUser.getId());
     }
 
     public List<User> getAll()

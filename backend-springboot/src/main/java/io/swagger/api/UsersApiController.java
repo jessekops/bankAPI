@@ -47,6 +47,7 @@ public class UsersApiController implements UsersApi {
         this.request = request;
     }
 
+    // No role is needed for this endpoint, since there isn't a token yet.
     public ResponseEntity<UserDTO> addUser(@Parameter(in = ParameterIn.DEFAULT, description = "New user object", required=true, schema=@Schema()) @Valid @RequestBody UserDTO body) {
 
         // Map the UserDTO object from the body to a new User object
@@ -80,6 +81,16 @@ public class UsersApiController implements UsersApi {
         return new ResponseEntity<UserDTO>(response,HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasAnyRole('EMPLOYEE', 'CUSTOMER')")
+    public ResponseEntity<UserDTO> updateUser(@Parameter(in = ParameterIn.PATH, description = "Username input", required=true, schema=@Schema()) @PathVariable("username") String username,@Parameter(in = ParameterIn.DEFAULT, description = "Updated user object", required=true, schema=@Schema()) @Valid @RequestBody UserDTO body) {
+
+        User user = mapper.map(body, User.class);
+        user = userService.updateUser(user);
+
+        UserDTO response = mapper.map(user, UserDTO.class);
+        return new ResponseEntity<UserDTO>(response, HttpStatus.CREATED);
+    }
+
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserDTO> getByEmail(@Parameter(in = ParameterIn.PATH, description = "Email input", required=true, schema=@Schema()) @PathVariable("email") String email) {
 
@@ -110,17 +121,6 @@ public class UsersApiController implements UsersApi {
         catch (IllegalArgumentException ex){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with given username not found.");
         }
-    }
-
-    // Does the JpaRepo just know which record in the DB to override?? --> Nope!
-    @PreAuthorize("hasAnyRole('EMPLOYEE', 'CUSTOMER')") //hasAnyRole('EMPLOYEE', 'CUSTOMER') //hasRole('CUSTOMER')
-    public ResponseEntity<UserDTO> updateUser(@Parameter(in = ParameterIn.PATH, description = "Username input", required=true, schema=@Schema()) @PathVariable("username") String username,@Parameter(in = ParameterIn.DEFAULT, description = "Updated user object", required=true, schema=@Schema()) @Valid @RequestBody UserDTO body) {
-
-        User user = mapper.map(body, User.class);
-        user = userService.updateUser(user);
-
-        UserDTO response = mapper.map(user, UserDTO.class);
-        return new ResponseEntity<UserDTO>(response, HttpStatus.CREATED);
     }
 
 }
