@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.model.enumeration.UserType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
