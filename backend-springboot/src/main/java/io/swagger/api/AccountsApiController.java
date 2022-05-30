@@ -3,11 +3,15 @@ package io.swagger.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.model.dto.AccountDTO;
+import io.swagger.model.entity.Account;
+import io.swagger.service.AccountService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +37,9 @@ public class AccountsApiController implements AccountsApi {
 
     private final HttpServletRequest request;
 
+    @Autowired
+    private AccountService accountService;
+
     @org.springframework.beans.factory.annotation.Autowired
     public AccountsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
@@ -41,7 +48,13 @@ public class AccountsApiController implements AccountsApi {
 
     public ResponseEntity<AccountDTO> addAccount(@Parameter(in = ParameterIn.DEFAULT, description = "New account object", required=true, schema=@Schema()) @Valid @RequestBody AccountDTO body) {
 
-        return new ResponseEntity<AccountDTO>(HttpStatus.NOT_IMPLEMENTED);
+        ModelMapper modelMapper = new ModelMapper();
+        Account a = modelMapper.map(body, Account.class);
+        a = accountService.addAccount(a);
+
+        AccountDTO resp = modelMapper.map(a, AccountDTO.class);
+
+        return new ResponseEntity<AccountDTO>(resp, HttpStatus.CREATED);
     }
 
     public ResponseEntity<AccountDTO> getAccount(@Parameter(in = ParameterIn.PATH, description = "IBAN input", required=true, schema=@Schema()) @PathVariable("iban") String iban) {
