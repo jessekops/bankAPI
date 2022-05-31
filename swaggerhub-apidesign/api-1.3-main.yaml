@@ -193,19 +193,20 @@ paths:
                 $ref: "#/components/schemas/AccountDTO"
         400:
           description: Invalid account object
-  /accounts/{iban}:
+  /accounts/{userID}:
     parameters:
       - in: path
-        name: iban
+        name: userID
         required: true
-        description: IBAN input
+        description: User ID input
         schema:
           type: string
+          format: uuid
     get:
       tags:
         - Employee
         - Customer
-      summary: Search an account list on IBAN
+      summary: Search an account list on UserID
       operationId: getAccount
       responses:
         200:
@@ -216,6 +217,14 @@ paths:
                 $ref: "#/components/schemas/AccountDTO"
         404:
           description: Account not found
+  /accounts/{iban}:
+    parameters:
+      - in: path
+        name: iban
+        required: true
+        description: IBAN input
+        schema:
+          type: string
     put:
       tags:
         - Employee
