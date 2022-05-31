@@ -48,27 +48,26 @@ public class UsersApiController implements UsersApi {
     }
 
     // No role is needed for this endpoint, since there isn't a token yet.
-    public ResponseEntity<UserDTO> addUser(@Parameter(in = ParameterIn.DEFAULT, description = "New user object", required=true, schema=@Schema()) @Valid @RequestBody UserDTO body) {
+    public ResponseEntity<UserDTO> addUser(@Parameter(in = ParameterIn.DEFAULT, description = "New user object", required = true, schema = @Schema()) @Valid @RequestBody UserDTO body) {
 
         // Map the UserDTO object from the body to a new User object
         User user = mapper.map(body, User.class);
 
 
         List<User> existingUsers = userService.getAll();
-        for (User u : existingUsers)
-        {
+        for (User u : existingUsers) {
             // Check if the chosen username is already in use
-            if(u.getUsername().equals(user.getUsername())){
+            if (u.getUsername().equals(user.getUsername())) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Username is already in use! Please try again");
             }
 
             // Check if the chosen email address is already in use
-            if(u.getEmail().equals(user.getEmail())){
+            if (u.getEmail().equals(user.getEmail())) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Email address is already in use! Please try again");
             }
 
             // Check if the chosen phone number is already in use
-            if(u.getPhone().equals(user.getPhone())){
+            if (u.getPhone().equals(user.getPhone())) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Phone number is already in use! Please try again");
             }
         }
@@ -78,11 +77,11 @@ public class UsersApiController implements UsersApi {
 
         // Respond with the new User, mapped to a UserDTO object
         UserDTO response = mapper.map(user, UserDTO.class);
-        return new ResponseEntity<UserDTO>(response,HttpStatus.CREATED);
+        return new ResponseEntity<UserDTO>(response, HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'CUSTOMER')")
-    public ResponseEntity<UserDTO> updateUser(@Parameter(in = ParameterIn.PATH, description = "Username input", required=true, schema=@Schema()) @PathVariable("username") String username,@Parameter(in = ParameterIn.DEFAULT, description = "Updated user object", required=true, schema=@Schema()) @Valid @RequestBody UserDTO body) {
+    public ResponseEntity<UserDTO> updateUser(@Parameter(in = ParameterIn.PATH, description = "Username input", required = true, schema = @Schema()) @PathVariable("username") String username, @Parameter(in = ParameterIn.DEFAULT, description = "Updated user object", required = true, schema = @Schema()) @Valid @RequestBody UserDTO body) {
 
         User user = mapper.map(body, User.class);
         user = userService.updateUser(user);
@@ -92,16 +91,15 @@ public class UsersApiController implements UsersApi {
     }
 
     @PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<UserDTO> getByEmail(@Parameter(in = ParameterIn.PATH, description = "Email input", required=true, schema=@Schema()) @PathVariable("email") String email) {
+    public ResponseEntity<UserDTO> getByEmail(@Parameter(in = ParameterIn.PATH, description = "Email input", required = true, schema = @Schema()) @PathVariable("email") String email) {
 
-        try{
+        try {
             User searchResult = userService.findByEmail(email);
 
             UserDTO response = mapper.map(searchResult, UserDTO.class);
 
             return new ResponseEntity<UserDTO>(response, HttpStatus.OK);
-        }
-        catch (IllegalArgumentException ex){
+        } catch (IllegalArgumentException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with given email address not found.");
         }
 
@@ -109,16 +107,15 @@ public class UsersApiController implements UsersApi {
     }
 
     @PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<UserDTO> getByUsername(@Parameter(in = ParameterIn.PATH, description = "Username input", required=true, schema=@Schema()) @PathVariable("username") String username) {
+    public ResponseEntity<UserDTO> getByUsername(@Parameter(in = ParameterIn.PATH, description = "Username input", required = true, schema = @Schema()) @PathVariable("username") String username) {
 
-        try{
+        try {
             User searchResult = userService.findByUsername(username);
 
             UserDTO response = mapper.map(searchResult, UserDTO.class);
 
             return new ResponseEntity<UserDTO>(response, HttpStatus.OK);
-        }
-        catch (IllegalArgumentException ex){
+        } catch (IllegalArgumentException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with given username not found.");
         }
     }
