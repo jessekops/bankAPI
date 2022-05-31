@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -33,6 +34,8 @@ public class TransactionsApiController implements TransactionsApi {
     @Autowired
     private TransactionService transService;
 
+    private ModelMapper modelMapper;
+
     private static final Logger log = LoggerFactory.getLogger(TransactionsApiController.class);
 
     private final ObjectMapper objectMapper;
@@ -43,32 +46,41 @@ public class TransactionsApiController implements TransactionsApi {
     public TransactionsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
+        this.modelMapper = new ModelMapper();
     }
 
-    public ResponseEntity<TransactionDTO> createTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "New transaction object", required=true, schema=@Schema()) @Valid @RequestBody TransactionDTO body) {
+    public ResponseEntity<TransactionDTO> createTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "New transaction object", required = true, schema = @Schema()) @Valid @RequestBody TransactionDTO body) {
 
-        ModelMapper mapper = new ModelMapper();
 
-        Transaction trans = mapper.map(body, Transaction.class);
+        Transaction trans = modelMapper.map(body, Transaction.class);
         trans = transService.createTransaction(trans);
 
-        TransactionDTO response = mapper.map(trans, TransactionDTO.class);
+        TransactionDTO response = modelMapper.map(trans, TransactionDTO.class);
         return new ResponseEntity<TransactionDTO>(response, HttpStatus.CREATED);
     }
 
-    public ResponseEntity<Void> deleteTransaction(@Parameter(in = ParameterIn.PATH, description = "Transaction ID input", required=true, schema=@Schema()) @PathVariable("id") UUID id) {
-
-        return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<Void> deleteTransaction(@Parameter(in = ParameterIn.PATH, description = "Transaction ID input", required = true, schema = @Schema()) @PathVariable("id") UUID id) {
+        transService.deleteTransaction(id);
+        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
 
-    public ResponseEntity<TransactionDTO> getTransaction(@Parameter(in = ParameterIn.PATH, description = "Transaction ID input", required=true, schema=@Schema()) @PathVariable("id") UUID id) {
+    public ResponseEntity<TransactionDTO> getTransaction(@Parameter(in = ParameterIn.PATH, description = "Transaction ID input", required = true, schema = @Schema()) @PathVariable("id") UUID id) {
+        try {
+            Transaction trans = transService.findTransactionById(id);
+            TransactionDTO response = modelMapper.map(trans, TransactionDTO.class);
+            return new ResponseEntity<TransactionDTO>(response, HttpStatus.OK);
 
-        return new ResponseEntity<TransactionDTO>(HttpStatus.NOT_IMPLEMENTED);
+        } catch (IllegalArgumentException ex) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No transactions found with given ID");
+        }
     }
 
-    public ResponseEntity<TransactionDTO> updateTransaction(@Parameter(in = ParameterIn.PATH, description = "Transaction ID input", required=true, schema=@Schema()) @PathVariable("id") UUID id,@Parameter(in = ParameterIn.DEFAULT, description = "Updated transaction object", required=true, schema=@Schema()) @Valid @RequestBody TransactionDTO body) {
+    public ResponseEntity<TransactionDTO> updateTransaction(@Parameter(in = ParameterIn.PATH, description = "Transaction ID input", required = true, schema = @Schema()) @PathVariable("id") UUID id, @Parameter(in = ParameterIn.DEFAULT, description = "Updated transaction object", required = true, schema = @Schema()) @Valid @RequestBody TransactionDTO body) {
+        Transaction trans = modelMapper.map(body, Transaction.class);
+        trans = transService.updateTransaction(trans);
 
-        return new ResponseEntity<TransactionDTO>(HttpStatus.NOT_IMPLEMENTED);
+        TransactionDTO response = modelMapper.map(trans, TransactionDTO.class);
+        return new ResponseEntity<TransactionDTO>(response, HttpStatus.CREATED);
     }
 
 }
