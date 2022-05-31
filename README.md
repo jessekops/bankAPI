@@ -1,5 +1,5 @@
 # ProjectCodeGeneration PG05
-#### Sander Baak, Jesse Kops, Bas Hulskamp
+#### Creators: Sander Baak, Jesse Kops, Bas Hulskamp
 
 ## Behoooold, The Inholland Bank API
 
