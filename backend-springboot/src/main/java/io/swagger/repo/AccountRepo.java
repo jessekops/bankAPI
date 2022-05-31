@@ -8,5 +8,5 @@ import java.util.UUID;
 
 @Repository
 public interface AccountRepo extends JpaRepository<Account, UUID> {
-    Account findByIban(String IBAN);
+    Account findAccountByUserId(UUID userid);
 }
