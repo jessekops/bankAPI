@@ -1,17 +1,21 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <router-view />
+  <!-- Add a router view -->
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
 
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+  name: "App",
+  watch: {
+    $route: {
+      immediate: true,
+      handler() {
+        document.title = "InHolland Bank";
+      },
+    },
+  },
+};
 </script>
 
 <style>
