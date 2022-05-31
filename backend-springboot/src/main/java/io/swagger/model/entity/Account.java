@@ -1,9 +1,10 @@
 package io.swagger.model.entity;
 
+import io.swagger.model.enumeration.AccountType;
 import lombok.Data;
-
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -11,8 +12,14 @@ import java.util.UUID;
 public class Account {
 
     @Id
-    @GeneratedValue
-    private UUID iban;
+    private String iban;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<AccountType> accountTypes;
+
+    private Double balance;
+    private Double absLimit;
+    private Boolean active;
 
     @ManyToOne(cascade = CascadeType.ALL)
     private User user;
