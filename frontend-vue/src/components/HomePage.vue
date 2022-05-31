@@ -1,15 +1,19 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
+  <div v-if="isLoggedIn" class="hello">
+    <h1>Welkom! je bent ingelogd</h1>
   </div>
 </template>
 
 <script>
+
+import { mapGetters } from "vuex";
+
+
 export default {
   name: 'HelloWorld',
-  props: {
-    msg: String
-  }
+    computed: {
+    ...mapGetters(["isLoggedIn"]),
+  },
 }
 </script>
 

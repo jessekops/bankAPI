@@ -5,10 +5,13 @@ import store from './store/store'
 
 import Login from './components/users/Login.vue';
 
+import HomePage from './components/HomePage.vue';
+
 const routes = [
 
     { path: '/', component: Login },
     { path: '/login', component: Login },
+    { path: '/home', component: HomePage },
 ];
 
 
