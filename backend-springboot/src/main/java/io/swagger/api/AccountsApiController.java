@@ -6,6 +6,7 @@ import io.swagger.model.dto.AccountDTO;
 import io.swagger.model.dto.UserDTO;
 import io.swagger.model.entity.Account;
 import io.swagger.model.entity.User;
+import io.swagger.service.AccountIbanGenService;
 import io.swagger.service.AccountService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -47,6 +48,8 @@ public class AccountsApiController implements AccountsApi {
 
     @Autowired
     private AccountService accountService;
+    @Autowired
+    private AccountIbanGenService accountIbanService;
 
     @org.springframework.beans.factory.annotation.Autowired
     public AccountsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -59,11 +62,25 @@ public class AccountsApiController implements AccountsApi {
 
 
         Account a = modelMapper.map(body, Account.class);
-        a = accountService.addAccount(a);
 
-        AccountDTO resp = modelMapper.map(a, AccountDTO.class);
+        //get all accounts to make a check to add a new account
+        List<Account> accountList = accountService.getAll();
+        String iban = accountIbanService.generateIban();
+        while (!accountList.contains(iban)) {
+            try {
+                //generate the iban here
+                    iban = accountIbanService.generateIban();
+                    a.setIban(iban);
+                    a = accountService.addAccount(a);
+                    AccountDTO resp = modelMapper.map(a, AccountDTO.class);
+                    return new ResponseEntity<AccountDTO>(resp, HttpStatus.CREATED);
 
-        return new ResponseEntity<AccountDTO>(resp, HttpStatus.CREATED);
+            }
+            catch (IllegalArgumentException ex) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account with generated iban already exists.");
+            }
+        }
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Something went wrong with generating your iban please try again.");
     }
 
     public ResponseEntity<AccountDTO> getAccount(@Parameter(in = ParameterIn.PATH, description = "User ID input", required=true, schema=@Schema()) @PathVariable("userID") UUID userID) {

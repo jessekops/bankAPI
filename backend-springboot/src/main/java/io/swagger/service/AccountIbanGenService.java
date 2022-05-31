@@ -14,5 +14,18 @@ public class AccountIbanGenService extends AccountService {
     @Autowired
     private AccountRepo accountRepo;
 
+    public String generateIban() {
+        StringBuilder iban = new StringBuilder("NL");
+        Random prefix = new Random();
+        int max = 100;
+        int min = 10;
+        iban.append(prefix.nextInt(max-min));
+        iban.append("INHO");
+        long number = (long) Math.floor(Math.random() * 9_000_000_000L) + 1_000_000_000L;
+        iban.append(number);
 
+        String finalIban = iban.toString();
+
+        return  finalIban;
+    }
 }

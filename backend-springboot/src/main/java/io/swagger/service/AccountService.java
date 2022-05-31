@@ -16,22 +16,10 @@ public class AccountService {
     private AccountRepo accountRepo;
 
     public Account addAccount(Account a) {
-        a.setIban(generateIban());
         return accountRepo.save(a);
     }
 
-    public String generateIban() {
-        StringBuilder iban = new StringBuilder("NL");
-        Random prefix = new Random();
-        iban.append(prefix.nextInt(2-100));
-        iban.append("INHO");
-        long number = (long) Math.floor(Math.random() * 9_000_000_000L) + 1_000_000_000L;
-        iban.append(number);
 
-        String finalIban = iban.toString();
-
-        return  finalIban;
-    }
 
     public Account findAccountByUserId(UUID userId) {
         return accountRepo.findAccountByUserId(userId);
