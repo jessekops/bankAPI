@@ -12,7 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-
 import java.util.List;
 
 @Service
@@ -31,43 +30,41 @@ public class UserService {
     PasswordEncoder encoder;
 
 
-    public String login(String username, String password){
+    public String login(String username, String password) {
 
         String token = "";
 
-        try{
+        try {
             authManager.authenticate(new UsernamePasswordAuthenticationToken(username, password)); // Check username and password via Spring Boot Security
             User user = userRepo.findByUsername(username);
             token = provider.createToken(username, user.getUserTypes()); //user.getUserTypes() //List.of(user.getUserType()
-        }
-        catch(AuthenticationException authEx){
+        } catch (AuthenticationException authEx) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username and/or password");
         }
 
         return token;
     }
 
-    public User addUser(User user){
+    public User addUser(User user) {
 
         user.setPassword(encoder.encode(user.getPassword()));
 
         return userRepo.save(user);
     }
 
-    public User findByUsername(String username){
+    public User findByUsername(String username) {
         return userRepo.findByUsername(username);
     }
 
-    public User findByEmail(String email){
+    public User findByEmail(String email) {
         return userRepo.findByEmail(email);
     }
 
-    public User updateUser(User updatedUser){
+    public User updateUser(User updatedUser) {
         return userRepo.save(updatedUser);
     }
 
-    public List<User> getAll()
-    {
+    public List<User> getAll() {
         return userRepo.findAll();
     }
 }
