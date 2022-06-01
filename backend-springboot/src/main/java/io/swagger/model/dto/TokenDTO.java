@@ -16,6 +16,10 @@ import org.springframework.validation.annotation.Validated;
 public class TokenDTO   {
   @JsonProperty("token")
   private String token = null;
+  @JsonProperty("username")
+  private String username = null;
+  @JsonProperty("userrole")
+  private String userrole = null;
 
   public TokenDTO token(String token) {
     this.token = token;
@@ -34,6 +38,12 @@ public class TokenDTO   {
 
   public void setToken(String token) {
     this.token = token;
+  }
+  public void setUserName(String username) {
+    this.username = username;
+  }
+  public void setUserrole(String userrole) {
+    this.userrole = userrole;
   }
 
 

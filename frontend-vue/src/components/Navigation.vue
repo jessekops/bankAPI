@@ -18,6 +18,16 @@
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto">
+          <li v-if="getUserRole == 'Admin'" class="nav-item dropdown">
+          <a class="nav-link text-white mr-2 dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="margin-right: 2.5rem">
+            CMS
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" href="#">Accounts</a></li>
+            <li><a class="dropdown-item" href="#">Transactions</a></li>
+            <li><a class="dropdown-item" href="#">Users</a></li>
+          </ul>
+        </li>
                 <li class="nav-item" v-if="!isLoggedIn">
                     <router-link to="/login" class="nav-link" >Login</router-link>
                 </li>
@@ -38,7 +48,7 @@ export default {
   name: "Navigation",
   computed: {
     ...mapGetters(["isLoggedIn"]),
-    // ...mapGetters(["getUserRole"]),
+    ...mapGetters(["getUserRole"]),
   },
   methods: {
     logout() {

@@ -5,7 +5,7 @@ const store = createStore({
         return {
             token: null,
             username: null,
-            role: null
+            userrole: null
         }
     },
     getters: {
@@ -16,21 +16,21 @@ const store = createStore({
             return state.username;
         },
         getUserRole(state) {
-            return state.role;
+            return state.userrole;
         },
     },
     mutations: {
         authenticateUser(state, parameters) {
             state.token = parameters.token
             state.username = parameters.username
-            state.role = parameters.role
+            state.userrole = parameters.userrole
         }
     },
     actions: {
 
         login({ commit }, parameters) {
             return new Promise((resolve, reject) => {
-                axios.post("http://localhost:8080/BankAPI/login", {
+                axios.post("login", {
                     username: parameters.username,
                     password: parameters.password,
                 })
@@ -43,7 +43,7 @@ const store = createStore({
 
                         console.log(result.data);
 
-                        localStorage.setItem('role', result.data.role);
+                        localStorage.setItem('userrole', result.data.userrole);
                         localStorage.setItem('username', result.data.username);
 
 
@@ -59,14 +59,14 @@ const store = createStore({
         autoLogin({ commit }) {
             const token = localStorage.getItem('token');
             const username = localStorage.getItem('username');
-            const role = localStorage.getItem('role');
+            const userrole = localStorage.getItem('userrole');
             if (token && username) {
                 axios.defaults.headers.common["Authorization"] =
                     "Bearer " + token;
                 commit('authenticateUser', {
                     token: token,
                     username: username,
-                    role: role
+                    userrole: userrole
                 });
             }
         }

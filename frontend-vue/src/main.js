@@ -6,12 +6,15 @@ import store from './store/store'
 import Login from './components/users/Login.vue';
 
 import HomePage from './components/HomePage.vue';
+import Index from './components/accounts/Index.vue';
 
 const routes = [
 
     { path: '/', component: Login },
     { path: '/login', component: Login },
     { path: '/home', component: HomePage },
+    { path: '/accounts', component: Index },
+
 ];
 
 

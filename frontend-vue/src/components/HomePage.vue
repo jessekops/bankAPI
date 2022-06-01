@@ -1,6 +1,6 @@
 <template>
   <div v-if="isLoggedIn" class="hello">
-    <h1>Welkom! je bent ingelogd</h1>
+    <h1>Welkom! je bent ingelogd {{getUserName}}, je rol is: {{getUserRole}}</h1>
   </div>
 </template>
 
@@ -13,6 +13,9 @@ export default {
   name: 'HelloWorld',
     computed: {
     ...mapGetters(["isLoggedIn"]),
+    ...mapGetters(["getUserName"]),
+    ...mapGetters(["getUserRole"]),
+    
   },
 }
 </script>
