@@ -28,22 +28,10 @@ public class TransactionService {
 
 
     public List<Transaction> getAllTransactions() {
-
         return transactionRepo.findAll();
     }
 
-    public Transaction findTransactionByFrom(String from) {
-
-        return transactionRepo.findTransactionByFrom(from);
-    }
-
-    public Transaction findTransactionByTo(String to) {
-
-        return transactionRepo.findTransactionByTo(to);
-    }
-
     public Transaction findTransactionById(UUID id) {
-
         return transactionRepo.findTransactionById(id);
     }
 
