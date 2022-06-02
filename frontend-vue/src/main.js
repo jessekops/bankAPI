@@ -7,6 +7,7 @@ import Login from './components/users/Login.vue';
 
 import HomePage from './components/HomePage.vue';
 import Index from './components/accounts/Index.vue';
+import AddAccount from './components/accounts/AddAccount.vue';
 
 const routes = [
 
@@ -14,6 +15,7 @@ const routes = [
     { path: '/login', component: Login },
     { path: '/home', component: HomePage },
     { path: '/accounts', component: Index },
+    { path: '/addaccount', component: AddAccount },
 
 ];
 

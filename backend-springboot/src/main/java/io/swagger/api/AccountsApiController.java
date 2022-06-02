@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-23T13:04:25.984Z[GMT]")
 @RestController
-@CrossOrigin(origins = "http://localhost:8081")
+@CrossOrigin(origins = "http://127.0.0.1:8081")
 @Api(tags = {"Employee", "Customer"})
 public class AccountsApiController implements AccountsApi {
 
@@ -77,6 +77,7 @@ public class AccountsApiController implements AccountsApi {
                     a.setIban(iban);
                     a = accountService.addAccount(a);
                     a.setUser(userService.findByUsername("BeefyViking1"));
+
                     AccountDTO resp = modelMapper.map(a, AccountDTO.class);
                     return new ResponseEntity<AccountDTO>(resp, HttpStatus.CREATED);
 
