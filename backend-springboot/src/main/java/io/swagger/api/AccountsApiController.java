@@ -3,10 +3,7 @@ package io.swagger.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.model.dto.AccountDTO;
-import io.swagger.model.dto.UserDTO;
 import io.swagger.model.entity.Account;
-import io.swagger.model.entity.User;
-import io.swagger.model.enumeration.AccountType;
 import io.swagger.service.AccountIbanGenService;
 import io.swagger.service.AccountService;
 import io.swagger.service.UserService;
@@ -26,18 +23,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-23T13:04:25.984Z[GMT]")
+
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-06-01T10:34:07.804Z[GMT]")
 @RestController
 @CrossOrigin(origins = "/**", allowedHeaders = "/**")
 @Api(tags = {"Employee", "Customer"})
 public class AccountsApiController implements AccountsApi {
+
 
     private static final Logger log = LoggerFactory.getLogger(AccountsApiController.class);
 
@@ -107,6 +103,21 @@ public class AccountsApiController implements AccountsApi {
         }
 
     }
+
+    public ResponseEntity<AccountDTO> getAccountByIban(@Parameter(in = ParameterIn.PATH, description = "IBAN input", required=true, schema=@Schema()) @PathVariable("iban") String iban) {
+        try{
+            Account foundAccount = accountService.findAccountByIban(iban);
+
+            AccountDTO response = modelMapper.map(foundAccount, AccountDTO.class);
+
+            return new ResponseEntity<AccountDTO>(response, HttpStatus.OK);
+        }
+        catch (IllegalArgumentException ex){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account with given Iban not found.");
+        }
+
+    }
+
 
     public ResponseEntity<List<AccountDTO>> getAccounts(@Min(0)@Parameter(in = ParameterIn.QUERY, description = "Number of records to skip for pagination" ,schema=@Schema(allowableValues={  }
 )) @Valid @RequestParam(value = "skip", required = false) Integer skip,@Min(1) @Max(200000) @Parameter(in = ParameterIn.QUERY, description = "Maximum number of records to return" ,schema=@Schema(allowableValues={  }, minimum="1", maximum="200000"

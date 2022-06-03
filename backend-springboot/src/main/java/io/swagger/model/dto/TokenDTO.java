@@ -7,6 +7,8 @@ import io.swagger.model.enumeration.UserType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.Objects;
+
 /**
  * Request body for login responses with JWT
  */

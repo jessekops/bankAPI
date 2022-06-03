@@ -225,6 +225,21 @@ paths:
         description: IBAN input
         schema:
           type: string
+    get:
+      tags:
+        - Employee
+        - Customer
+      summary: Search an account list on IBAN
+      operationId: getAccountByIban
+      responses:
+        200:
+          description: Account found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountDTO"
+        404:
+          description: Account not found
     put:
       tags:
         - Employee

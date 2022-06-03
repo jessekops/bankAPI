@@ -15,57 +15,41 @@ public class TransactionValidatorService {
 
 //    Account accountFrom = accountService.findAccountByIban(transaction.getFrom());
 //    Account accountTo = accountService.findAccountByIban(transaction.getTo());
-//    Account balance = accountService.findAccountByIban(account.getBalance());
+
+    //    Account balance = account.getBalance(accountService.findAccountByIban());
 //    Double amount = transaction.getAmount();
 //    Double dayLimit = account.getUser().getDayLimit();
 //    Double absLimit = account.getUser().getTransLimit();
+//
 //    User userFrom = account.getUser();
 //    User userTo = account.getUser();
 //
-//    // Savings accounts cannot make a transaction to an account that does not belong to the same user
+//    // Method to check if the user is the owner of the account
 //
-//    private boolean checkSameUser(User userFrom, User userTo) {
-//        int valid = 0;
+//    private boolean isUserOwner(User user, String iban) {
+//        Account account = accountService.findAccountByIban(iban);
 //
-//        if (userFrom != userTo) {
-//            valid++;
-//        }
-//
-//        return valid == 1;
+//        if (account.getUser() != user) {
+//            return false;
+//        } else return true;
 //    }
 //
 //    // Method to check if the from account is not the same as to account
 //
 //    private boolean checkNotSameAccount(Account accountFrom, Account accountTo) {
-//        int valid = 0;
 //
-//        if (!accountFrom.equals(accountTo)) {
-//            valid++;
-//        }
-//
-//        return valid == 1;
+//        if (accountFrom.equals(accountTo)) {
+//            return false;
+//        } else return true;
 //    }
 //
 //    // Method to check if there is sufficient funds
 //
-//    private boolean checkSufficientFund(Account accountFrom, Double amount, Double balance, Double dayLimit, Double absLimit) {
-//        int valid = 0;
+//    private boolean checkSufficientFund(String iban, double amount) {
+//        Account account = accountService.findAccountByIban(iban);
 //
-//        // Check if amount is smaller then balance
-//        if (amount.compareTo(balance) < 0) {
-//            valid++;
-//        }
-//
-//        // Check if balance after the transaction is still bigger then the limit
-//        if ((balance - amount).compareTo(absLimit) < 0) {
-//            valid++;
-//        }
-//
-//        // Check if daylimit gets proceeded
-//        if (amount.compareTo(balance) < 0) {
-//            valid++;
-//        }
-//
-//        return valid == 3;
+//        if ((account.getBalance().subtract(amount)).compareTo(account.getAbsLimit()) < 0) {
+//            return false;
+//        } else return true;
 //    }
 }
