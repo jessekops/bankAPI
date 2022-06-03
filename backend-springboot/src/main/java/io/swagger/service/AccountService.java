@@ -28,8 +28,9 @@ public class AccountService {
     public Account updateAccount(Account updatedAccount){
         return accountRepo.save(updatedAccount);
     }
-
-
+    public Account findAccountByIban(String iban) {
+        return accountRepo.findAccountByIban(iban);
+    }
     public List<Account> getAll() {
         return accountRepo.findAll();
     }
