@@ -63,6 +63,7 @@ public class AccountDTO   {
     return this;
   }
 
+
   /**
    * Get accountType
    * @return accountType

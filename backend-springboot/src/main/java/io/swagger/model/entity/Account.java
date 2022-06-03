@@ -24,6 +24,10 @@ public class Account {
     @ManyToOne(cascade = CascadeType.ALL)
     private User user;
 
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @OneToMany(mappedBy = "from")
     private List<Transaction> transactions;
 

@@ -65,7 +65,7 @@ export default {
             url: 'accounts',
             method: 'get',
             headers: {
-                    Accept: 'application/json',
+            Accept: 'application/json',
              'Content-Type': 'application/json',
                Authorization: `Bearer ${token}`
             }

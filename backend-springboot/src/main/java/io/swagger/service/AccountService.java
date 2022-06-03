@@ -20,7 +20,6 @@ public class AccountService {
     }
 
 
-
     public Account findAccountByUserId(UUID userId) {
         return accountRepo.findAccountByUserId(userId);
     }
