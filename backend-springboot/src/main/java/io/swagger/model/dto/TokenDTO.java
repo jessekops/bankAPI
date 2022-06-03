@@ -1,9 +1,10 @@
 package io.swagger.model.dto;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
+
+import java.util.Objects;
 
 /**
  * Request body for login responses with JWT
@@ -16,6 +17,10 @@ import org.springframework.validation.annotation.Validated;
 public class TokenDTO   {
   @JsonProperty("token")
   private String token = null;
+  @JsonProperty("username")
+  private String username = null;
+  @JsonProperty("userrole")
+  private String userrole = null;
 
   public TokenDTO token(String token) {
     this.token = token;
@@ -34,6 +39,12 @@ public class TokenDTO   {
 
   public void setToken(String token) {
     this.token = token;
+  }
+  public void setUserName(String username) {
+    this.username = username;
+  }
+  public void setUserrole(String userrole) {
+    this.userrole = userrole;
   }
 
 

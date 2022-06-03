@@ -3,9 +3,9 @@
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-md-7 col-lg-5">
-          <div class="wrap">
-            <img class="w-50" src="@/assets/inhollandbank.png" />
-            <div class="text-muted login-wrap p-4 p-md-5">
+          <div class="wrap text-center">
+            <img class="w-50 mt-4" src="@/assets/inhollandbank.png" />
+            <div class="text-muted login-wrap p-2 p-md-2">
               <div class="d-flex">
                 <div class="w-100">
                   <h3 class="mb-4">Sign In</h3>
@@ -49,7 +49,6 @@
                       text-center
                       submit
                       vue-butt
-                      mx-2
                       btn-success btn-lg
                     "
                   >
@@ -82,7 +81,7 @@ export default {
           password: this.password,
         })
         .then(() => {
-          this.$router.replace("/movies");
+          this.$router.replace("/home");
         })
         .catch(function (error) {
           console.log(error);
@@ -93,6 +92,12 @@ export default {
 </script>
 
 <style scoped>
+.vue-butt {
+    
+
+  display: inline-block;
+
+}
 .ftco-section {
   height: 94vh;
   background: radial-gradient(circle, rgb(238, 238, 238) 0%, rgb(233, 233, 233));
