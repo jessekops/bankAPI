@@ -8,11 +8,14 @@ import io.swagger.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,6 +24,7 @@ import javax.validation.Valid;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-23T13:04:25.984Z[GMT]")
 @RestController
+@CrossOrigin(origins = "http://127.0.0.1:8081")
 @Api(tags = {"Employee", "Customer"})
 public class LoginApiController implements LoginApi {
 
@@ -42,11 +46,30 @@ public class LoginApiController implements LoginApi {
     public ResponseEntity<TokenDTO> login(@Parameter(in = ParameterIn.DEFAULT, description = "Object with username and password to compare to existing data in DB", required=true, schema=@Schema()) @Valid @RequestBody LoginDTO body) {
 
         // Get token from UserService
-        String token = userService.login(body.getUsername(), body.getPassword());
+
+
+        String username = body.getUsername();
+        String password = body.getPassword();
+
+        String token = userService.login(username, password);
 
         // Create TokenDTO to respond with
         TokenDTO response = new TokenDTO();
+       // String[] list = new String[];
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("token", token);
+            obj.put("username", username);
+        }
+        catch (JSONException e) {
+
+        }
+
+
+
         response.setToken(token);
+        response.setUserName(username);
+        response.setUserrole("Employee");
 
         return new ResponseEntity<TokenDTO>(response, HttpStatus.OK);
     }

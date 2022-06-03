@@ -1,13 +1,15 @@
 package io.swagger.model.dto;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.model.enumeration.AccountType;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.util.UUID;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * AccountDTO
@@ -21,7 +23,7 @@ public class AccountDTO   {
   private String iban = null;
 
   @JsonProperty("accountType")
-  private AccountType accountType = null;
+  private Set<AccountType> accountType = null;
 
   @JsonProperty("ownerId")
   private UUID ownerId = null;
@@ -54,7 +56,7 @@ public class AccountDTO   {
     this.iban = iban;
   }
 
-  public AccountDTO accountType(AccountType accountType) {
+  public AccountDTO accountType(Set<AccountType> accountType) {
     this.accountType = accountType;
     return this;
   }
@@ -67,11 +69,11 @@ public class AccountDTO   {
       @NotNull
 
     @Valid
-    public AccountType getAccountType() {
+    public Set<AccountType> getAccountType() {
     return accountType;
   }
 
-  public void setAccountType(AccountType accountType) {
+  public void setAccountType(Set<AccountType> accountType) {
     this.accountType = accountType;
   }
 
