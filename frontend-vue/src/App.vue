@@ -1,11 +1,14 @@
 <template>
+<navigation></navigation>
   <router-view />
   <!-- Add a router view -->
 </template>
 
 <script>
+import Navigation from './components/Navigation.vue';
 
 export default {
+  components: { Navigation },
   name: "App",
   watch: {
     $route: {
@@ -15,16 +18,12 @@ export default {
       },
     },
   },
+  created() {
+    this.$store.dispatch("autoLogin");
+  },
 };
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>
