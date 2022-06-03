@@ -1,6 +1,5 @@
 package io.swagger.configuration;
 
-import io.swagger.model.entity.User;
 import io.swagger.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
