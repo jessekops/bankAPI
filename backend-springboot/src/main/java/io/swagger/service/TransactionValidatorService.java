@@ -5,16 +5,20 @@ import io.swagger.model.entity.Transaction;
 import io.swagger.model.entity.User;
 import io.swagger.model.enumeration.AccountType;
 
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 public class TransactionValidatorService {
 
-    private TransactionService transactionService;
-    private AccountService accountService;
-    private UserService userService;
-    private Transaction transaction;
-    private Account account;
-    private User user;
-
-
+//    private TransactionService transactionService;
+//    private AccountService accountService;
+//    private UserService userService;
+//    private Transaction transaction;
+//    private Account account;
+//    private User user;
+//
+//
 //    // Method to check if it is current or savings account
 //
 //    public boolean checkCurrentOrSavings(String ibanFrom, String ibanTo) {
@@ -46,9 +50,48 @@ public class TransactionValidatorService {
 //
 //    public boolean checkSufficientFund(String iban, double amount) {
 //        Account account = accountService.findAccountByIban(iban);
-//
-//        if ((account.getBalance().subtract(amount)).compareTo(account.getAbsLimit()) < 0) {
+//        double balance = account.getBalance();
+//        if (balance - amount < 0) {
 //            return false;
 //        } else return true;
+//    }
+//
+//    public boolean checkAbsLimit(String iban, double amount) {
+//        Account account = accountService.findAccountByIban(iban);
+//        double balance = account.getBalance();
+//        double absLimit = account.getAbsLimit();
+//
+//        if (balance - amount < absLimit) {
+//            return false;
+//        } else return true;
+//    }
+//
+//    public boolean checkDayLimit(String iban, double amount) {
+//        Account account = accountService.findAccountByIban(iban);
+//        User user = account.getUser();
+//        double dayLimit = user.getDayLimit();
+//
+//        List<Transaction> transToday = getTotdayTransactions(transaction);
+//        float total = 0;
+//        for (Transaction transaction : transToday) {
+//            total += amount;
+//        }
+//        if (total > dayLimit) {
+//            return false;
+//        } else return true;
+//    }
+//
+//    private List<Transaction> getTotdayTransactions(Transaction transaction) {
+//        List<Transaction> transactions = findbyfrom
+//
+//        OffsetDateTime localTime = OffsetDateTime.now();
+//        List<Transaction> transToday = new ArrayList<>();
+//        for (Transaction trans : transactions) {
+//            if (trans.getTimestamp().getYear() == localTime.getYear()
+//                && trans.getTimestamp().getMonth() == localTime.getMonth()
+//                    && trans.getTimestamp().getDayOfMonth() == localTime.getDayOfMonth()) {
+//                transToday.add(trans);
+//            }
+//        }
 //    }
 }
