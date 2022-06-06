@@ -15,6 +15,17 @@ const store = createStore({
         getUserName(state) {
             return state.username;
         },
+        isAdmin(state) {
+            if (state.userrole) {
+                if (state.userrole.toString().includes("ROLE_EMPLOYEE")) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+
+        },
         getUserRole(state) {
             return state.userrole;
         },
