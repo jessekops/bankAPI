@@ -18,8 +18,8 @@ public class AccountService {
     }
 
 
-    public Account findAccountByUserId(UUID userId) {
-        return accountRepo.findAccountByUserId(userId);
+    public List<Account> findAccountsByUserId(UUID userId) {
+        return accountRepo.findAccountsByUserId(userId);
     }
 
     public Account updateAccount(Account updatedAccount){
