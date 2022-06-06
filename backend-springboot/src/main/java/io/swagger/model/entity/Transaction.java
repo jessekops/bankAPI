@@ -1,6 +1,7 @@
 package io.swagger.model.entity;
 
 import lombok.Data;
+import org.threeten.bp.LocalDate;
 import org.threeten.bp.OffsetDateTime;
 
 import javax.persistence.Entity;
@@ -17,7 +18,7 @@ public class Transaction {
     @GeneratedValue
     private UUID id;
 
-    private OffsetDateTime timestamp;
+    private LocalDate timestamp;
 
     @ManyToOne
     private Account from;
