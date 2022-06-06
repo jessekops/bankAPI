@@ -1,4 +1,4 @@
-<template>
+<template :v-if="!isLoggedIn">
   <section class="ftco-section">
     <div class="container">
       <div class="row justify-content-center">
@@ -64,6 +64,7 @@
   </section>
 </template>
 <script>
+import { mapGetters } from "vuex";
 export default {
   name: "Login",
   data() {
@@ -71,6 +72,10 @@ export default {
       username: "",
       password: "",
     };
+  },
+  computed: {
+    ...mapGetters(["isLoggedIn"]),
+    ...mapGetters(["isAdmin"]),
   },
 
   methods: {
@@ -93,13 +98,14 @@ export default {
 
 <style scoped>
 .vue-butt {
-    
-
   display: inline-block;
-
 }
 .ftco-section {
   height: 94vh;
-  background: radial-gradient(circle, rgb(238, 238, 238) 0%, rgb(233, 233, 233));
+  background: radial-gradient(
+    circle,
+    rgb(238, 238, 238) 0%,
+    rgb(233, 233, 233)
+  );
 }
 </style>

@@ -24,7 +24,7 @@ import javax.validation.Valid;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-23T13:04:25.984Z[GMT]")
 @RestController
-@CrossOrigin(origins = "http://127.0.0.1:8081")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @Api(tags = {"Employee", "Customer"})
 public class LoginApiController implements LoginApi {
 
@@ -43,6 +43,7 @@ public class LoginApiController implements LoginApi {
         this.request = request;
     }
 
+
     public ResponseEntity<TokenDTO> login(@Parameter(in = ParameterIn.DEFAULT, description = "Object with username and password to compare to existing data in DB", required=true, schema=@Schema()) @Valid @RequestBody LoginDTO body) {
 
         // Get token from UserService
@@ -51,25 +52,21 @@ public class LoginApiController implements LoginApi {
         String username = body.getUsername();
         String password = body.getPassword();
 
-        String token = userService.login(username, password);
+
 
         // Create TokenDTO to respond with
-        TokenDTO response = new TokenDTO();
+        TokenDTO response = userService.login(username, password);
        // String[] list = new String[];
-        JSONObject obj = new JSONObject();
-        try {
-            obj.put("token", token);
-            obj.put("username", username);
-        }
-        catch (JSONException e) {
+//        JSONObject obj = new JSONObject();
+//        try {
+//            obj.put("token", response.getToken());
+//            obj.put("username", response.getUsername());
+//            obj.put("userrole", response.getUserrole());
+//        }
+//        catch (JSONException e) {
+//
+//        }
 
-        }
-
-
-
-        response.setToken(token);
-        response.setUserName(username);
-        response.setUserrole("Employee");
 
         return new ResponseEntity<TokenDTO>(response, HttpStatus.OK);
     }

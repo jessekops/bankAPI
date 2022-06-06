@@ -1,6 +1,9 @@
 package io.swagger.model.dto;
 
+import java.util.List;
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.model.enumeration.UserType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
@@ -20,7 +23,7 @@ public class TokenDTO   {
   @JsonProperty("username")
   private String username = null;
   @JsonProperty("userrole")
-  private String userrole = null;
+  private List<UserType> userrole = null;
 
   public TokenDTO token(String token) {
     this.token = token;
@@ -43,9 +46,19 @@ public class TokenDTO   {
   public void setUserName(String username) {
     this.username = username;
   }
-  public void setUserrole(String userrole) {
+  public void setUserrole(List<UserType> userrole) {
     this.userrole = userrole;
   }
+
+  public List<UserType> getUserrole() {
+    return userrole;
+  }
+  public String getUsername() {
+    return username;
+  }
+
+
+
 
 
   @Override
