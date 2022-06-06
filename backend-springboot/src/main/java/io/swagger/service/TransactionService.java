@@ -6,7 +6,9 @@ import io.swagger.model.entity.User;
 import io.swagger.repo.AccountRepo;
 import io.swagger.repo.TransactionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.stereotype.Service;
+import org.threeten.bp.LocalDate;
 
 import java.util.List;
 import java.util.UUID;
@@ -14,117 +16,119 @@ import java.util.UUID;
 @Service
 public class TransactionService {
 
-//    @Autowired
-//    private TransactionRepo transactionRepo;
-//    private TransactionService transactionService;
-//    private TransactionValidatorService transactionValidatorService;
-//    private AccountService accountService;
-//    private AccountRepo accountRepo;
-//    private UserService userService;
-//    private Transaction transaction;
-//    private Account account;
-//    private User user;
-//
-//    String accountFrom = accountService.findAccountByIban(transaction.getFrom());
-//    String accountTo = accountService.findAccountByIban(transaction.getTo());
-//
-//    Double balance = account.getBalance();
-//    Double amount = transaction.getAmount();
-//    Double dayLimit = account.getUser().getDayLimit();
-//    Double absLimit = account.getUser().getTransLimit();
-//
-//    User userFrom = account.getUser();
-//    User userTo = account.getUser();
-//
-//    public Transaction createTransaction(Transaction trans) {
-//        if (transactionValidatorService.checkCurrentOrSavings(accountFrom, accountTo)) {
-//            // one account is a savings account
-//            // Check if user is owner of account
-//            if (!transactionValidatorService.isUserOwner(userFrom, accountFrom)) {
-//                // user is not the owner of the account
-//            } else {
-//                // Check if from is not the same as to
-//                if (!transactionValidatorService.checkNotSameAccount(accountFrom, accountTo)) {
-//                    // from is same as to
-//                } else {
-//                    // Check sufficient funds
-//                    if (!transactionValidatorService.checkSufficientFund(accountFrom, amount)) {
-//                        // not enough balance
-//                    } else {
-//                        if (!transactionValidatorService.checkAbsLimit(accountFrom, amount)) {
-//                            // not enough balance
-//                        } else {
-//                            if (!transactionValidatorService.checkDayLimit(accountFrom, amount)) {
-//                                // spent too much today
-//                            } else {
-//                                // do transaction
-//
-//                                // update from
-//                                updateFromBalance(transaction);
-//                                // update to
-//                                updateToBalance(transaction);
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        } else { // Do normal transaction
-//            // Check if from is not the same as to
-//            if (!transactionValidatorService.checkNotSameAccount(accountFrom, accountTo)) {
-//                // from is same as to
-//            } else {
-//                // Check sufficient funds
-//                if (!transactionValidatorService.checkSufficientFund(accountFrom, amount)) {
-//                    // not enough balance
-//                } else {
-//                    if (!transactionValidatorService.checkAbsLimit(accountFrom, amount)) {
-//                        // not enough balance
-//                    } else {
-//                        if (!transactionValidatorService.checkDayLimit(accountFrom, amount)) {
-//                            // spent too much today
-//                        } else {
-//
-//                            // Do transaction
-//
-//                            // update from
-//                            updateFromBalance(transaction);
-//                            // update to
-//                            updateToBalance(transaction);
-//                        }
-//                    }
-//                }
-//
-//            }
-//        }
-//        return transactionRepo.save(trans);
-//    }
-//    // update from account
-//    private void updateFromBalance(Transaction transaction) {
-//        Account account = accountRepo.findAccountByIban(transaction.getFrom());
-//        if (account != null) {
-//            account.setBalance((account.getBalance() - transaction.getAmount()));
-//            accountRepo.save(account);
-//        }
-//    }
-//
-//    // update to account
-//    private void updateToBalance(Transaction transaction) {
-//        Account account = accountRepo.findAccountByIban(transaction.getTo());
-//        if (account != null) {
-//            account.setBalance((account.getBalance() - transaction.getAmount()));
-//            accountRepo.save(account);
-//        }
-//    }
-//
-//    public Transaction findTransactionById(UUID id) {
-//        return transactionRepo.findTransactionById(id);
-//    }
-//
-//    public void deleteTransaction(UUID id) {
-//        transactionRepo.delete(findTransactionById(id));
-//    }
-//
-//    public Transaction updateTransaction(Transaction transaction) {
-//        return transactionRepo.save(transaction);
-//    }
+    @Autowired
+    private TransactionRepo transactionRepo;
+    private TransactionService transactionService;
+    private TransactionValidatorService transactionValidatorService;
+    private AccountService accountService;
+    private AccountRepo accountRepo;
+    private UserService userService;
+    private Transaction transaction;
+    private Account account;
+    private User user;
+
+    public Transaction createTransaction(Transaction trans) {
+        if (transactionValidatorService.checkCurrentOrSavings(accountService.findAccountByIban(trans.getTo()), accountService.findAccountByIban(trans.getTo()))) {
+//             one account is a savings account
+            // Check if user is owner of account
+            if (!transactionValidatorService.isUserOwner(account.getUser(), accountService.findAccountByIban(trans.getTo()))) {
+                // user is not the owner of the account
+                throw new IllegalArgumentException("Cannot transfer from or to savings account that does not belong to you.");
+            } else {
+                // Check if from is not the same as to
+                if (!transactionValidatorService.checkNotSameAccount(accountService.findAccountByIban(trans.getTo()), accountService.findAccountByIban(trans.getTo()))) {
+                    // from is same as to
+                    throw new IllegalArgumentException("iban to cannot be the same as from.");
+                } else {
+                    // Check sufficient funds
+                    if (!transactionValidatorService.checkSufficientFund(accountService.findAccountByIban(trans.getTo()), trans.getAmount())) {
+                        // not enough balance
+                        throw new IllegalArgumentException("Not enough balance");
+                    } else {
+                        if (!transactionValidatorService.checkAbsLimit(accountService.findAccountByIban(trans.getTo()), trans.getAmount())) {
+                            // not enough balance
+                            throw new IllegalArgumentException("Not enough balance (absolute limit)");
+                        } else {
+                            if (!transactionValidatorService.checkDayLimit(user.getUsername())) {
+                                // spent too much today
+                                throw new IllegalArgumentException("Exceeded day limit.");
+                            } else {
+                                // do transaction
+
+                                // update from
+                                updateFromBalance(trans);
+                                // update to
+                                updateToBalance(trans);
+                            }
+                        }
+                    }
+                }
+            }
+        } else { // Do normal transaction
+            // Check if from is not the same as to
+            if (!transactionValidatorService.checkNotSameAccount(accountService.findAccountByIban(trans.getTo()), accountService.findAccountByIban(trans.getTo()))) {
+                // from is same as to
+                throw new IllegalArgumentException("iban to cannot be the same as from.");
+            } else {
+                // Check sufficient funds
+                if (!transactionValidatorService.checkSufficientFund(accountService.findAccountByIban(trans.getTo()), trans.getAmount())) {
+                    // not enough balance
+                    throw new IllegalArgumentException("Not enough balance");
+                } else {
+                    if (!transactionValidatorService.checkAbsLimit(accountService.findAccountByIban(trans.getTo()), trans.getAmount())) {
+                        // not enough balance
+                        throw new IllegalArgumentException("Not enough balance (absolute limit)");
+                    } else {
+                        if (!transactionValidatorService.checkDayLimit(user.getUsername())) {
+                            // spent too much today
+                            throw new IllegalArgumentException("Exceeded day limit.");
+                        } else {
+
+                            // Do transaction
+
+                            // update from
+                            updateFromBalance(trans);
+                            // update to
+                            updateToBalance(trans);
+                        }
+                    }
+                }
+            }
+        }
+        return transactionRepo.save(trans);
+    }
+
+    // update from account
+    private void updateFromBalance(Transaction trans) {
+        Account account = accountRepo.findAccountByIban(trans.getFrom().toString());
+        if (account != null) {
+            account.setBalance((account.getBalance() - trans.getAmount()));
+            accountRepo.save(account);
+        }
+    }
+
+    // update to account
+    private void updateToBalance(Transaction trans) {
+        Account account = accountRepo.findAccountByIban(trans.getTo());
+        if (account != null) {
+            account.setBalance((account.getBalance() + trans.getAmount()));
+            accountRepo.save(account);
+        }
+    }
+
+    public Transaction findTransactionById(UUID id) {
+        return transactionRepo.findTransactionById(id);
+    }
+
+    public void deleteTransaction(UUID id) {
+        transactionRepo.delete(findTransactionById(id));
+    }
+
+    public Transaction updateTransaction(Transaction transaction) {
+        return transactionRepo.save(transaction);
+    }
+
+    public List<Transaction> getTransactionsFromToday(LocalDate timeStamp) {
+        return transactionRepo.findAllByTimestamp(timeStamp);
+    }
 }
