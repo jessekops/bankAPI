@@ -14,8 +14,7 @@ public class Account {
     @Id
     private String iban;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<AccountType> accountType;
+    private AccountType accountType;
 
     private Double balance;
     private Double absLimit;
@@ -23,6 +22,10 @@ public class Account {
 
     @ManyToOne(cascade = CascadeType.ALL)
     private User user;
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     @OneToMany(mappedBy = "from")
     private List<Transaction> transactions;
