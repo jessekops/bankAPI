@@ -23,7 +23,7 @@ public class AccountDTO   {
   private String iban = null;
 
   @JsonProperty("accountType")
-  private Set<AccountType> accountType = null;
+  private AccountType accountType = null;
 
   @JsonProperty("ownerId")
   private UUID ownerId = null;
@@ -56,10 +56,11 @@ public class AccountDTO   {
     this.iban = iban;
   }
 
-  public AccountDTO accountType(Set<AccountType> accountType) {
+  public AccountDTO accountType(AccountType accountType) {
     this.accountType = accountType;
     return this;
   }
+
 
   /**
    * Get accountType
@@ -69,11 +70,11 @@ public class AccountDTO   {
       @NotNull
 
     @Valid
-    public Set<AccountType> getAccountType() {
+    public AccountType getAccountType() {
     return accountType;
   }
 
-  public void setAccountType(Set<AccountType> accountType) {
+  public void setAccountType(AccountType accountType) {
     this.accountType = accountType;
   }
 

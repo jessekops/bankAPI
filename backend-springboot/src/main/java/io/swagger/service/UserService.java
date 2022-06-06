@@ -1,8 +1,10 @@
 package io.swagger.service;
 
 import io.swagger.jwt.JwtTokenProvider;
+import io.swagger.model.dto.TokenDTO;
 import io.swagger.model.entity.User;
 import io.swagger.repo.UserRepo;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -30,19 +33,20 @@ public class UserService {
     PasswordEncoder encoder;
 
 
-    public String login(String username, String password) {
+    public TokenDTO login(String username, String password) {
 
-        String token = "";
-
+        TokenDTO tokenDto = new TokenDTO();
         try {
             authManager.authenticate(new UsernamePasswordAuthenticationToken(username, password)); // Check username and password via Spring Boot Security
             User user = userRepo.findByUsername(username);
-            token = provider.createToken(username, user.getUserTypes()); //user.getUserTypes() //List.of(user.getUserType()
+            tokenDto.setToken(provider.createToken(username, user.getUserTypes()));
+            tokenDto.setUserName(user.getUsername());
+            tokenDto.setUserrole(user.getUserTypes());
         } catch (AuthenticationException authEx) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username and/or password");
         }
 
-        return token;
+        return tokenDto;
     }
 
     public User addUser(User user) {
@@ -66,5 +70,9 @@ public class UserService {
 
     public List<User> getAll() {
         return userRepo.findAll();
+    }
+
+    public User findById(UUID Id) {
+        return userRepo.findUserById(Id);
     }
 }

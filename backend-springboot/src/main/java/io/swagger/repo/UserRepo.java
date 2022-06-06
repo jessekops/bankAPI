@@ -13,6 +13,8 @@ public interface UserRepo extends JpaRepository<User, UUID> {
 
     // UpdateUser (uses .save() in UserService)
 
+    User findUserById(UUID ID);
+
     User findByUsername(String username);
 
     User findByEmail(String email);
