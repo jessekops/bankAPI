@@ -32,21 +32,21 @@ public class LoginStepDefinition extends BaseStepDefinitions implements En {
                     request, String.class);
         });
 
-        Then("^I receive a status of (\\d+)$", (Integer status) -> {
-            Assertions.assertEquals(status, response.getStatusCodeValue());
-        });
-
-        And("^I get a JWT-token$", () -> {
-            JSONObject jsonObject = new JSONObject(response.getBody());
-            String token = jsonObject.getString("token");
-            Assertions.assertTrue(token.startsWith("ey"));
-        });
-        Given("^I have a valid user object$", () -> {
-            dto = new LoginDTO("user", "password");
-        });
-        Given("^I have an invalid user object$", () -> {
-            dto = new LoginDTO("", "");
-        });
+//        Then("^I receive a status of (\\d+)$", (Integer status) -> {
+//            Assertions.assertEquals(status, response.getStatusCodeValue());
+//        });
+//
+//        And("^I get a JWT-token$", () -> {
+//            JSONObject jsonObject = new JSONObject(response.getBody());
+//            String token = jsonObject.getString("token");
+//            Assertions.assertTrue(token.startsWith("ey"));
+//        });
+//        Given("^I have a valid user object$", () -> {
+//            dto = new LoginDTO("user", "password");
+//        });
+//        Given("^I have an invalid user object$", () -> {
+//            dto = new LoginDTO("", "");
+//        });
     }
 
 
