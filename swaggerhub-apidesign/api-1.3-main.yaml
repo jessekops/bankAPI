@@ -207,14 +207,16 @@ paths:
         - Employee
         - Customer
       summary: Search an account list on UserID
-      operationId: getAccount
+      operationId: getAccountsByOwnerID
       responses:
         200:
-          description: Account found
+          description: Accounts found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AccountDTO"
+                type: array
+                items:
+                  $ref: "#/components/schemas/AccountDTO"
         404:
           description: Account not found
   /accounts/{iban}:

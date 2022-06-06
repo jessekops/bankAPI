@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.model.dto.AccountDTO;
 import io.swagger.model.entity.Account;
+import io.swagger.model.entity.User;
 import io.swagger.service.AccountIbanGenService;
 import io.swagger.service.AccountService;
 import io.swagger.service.UserService;
@@ -30,7 +31,7 @@ import java.util.stream.Collectors;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-06-01T10:34:07.804Z[GMT]")
 @RestController
-@CrossOrigin(origins = "http://127.0.0.1:8081")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @Api(tags = {"Employee", "Customer"})
 public class AccountsApiController implements AccountsApi {
 
@@ -68,14 +69,18 @@ public class AccountsApiController implements AccountsApi {
         String iban = accountIbanService.generateIban();
         while (!accountList.contains(iban)) {
             try {
+                User u = userService.findById(body.getOwnerId());
+                a.setUser(u);
                 //generate the iban here
-                    iban = accountIbanService.generateIban();
-                    a.setIban(iban);
-                    a = accountService.addAccount(a);
-                    a.setUser(userService.findByUsername("BeefyViking1"));
+                iban = accountIbanService.generateIban();
+                a.setAccountType(body.getAccountType());
+                a.setIban(iban);
+                a = accountService.addAccount(a);
 
-                    AccountDTO resp = modelMapper.map(a, AccountDTO.class);
-                    return new ResponseEntity<AccountDTO>(resp, HttpStatus.CREATED);
+                AccountDTO resp = modelMapper.map(a, AccountDTO.class);
+
+                resp.setOwnerId(u.getId());
+                return new ResponseEntity<AccountDTO>(resp, HttpStatus.CREATED);
 
             }
             catch (IllegalArgumentException ex) {
@@ -120,10 +125,15 @@ public class AccountsApiController implements AccountsApi {
 )) @Valid @RequestParam(value = "limit", required = false) Integer limit) {
 
         List<Account> accountList = accountService.getAll();
+
         List<AccountDTO> dtos = accountList
                 .stream()
                 .map(user -> modelMapper.map(user, AccountDTO.class))
                 .collect(Collectors.toList());
+
+        for (int i = 0; i < dtos.size(); i++) {
+            dtos.get(i).setOwnerId(accountList.get(i).getUser().getId());
+        }
 
         return new ResponseEntity<List<AccountDTO>>(dtos, HttpStatus.OK);
     }
