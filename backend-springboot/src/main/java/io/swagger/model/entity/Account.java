@@ -14,8 +14,7 @@ public class Account {
     @Id
     private String iban;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<AccountType> accountType;
+    private AccountType accountType;
 
     private Double balance;
     private Double absLimit;
