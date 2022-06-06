@@ -48,7 +48,7 @@ public interface AccountsApi {
             @ApiResponse(responseCode = "200", description = "Account found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AccountDTO.class))),
 
             @ApiResponse(responseCode = "404", description = "Account not found") })
-    @RequestMapping(value = "/accounts/getByUserID/{userId}",
+    @RequestMapping(value = "/accounts/getByUserID/{userId}",//
             produces = { "application/json" },
             method = RequestMethod.GET)
     ResponseEntity<AccountDTO> getAccount(@Parameter(in = ParameterIn.PATH, description = "User ID input", required=true, schema=@Schema()) @PathVariable("userID") UUID userID);

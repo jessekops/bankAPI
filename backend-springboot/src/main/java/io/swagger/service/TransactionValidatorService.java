@@ -58,7 +58,7 @@ public class TransactionValidatorService {
 
     public boolean checkAbsLimit(Account iban, double amount) {
         double balance = iban.getBalance();
-        double absLimit = iban.getAbsLimit();
+        double absLimit = iban.getAbsLimit();//
 
         if (balance - amount < absLimit) {
             return false;
