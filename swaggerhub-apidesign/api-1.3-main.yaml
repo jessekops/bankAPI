@@ -193,7 +193,7 @@ paths:
                 $ref: "#/components/schemas/AccountDTO"
         400:
           description: Invalid account object
-  /accounts/{userID}:
+  /accounts/getByUserID/{userID}:
     parameters:
       - in: path
         name: userID
