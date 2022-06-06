@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +26,7 @@ import java.util.UUID;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-23T13:04:25.984Z[GMT]")
 @RestController
+@CrossOrigin(origins = "http://127.0.0.1:8081")
 @Api(tags = {"Employee", "Customer"})
 public class TransactionsApiController implements TransactionsApi {
 
@@ -48,23 +50,29 @@ public class TransactionsApiController implements TransactionsApi {
 
     public ResponseEntity<TransactionDTO> createTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "New transaction object", required = true, schema = @Schema()) @Valid @RequestBody TransactionDTO body) {
 
+        try {
+            Transaction trans = modelMapper.map(body, Transaction.class);
+            trans = transService.createTransaction(trans);
 
-        Transaction trans = modelMapper.map(body, Transaction.class);
-//        trans = transService.createTransaction(trans);
-
-        TransactionDTO response = modelMapper.map(trans, TransactionDTO.class);
-        return new ResponseEntity<TransactionDTO>(response, HttpStatus.CREATED);
+            TransactionDTO response = modelMapper.map(trans, TransactionDTO.class);
+            return new ResponseEntity<TransactionDTO>(response, HttpStatus.CREATED);
+        } catch (IllegalArgumentException exception) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
+        }
     }
 
     public ResponseEntity<Void> deleteTransaction(@Parameter(in = ParameterIn.PATH, description = "Transaction ID input", required = true, schema = @Schema()) @PathVariable("id") UUID id) {
-//        transService.deleteTransaction(id);
-        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+        try {
+            transService.deleteTransaction(id);
+            return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+        } catch (IllegalArgumentException ex) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No transactions found with given ID");
+        }
     }
 
     public ResponseEntity<TransactionDTO> getTransaction(@Parameter(in = ParameterIn.PATH, description = "Transaction ID input", required = true, schema = @Schema()) @PathVariable("id") UUID id) {
         try {
-            Transaction trans = new Transaction();
-//            Transaction trans = transService.findTransactionById(id);
+            Transaction trans = transService.findTransactionById(id);
             TransactionDTO response = modelMapper.map(trans, TransactionDTO.class);
             return new ResponseEntity<TransactionDTO>(response, HttpStatus.OK);
 
@@ -74,11 +82,15 @@ public class TransactionsApiController implements TransactionsApi {
     }
 
     public ResponseEntity<TransactionDTO> updateTransaction(@Parameter(in = ParameterIn.PATH, description = "Transaction ID input", required = true, schema = @Schema()) @PathVariable("id") UUID id, @Parameter(in = ParameterIn.DEFAULT, description = "Updated transaction object", required = true, schema = @Schema()) @Valid @RequestBody TransactionDTO body) {
-        Transaction trans = modelMapper.map(body, Transaction.class);
-//        trans = transService.updateTransaction(trans);
+        try {
+            Transaction trans = modelMapper.map(body, Transaction.class);
+            trans = transService.updateTransaction(trans);
 
-        TransactionDTO response = modelMapper.map(trans, TransactionDTO.class);
-        return new ResponseEntity<TransactionDTO>(response, HttpStatus.CREATED);
+            TransactionDTO response = modelMapper.map(trans, TransactionDTO.class);
+            return new ResponseEntity<TransactionDTO>(response, HttpStatus.CREATED);
+        } catch (IllegalArgumentException ex) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No transactions found with given ID");
+        }
     }
 
 }
