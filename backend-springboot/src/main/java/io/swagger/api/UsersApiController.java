@@ -108,8 +108,6 @@ public class UsersApiController implements UsersApi {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "The user with the requested ID" + " (" + user.getId() + ") " + "could not be updated; user does not exist");
         }
 
-
-
         user = userService.updateUser(user);
 
         UserDTO response = mapper.map(user, UserDTO.class);

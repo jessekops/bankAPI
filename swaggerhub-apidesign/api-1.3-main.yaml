@@ -136,6 +136,23 @@ paths:
                 $ref: "#/components/schemas/UserDTO"
         404:
           description: User not found
+  /users/getAllWithoutAccount:
+    get:
+      tags:
+        - Employee
+      summary: Find all user without an account
+      operationId: getAllUsersWithoutAccount
+      responses:
+        200:
+          description: Users found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserDTO"
+        404:
+          description: All users have an account or user not found
   /accounts:
     get:
       tags:
