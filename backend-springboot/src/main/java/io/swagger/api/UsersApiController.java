@@ -24,8 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-23T13:04:25.984Z[GMT]")
 @RestController
@@ -94,17 +93,16 @@ public class UsersApiController implements UsersApi {
         boolean userExists = true;
         for (User u : existingUsers) {
             // Check if the request user to be updated, exists in the DB
-            if(user.getId().compareTo(u.getId()) != 0){
+            if (user.getId().compareTo(u.getId()) != 0) {
                 userExists = false;
-            }
-            else {
+            } else {
                 userExists = true;
                 break;
             }
         }
 
         // If the user does not exist, throw an exception
-        if(!userExists){
+        if (!userExists) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "The user with the requested ID" + " (" + user.getId() + ") " + "could not be updated; user does not exist");
         }
 
@@ -144,4 +142,16 @@ public class UsersApiController implements UsersApi {
         }
     }
 
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public ResponseEntity<List<UserDTO>> getAllUsersWithoutAccount() {
+
+        List<User> users = userService.getAllWithoutAccount();
+
+        List<UserDTO> dtos = users
+                .stream()
+                .map(user -> mapper.map(user, UserDTO.class))
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<List<UserDTO>>(dtos, HttpStatus.OK);
+    }
 }
