@@ -81,7 +81,7 @@
             />
           </div>
           <div class="input-group mt-4">
-            <button class="btn btn-primary" @click="addAccount()">
+            <button type="button" class="btn btn-primary" @click="addAccount()">
               Create Account
             </button>
             <button

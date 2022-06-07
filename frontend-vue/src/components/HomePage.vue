@@ -48,8 +48,8 @@
               <div class="card-body">
                 <h5 class="card-title">Deposit</h5>
                 <p class="card-text">This is quick access to make a deposit</p>
-                <a href="/deposit" class="btn btn-success text-white"
-                  >Deposit</a
+                <router-link to="/deposit" class="btn btn-success text-white"
+                  >Deposit</router-link
                 >
               </div>
             </div>
