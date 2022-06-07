@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -90,22 +91,23 @@ public class AccountsApiController implements AccountsApi {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Something went wrong with generating your iban please try again.");
     }
 
-    public ResponseEntity<AccountDTO> getAccount(@Parameter(in = ParameterIn.PATH, description = "User ID input", required=true, schema=@Schema()) @PathVariable("userID") UUID userID) {
+    public ResponseEntity<List<AccountDTO>> getAccountsByOwnerID(@Parameter(in = ParameterIn.PATH, description = "User ID input", required=true, schema=@Schema()) @PathVariable("userID") UUID userID) {
 
-        try{
-            Account foundAccount = accountService.findAccountByUserId(userID);
+        List<Account> accountList = accountService.findAccountsByUserId(userID);
+        List<AccountDTO> responsedto = accountList
+                .stream()
+                .map(user -> modelMapper.map(user, AccountDTO.class))
+                .collect(Collectors.toList());
 
-            AccountDTO response = modelMapper.map(foundAccount, AccountDTO.class);
-
-            return new ResponseEntity<AccountDTO>(response, HttpStatus.OK);
+        for (int i = 0; i < responsedto.size(); i++) {
+            responsedto.get(i).setOwnerId(accountList.get(i).getUser().getId());
         }
-        catch (IllegalArgumentException ex){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account with given User ID not found.");
-        }
 
+        return new ResponseEntity<List<AccountDTO>>(responsedto, HttpStatus.OK);
     }
 
     public ResponseEntity<AccountDTO> getAccountByIban(@Parameter(in = ParameterIn.PATH, description = "IBAN input", required=true, schema=@Schema()) @PathVariable("iban") String iban) {
+
         try{
             Account foundAccount = accountService.findAccountByIban(iban);
 
@@ -118,8 +120,6 @@ public class AccountsApiController implements AccountsApi {
         }
 
     }
-
-
     public ResponseEntity<List<AccountDTO>> getAccounts(@Min(0)@Parameter(in = ParameterIn.QUERY, description = "Number of records to skip for pagination" ,schema=@Schema(allowableValues={  }
 )) @Valid @RequestParam(value = "skip", required = false) Integer skip,@Min(1) @Max(200000) @Parameter(in = ParameterIn.QUERY, description = "Maximum number of records to return" ,schema=@Schema(allowableValues={  }, minimum="1", maximum="200000"
 )) @Valid @RequestParam(value = "limit", required = false) Integer limit) {
