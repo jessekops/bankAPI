@@ -27,6 +27,8 @@ public class CustomApplicationRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
+        //Add a standard User and Account for the bank itself to the DB when the application starts running
+
         List<UserType> userTypes = new ArrayList<>();
         userTypes.add(UserType.ROLE_EMPLOYEE);
         User Bank = new User();
