@@ -74,6 +74,12 @@ public class AccountsApiController implements AccountsApi {
                 a.setUser(u);
                 //generate the iban here
                 iban = accountIbanService.generateIban();
+                Integer pin = body.getPinCode();
+                if(String.valueOf(pin).length() != 4) {
+                    throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "pin needs to be 4 digits.");
+                }
+                
+                a.setPinCode(body.getPinCode());
                 a.setAccountType(body.getAccountType());
                 a.setIban(iban);
                 a = accountService.addAccount(a);
