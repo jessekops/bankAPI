@@ -42,16 +42,6 @@ public interface AccountsApi {
     ResponseEntity<AccountDTO> addAccount(@Parameter(in = ParameterIn.DEFAULT, description = "New account object", required=true, schema=@Schema()) @Valid @RequestBody AccountDTO body);
 
 
-    @Operation(summary = "Search an account list on UserID", description = "", security = {
-            @SecurityRequirement(name = "bearerAuth")    }, tags={ "Employee", "Customer" })
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Account found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AccountDTO.class))),
-
-            @ApiResponse(responseCode = "404", description = "Account not found") })
-    @RequestMapping(value = "/accounts/getByUserID/{userId}",//
-            produces = { "application/json" },
-            method = RequestMethod.GET)
-    ResponseEntity<AccountDTO> getAccount(@Parameter(in = ParameterIn.PATH, description = "User ID input", required=true, schema=@Schema()) @PathVariable("userID") UUID userID);
 
 
     @Operation(summary = "Search an account list on IBAN", description = "", security = {
@@ -60,7 +50,7 @@ public interface AccountsApi {
             @ApiResponse(responseCode = "200", description = "Account found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AccountDTO.class))),
 
             @ApiResponse(responseCode = "404", description = "Account not found") })
-    @RequestMapping(value = "/accounts/{iban}",
+    @RequestMapping(value = "/accounts/getByIban/{iban}",
             produces = { "application/json" },
             method = RequestMethod.GET)
     ResponseEntity<AccountDTO> getAccountByIban(@Parameter(in = ParameterIn.PATH, description = "IBAN input", required=true, schema=@Schema()) @PathVariable("iban") String iban);
@@ -78,6 +68,17 @@ public interface AccountsApi {
     ResponseEntity<List<AccountDTO>> getAccounts(@Min(0)@Parameter(in = ParameterIn.QUERY, description = "Number of records to skip for pagination" ,schema=@Schema(allowableValues={  }
     )) @Valid @RequestParam(value = "skip", required = false) Integer skip, @Min(1) @Max(200000) @Parameter(in = ParameterIn.QUERY, description = "Maximum number of records to return" ,schema=@Schema(allowableValues={  }, minimum="1", maximum="200000"
     )) @Valid @RequestParam(value = "limit", required = false) Integer limit);
+
+    @Operation(summary = "Search an account list on UserID", description = "", security = {
+            @SecurityRequirement(name = "bearerAuth")    }, tags={ "Employee", "Customer" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Accounts found", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = AccountDTO.class)))),
+
+            @ApiResponse(responseCode = "404", description = "Accounts not found") })
+    @RequestMapping(value = "/accounts/getByUserID/{userID}",
+            produces = { "application/json" },
+            method = RequestMethod.GET)
+    ResponseEntity<List<AccountDTO>> getAccountsByOwnerID(@Parameter(in = ParameterIn.PATH, description = "User ID input", required=true, schema=@Schema()) @PathVariable("userID") UUID userID);
 
 
     @Operation(summary = "Updates an account", description = "By sending this request, an employee can update the account information with the given IBAN ", security = {

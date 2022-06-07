@@ -14,9 +14,9 @@
       </button>
       <div class="navbar-collapse collapse" id="collapseNavbar">
         <ul v-if="isLoggedIn" class="navbar-nav">
-          <li class="nav-item active">
-            <a class="nav-link" href="">Deposit</a>
-          </li>
+          <router-link to="/deposit" class="nav-link nav-item">
+            Deposit
+          </router-link>
           <li class="nav-item">
             <a class="nav-link" href="">Withdraw</a>
           </li>
