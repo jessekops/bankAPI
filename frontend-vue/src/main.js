@@ -5,6 +5,8 @@ import store from './store/store'
 
 //Users
 import Login from './components/users/Login.vue';
+import Register from './components/users/Register.vue';
+
 import HomePage from './components/HomePage.vue';
 //Accounts
 import Index from './components/accounts/Index.vue';
@@ -18,6 +20,7 @@ const routes = [
 
     { path: '/', component: Login },
     { path: '/login', component: Login },
+    { path: '/register', component: Register },
     { path: '/home', component: HomePage },
     { path: '/accounts', component: Index },
     { path: '/addaccount', component: AddAccount },
