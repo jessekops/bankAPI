@@ -41,6 +41,7 @@ public class UserService {
             tokenDto.setToken(provider.createToken(username, user.getUserTypes()));
             tokenDto.setUserName(user.getUsername());
             tokenDto.setUserrole(user.getUserTypes());
+            tokenDto.setUserId(user.getId());
         } catch (AuthenticationException authEx) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username and/or password");
         }
