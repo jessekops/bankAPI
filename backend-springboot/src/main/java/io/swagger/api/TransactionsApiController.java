@@ -3,7 +3,10 @@ package io.swagger.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.model.dto.TransactionDTO;
+import io.swagger.model.entity.Account;
 import io.swagger.model.entity.Transaction;
+import io.swagger.model.entity.User;
+import io.swagger.service.AccountService;
 import io.swagger.service.TransactionService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -33,6 +36,9 @@ public class TransactionsApiController implements TransactionsApi {
     @Autowired
     private TransactionService transService;
 
+    @Autowired
+    private AccountService accountService;
+
     private ModelMapper modelMapper;
 
     private static final Logger log = LoggerFactory.getLogger(TransactionsApiController.class);
@@ -52,6 +58,7 @@ public class TransactionsApiController implements TransactionsApi {
 
         try {
             Transaction trans = modelMapper.map(body, Transaction.class);
+
             trans = transService.createTransaction(trans);
 
             TransactionDTO response = modelMapper.map(trans, TransactionDTO.class);

@@ -3,6 +3,7 @@ package io.swagger.model.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
+import org.threeten.bp.LocalDate;
 import org.threeten.bp.OffsetDateTime;
 
 import javax.validation.Valid;
@@ -22,7 +23,7 @@ public class TransactionDTO   {
   private UUID id = null;
 
   @JsonProperty("timestamp")
-  private OffsetDateTime timestamp = null;
+  private LocalDate timestamp = null;
 
   @JsonProperty("from")
   private String from = null;
@@ -56,7 +57,7 @@ public class TransactionDTO   {
     this.id = id;
   }
 
-  public TransactionDTO timestamp(OffsetDateTime timestamp) {
+  public TransactionDTO timestamp(LocalDate timestamp) {
     this.timestamp = timestamp;
     return this;
   }
@@ -68,11 +69,11 @@ public class TransactionDTO   {
   @Schema(description = "")
   
     @Valid
-    public OffsetDateTime getTimestamp() {
+    public LocalDate getTimestamp() {
     return timestamp;
   }
 
-  public void setTimestamp(OffsetDateTime timestamp) {
+  public void setTimestamp(LocalDate timestamp) {
     this.timestamp = timestamp;
   }
 

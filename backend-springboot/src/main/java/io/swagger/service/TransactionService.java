@@ -17,30 +17,31 @@ import java.util.UUID;
 public class TransactionService {
 
     @Autowired
-    private TransactionRepo transactionRepo;
-    private TransactionService transactionService;
-    private TransactionValidatorService transactionValidatorService;
-    private AccountService accountService;
-    private AccountRepo accountRepo;
-    private UserService userService;
-    private Transaction transaction;
-    private Account account;
-    private User user;
+    TransactionRepo transactionRepo;
+    TransactionService transactionService;
+    TransactionValidatorService transactionValidatorService;
+    AccountService accountService;
+    AccountRepo accountRepo;
+    UserService userService;
+    Transaction transaction;
+    Account account;
+    User user;
 
     public Transaction createTransaction(Transaction trans) {
-        if (transactionValidatorService.checkCurrentOrSavings(accountService.findAccountByIban(trans.getTo()), accountService.findAccountByIban(trans.getTo()))) {
+        if (transactionValidatorService.checkCurrentOrSavings(accountService.findAccountByIban(trans.getFrom().toString()), accountService.findAccountByIban(trans.getTo()))) {
 //             one account is a savings account
-            // Check if user is owner of account
+//             Check if user is owner of account
+
             if (!transactionValidatorService.isUserOwner(account.getUser(), accountService.findAccountByIban(trans.getTo()))) {
                 // user is not the owner of the account
                 throw new IllegalArgumentException("Cannot transfer from or to savings account that does not belong to you.");
             } else {
-                // Check if from is not the same as to
-                if (!transactionValidatorService.checkNotSameAccount(accountService.findAccountByIban(trans.getTo()), accountService.findAccountByIban(trans.getTo()))) {
+//                 Check if from is not the same as to
+                if (!transactionValidatorService.checkNotSameAccount(trans.getTo(), trans.getTo())) {
                     // from is same as to
                     throw new IllegalArgumentException("iban to cannot be the same as from.");
                 } else {
-                    // Check sufficient funds
+//                     Check sufficient funds
                     if (!transactionValidatorService.checkSufficientFund(accountService.findAccountByIban(trans.getTo()), trans.getAmount())) {
                         // not enough balance
                         throw new IllegalArgumentException("Not enough balance");
@@ -66,7 +67,7 @@ public class TransactionService {
             }
         } else { // Do normal transaction
             // Check if from is not the same as to
-            if (!transactionValidatorService.checkNotSameAccount(accountService.findAccountByIban(trans.getTo()), accountService.findAccountByIban(trans.getTo()))) {
+            if (!transactionValidatorService.checkNotSameAccount(trans.getTo(), trans.getTo())) {
                 // from is same as to
                 throw new IllegalArgumentException("iban to cannot be the same as from.");
             } else {
