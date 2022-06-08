@@ -5,6 +5,7 @@ import io.swagger.model.entity.Transaction;
 import io.swagger.model.entity.User;
 import io.swagger.repo.AccountRepo;
 import io.swagger.repo.TransactionRepo;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.stereotype.Service;
@@ -18,103 +19,117 @@ public class TransactionService {
 
     @Autowired
     TransactionRepo transactionRepo;
+    @Autowired
     TransactionService transactionService;
+    @Autowired
     TransactionValidatorService transactionValidatorService;
+    @Autowired
     AccountService accountService;
+    @Autowired
     AccountRepo accountRepo;
+    @Autowired
     UserService userService;
-    Transaction transaction;
-    Account account;
-    User user;
+
 
     public Transaction createTransaction(Transaction trans) {
-        if (transactionValidatorService.checkCurrentOrSavings(accountService.findAccountByIban(trans.getFrom().toString()), accountService.findAccountByIban(trans.getTo()))) {
-//             one account is a savings account
-//             Check if user is owner of account
 
-            if (!transactionValidatorService.isUserOwner(account.getUser(), accountService.findAccountByIban(trans.getTo()))) {
-                // user is not the owner of the account
-                throw new IllegalArgumentException("Cannot transfer from or to savings account that does not belong to you.");
+        // User performing = owner account from
+
+        // Check if one of the accounts is of type savings
+        // If at least one account is a savings account continue savings transaction
+        if (transactionValidatorService.checkCurrentOrSavings(accountService.findAccountByIban(trans.getFrom().getIban()), accountService.findAccountByIban(trans.getTo()))) {
+            // At least one account is a savings account
+
+            // Check if user is owner of both accounts
+            if (!transactionValidatorService.isUserOwner(userService.findById(trans.getUserPerforming()), accountService.findAccountByIban(trans.getFrom().getIban()), accountService.findAccountByIban(trans.getTo()))) {
+                // User is not the owner of both accounts
+                throw new IllegalArgumentException("Cannot create transaction; cannot transfer from or to savings account that does not belong to you.");
             } else {
-//                 Check if from is not the same as to
-                if (!transactionValidatorService.checkNotSameAccount(trans.getTo(), trans.getTo())) {
-                    // from is same as to
-                    throw new IllegalArgumentException("iban to cannot be the same as from.");
-                } else {
-//                     Check sufficient funds
-                    if (!transactionValidatorService.checkSufficientFund(accountService.findAccountByIban(trans.getTo()), trans.getAmount())) {
-                        // not enough balance
-                        throw new IllegalArgumentException("Not enough balance");
-                    } else {
-                        if (!transactionValidatorService.checkAbsLimit(accountService.findAccountByIban(trans.getTo()), trans.getAmount())) {
-                            // not enough balance
-                            throw new IllegalArgumentException("Not enough balance (absolute limit)");
-                        } else {
-                            if (!transactionValidatorService.checkDayLimit(user.getUsername())) {
-                                // spent too much today
-                                throw new IllegalArgumentException("Exceeded day limit.");
-                            } else {
-                                // do transaction
-
-                                // update from
-                                updateFromBalance(trans);
-                                // update to
-                                updateToBalance(trans);
-                            }
-                        }
-                    }
-                }
+                // Account from and account to might both be of type savings
+                checkGeneralConditions(trans); // Check if all conditions are met:
             }
-        } else { // Do normal transaction
-            // Check if from is not the same as to
-            if (!transactionValidatorService.checkNotSameAccount(trans.getTo(), trans.getTo())) {
-                // from is same as to
-                throw new IllegalArgumentException("iban to cannot be the same as from.");
-            } else {
-                // Check sufficient funds
-                if (!transactionValidatorService.checkSufficientFund(accountService.findAccountByIban(trans.getTo()), trans.getAmount())) {
-                    // not enough balance
-                    throw new IllegalArgumentException("Not enough balance");
-                } else {
-                    if (!transactionValidatorService.checkAbsLimit(accountService.findAccountByIban(trans.getTo()), trans.getAmount())) {
-                        // not enough balance
-                        throw new IllegalArgumentException("Not enough balance (absolute limit)");
-                    } else {
-                        if (!transactionValidatorService.checkDayLimit(user.getUsername())) {
-                            // spent too much today
-                            throw new IllegalArgumentException("Exceeded day limit.");
-                        } else {
-
-                            // Do transaction
-                            //
-                            // update from
-                            updateFromBalance(trans);
-                            // update to
-                            updateToBalance(trans);
-                        }
-                    }
-                }
-            }
+        } else { // Do transaction between two current accounts
+            checkGeneralConditions(trans); // Check if all conditions are met
         }
+        // Update balance account from
+        updateFromBalance(trans);
+        // Update balance account to
+        updateToBalance(trans);
+        // Commit and save transaction
         return transactionRepo.save(trans);
     }
 
-    // update from account
-    private void updateFromBalance(Transaction trans) {
-        Account account = accountRepo.findAccountByIban(trans.getFrom().toString());
-        if (account != null) {
-            account.setBalance((account.getBalance() - trans.getAmount()));
-            accountRepo.save(account);
+    public Transaction createWithdrawal(Transaction trans, Integer pinCode) {
+
+        if (!pinCode.equals(accountService.findAccountByIban(trans.getFrom().getIban()).getPinCode())) {
+            throw new IllegalArgumentException("Withdrawal failed; wrong pin code entered");
+        } else {
+            checkGeneralConditions(trans);
+        }
+
+        // Update balance account from (Owner is user)
+        updateFromBalance(trans);
+        // Account to Owner is bank
+        // Commit and save transaction
+        return transactionRepo.save(trans);
+    }
+
+    public Transaction createDeposit(Transaction trans, Integer pinCode) {
+
+        if (!pinCode.equals(accountService.findAccountByIban(trans.getTo()).getPinCode())) {
+            throw new IllegalArgumentException("Withdrawal failed; wrong pin code entered");
+        }
+        // Account from Owner is bank
+        // Update balance account to (Owner is user)
+        updateToBalance(trans);
+        // Commit and save transaction
+        return transactionRepo.save(trans);
+    }
+
+    private void checkGeneralConditions(Transaction trans) {
+        // Check if account from and account to are not the same account
+        if (!transactionValidatorService.checkNotSameAccount(trans.getFrom().getIban(), trans.getTo())) {
+            // Account from is same as account to
+            throw new IllegalArgumentException("Cannot create transaction; cannot transfer between two accounts that are the same.");
+        } else {
+            // Check if both accounts are active
+            if (!transactionValidatorService.checkActive(trans.getFrom().getIban(), trans.getTo())) {
+                throw new IllegalArgumentException("Cannot create transaction; at least one of the accounts is inactive.");
+            } else {
+                // Check if given transaction amount is greater than 0
+                if (trans.getAmount() <= 0) {
+                    throw new IllegalArgumentException("Cannot create transaction; Amount must be greater than 0.");
+                } else {
+                    // Check if absolute limit is exceeded
+                    if (!transactionValidatorService.checkAbsLimit(accountService.findAccountByIban(trans.getFrom().getIban()), trans.getAmount())) {
+                        throw new IllegalArgumentException("Cannot create transaction; Cannot exceed absolute limit");
+                    } else {
+                        // Check if day limit is exceeded
+                        if (!transactionValidatorService.checkDayLimit(userService.findById(trans.getUserPerforming()))) {
+                            throw new IllegalArgumentException("Cannot create transaction; Cannot exceed day limit.");
+                        }
+                    }
+                }
+            }
         }
     }
 
-    // update to account
+    // Update account from
+    private void updateFromBalance(Transaction trans) {
+        Account account = accountRepo.findAccountByIban(trans.getFrom().toString());
+
+        // Given that account exists
+        account.setBalance((account.getBalance() - trans.getAmount()));
+        accountRepo.save(account);
+    }
+
+    // Update account to
     private void updateToBalance(Transaction trans) {
         Account account = accountRepo.findAccountByIban(trans.getTo());
-        if (account != null) {
-            account.setBalance((account.getBalance() + trans.getAmount()));
-            accountRepo.save(account);
-        }
+
+        // Given that account exists
+        account.setBalance((account.getBalance() + trans.getAmount()));
+        accountRepo.save(account);
     }
 
     public Transaction findTransactionById(UUID id) {
