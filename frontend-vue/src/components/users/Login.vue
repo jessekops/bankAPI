@@ -1,5 +1,5 @@
-<template :v-if="!isLoggedIn">
-  <section class="ftco-section">
+<template >
+  <section v-if="!isLoggedIn" class="ftco-section">
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-md-7 col-lg-5">
