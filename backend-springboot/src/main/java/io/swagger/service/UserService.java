@@ -4,7 +4,6 @@ import io.swagger.jwt.JwtTokenProvider;
 import io.swagger.model.dto.TokenDTO;
 import io.swagger.model.entity.User;
 import io.swagger.repo.UserRepo;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -65,11 +64,18 @@ public class UserService {
     }
 
     public User updateUser(User updatedUser) {
+
+        updatedUser.setPassword(encoder.encode(updatedUser.getPassword()));
+
         return userRepo.save(updatedUser);
     }
 
     public List<User> getAll() {
         return userRepo.findAll();
+    }
+
+    public List<User> getAllWithoutAccount(){
+        return userRepo.findAllWithoutAccount();
     }
 
     public User findById(UUID Id) {
