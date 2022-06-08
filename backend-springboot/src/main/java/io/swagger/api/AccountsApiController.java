@@ -112,6 +112,7 @@ public class AccountsApiController implements AccountsApi {
             responsedto.get(i).setOwnerId(accountList.get(i).getUser().getId());
         }
 
+
         return new ResponseEntity<List<AccountDTO>>(responsedto, HttpStatus.OK);
     }
 
