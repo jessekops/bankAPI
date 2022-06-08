@@ -68,6 +68,16 @@
         </div>
       </div>
     </div>
+    <div v-if="!isLoggedIn" class="text-center">
+      <p>You are not logged in make sure to login!</p>
+      <router-link
+        to="/login"
+        style=""
+        class="btn w-100 text-center submit vue-butt btn-success btn-lg"
+      >
+        <span>Go to login</span>
+      </router-link>
+    </div>
   </div>
 </template>
 

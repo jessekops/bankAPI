@@ -9,6 +9,7 @@ import io.swagger.model.dto.UserDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -22,8 +23,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
+import java.util.List;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-23T13:04:25.984Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-06-07T12:51:42.133Z[GMT]")
 @Validated
 public interface UsersApi {
 
@@ -37,6 +39,18 @@ public interface UsersApi {
             consumes = {"application/json"},
             method = RequestMethod.POST)
     ResponseEntity<UserDTO> addUser(@Parameter(in = ParameterIn.DEFAULT, description = "New user object", required = true, schema = @Schema()) @Valid @RequestBody UserDTO body);
+
+
+    @Operation(summary = "Find all user without an account", description = "", security = {
+            @SecurityRequirement(name = "bearerAuth")}, tags = {"Employee"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Users found", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserDTO.class)))),
+
+            @ApiResponse(responseCode = "404", description = "All users have an account or user not found")})
+    @RequestMapping(value = "/users/getAllWithoutAccount",
+            produces = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<List<UserDTO>> getAllUsersWithoutAccount();
 
 
     @Operation(summary = "Search a user list on email address", description = "", security = {

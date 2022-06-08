@@ -25,22 +25,22 @@ public class TransactionValidatorService {
 
     public boolean checkCurrentOrSavings(Account accountTo, Account accountFrom) {
 
-        if (!Objects.equals(accountFrom.getAccountType().toString(), AccountType.SAVINGS.toString()) || !Objects.equals(accountTo.getAccountType().toString(), AccountType.SAVINGS.toString())) {
+        if (!Objects.equals(accountFrom.getAccountType(), AccountType.SAVINGS) || !Objects.equals(accountTo.getAccountType(), AccountType.SAVINGS)) {
             return false;
         } else return true;
     }
     // Method to check if the user is the owner of the account
 
-    public boolean isUserOwner(User user, Account iban) {
+    public boolean isUserOwner(User user, Account account) {
 
-        if (iban.getUser() != user) {
+        if (account.getUser() != user) {
             return false;
         } else return true;
     }
 
     // Method to check if the from account is not the same as to account
 
-    public boolean checkNotSameAccount(Account accountFrom, Account accountTo) {
+    public boolean checkNotSameAccount(String accountFrom, String accountTo) {
         if (accountFrom.equals(accountTo)) {
             return false;
         } else return true;
