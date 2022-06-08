@@ -1,5 +1,5 @@
 <template>
-  <section :v-if="isAdmin" class="table-accounts mx-4 p-4">
+  <section v-if="isAdmin" class="table-accounts mx-4 p-4">
     <div class="container">
       <div class="button-container p-2 my-2">
         <button
@@ -10,7 +10,7 @@
         </button>
       </div>
       <div class="form-container">
-        <form ref="form">
+        <form v-on:submit.prevent="addAccount" ref="form">
           <div class="input-group mb-3">
             <span class="input-group-text">Search for user</span>
             <input
@@ -36,9 +36,6 @@
               class="text-center form-control"
             />
           </div>
-          <div class="mx-0 text-center text-danger">
-            {{ errMsg }}
-          </div>
         </form>
       </div>
       <div class="form-container">
@@ -51,7 +48,7 @@
               @keypress="isNumber($event)"
               :disabled="disable"
               v-model="abs"
-              required=""
+              required="required"
               type="text"
               class="required form-control"
             />
@@ -80,6 +77,54 @@
               class="form-control"
             />
           </div>
+          <div class="input-group mb-3">
+            <span class="input-group-text">Pincode</span>
+            <div class="input-wrapper">
+              <div>
+                <div class="input-group">
+                  <input
+                    :disabled="disable"
+                    v-model.number="pin_0"
+                    v-on:keyup.right="pin_focus('pin_1')"
+                    v-on:keypress="is_valid_pin_value($event, 'pin_0')"
+                    ref="pin_0"
+                    type="text"
+                    placeholder="0"
+                  />
+                  <input
+                    :disabled="disable"
+                    v-model.number="pin_1"
+                    v-on:keyup.left="pin_focus('pin_0')"
+                    v-on:keyup.right="pin_focus('pin_2')"
+                    v-on:keypress="is_valid_pin_value($event, 'pin_1')"
+                    ref="pin_1"
+                    type="text"
+                    placeholder="0"
+                  />
+
+                  <input
+                    :disabled="disable"
+                    v-model.number="pin_2"
+                    v-on:keyup.left="pin_focus('pin_1')"
+                    v-on:keyup.right="pin_focus('pin_3')"
+                    v-on:keypress="is_valid_pin_value($event, 'pin_2')"
+                    ref="pin_2"
+                    type="text"
+                    placeholder="0"
+                  />
+                  <input
+                    :disabled="disable"
+                    v-model.number="pin_3"
+                    v-on:keyup.left="pin_focus('pin_2')"
+                    v-on:keypress="is_valid_pin_value($event, 'pin_3')"
+                    ref="pin_3"
+                    type="text"
+                    placeholder="0"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
           <div class="input-group mt-4">
             <button type="button" class="btn btn-primary" @click="addAccount()">
               Create Account
@@ -91,6 +136,7 @@
             >
               Cancel
             </button>
+            <span :v-if="errMsg" class="w-100 text-danger">{{ errMsg }}</span>
           </div>
         </form>
       </div>
@@ -101,15 +147,44 @@
 <script>
 import axios from "../../axios-auth";
 import { mapGetters } from "vuex";
+
 export default {
   name: "AddAccount",
   computed: {
     ...mapGetters(["isLoggedIn"]),
     ...mapGetters(["isAdmin"]),
   },
+  watch: {
+    pin: function () {
+      this.$bus.$emit("PIN/change", this.pin);
+    },
+    pin_0: function (nv) {
+      if (nv.toString().length !== 0) {
+        this.$refs.pin_1.focus();
+        this.$refs.pin_1.select();
+      }
+    },
+    pin_1: function (nv) {
+      if (nv.toString().length !== 0) {
+        this.$refs.pin_2.focus();
+        this.$refs.pin_2.select();
+      }
+    },
+    pin_2: function (nv) {
+      if (nv.toString().length !== 0) {
+        this.$refs.pin_3.focus();
+        this.$refs.pin_3.select();
+      }
+    },
+  },
   data() {
     return {
       selected: "current",
+      pin_0: null,
+      pin_1: null,
+      pin_2: null,
+      pin_3: null,
+      pinfull: null,
       options: [
         { text: "current", value: "current" },
         { text: "savings", value: "savings" },
@@ -127,6 +202,38 @@ export default {
 
   //don't allow anything but numbers in the input method
   methods: {
+    pin_focus: function (ref) {
+      this.$refs[ref].focus();
+      this.$refs[ref].select();
+    },
+    is_valid_pin_value: function (e, pin_N) {
+      const char = String.fromCharCode(e.keyCode);
+      const is_value_selected =
+        this[pin_N] !== null &&
+        this.$refs[pin_N].selectionStart === 0 &&
+        this.$refs[pin_N].selectionEnd === this[pin_N].toString().length;
+      if (
+        (this[pin_N] === null ||
+          this[pin_N].toString().length === 0 ||
+          is_value_selected) &&
+        parseInt(char, 10) >= 0 &&
+        parseInt(char, 10) <= 9
+      ) {
+        return true;
+      }
+
+      e.preventDefault();
+    },
+
+    isInt: function (evt) {
+      evt = evt ? evt : window.event;
+      var charCode = evt.which ? evt.which : evt.keyCode;
+      if ((charCode = 48 && charCode <= 57)) {
+        return true;
+      } else {
+        evt.preventDefault();
+      }
+    },
     isNumber: function (evt) {
       evt = evt ? evt : window.event;
       var charCode = evt.which ? evt.which : evt.keyCode;
@@ -160,31 +267,44 @@ export default {
     //adduser method
 
     addAccount() {
-      const data = JSON.stringify({
-        accountType: this.selected.valueOf(),
-        ownerId: this.ownerId,
-        balance: parseFloat(this.balance),
-        absLimit: parseFloat(this.abs),
-        active: true,
-      });
-      let token = localStorage.getItem("token");
-      let config = {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      };
-      axios
-        .post("accounts", data, config)
-        .then(function (response) {
-          this.$router.push("/accounts");
-          console.log(response);
-        })
-        .catch(function (error) {
-          console.log(data);
-          console.log(error);
+      if (
+        this.pin_0 != null &&
+        this.pin_1 != null &&
+        this.pin_2 != null &&
+        this.pin_3 != null
+      ) {
+        const stringCode =
+          this.pin_0.toString() +
+          this.pin_1.toString() +
+          this.pin_2.toString() +
+          this.pin_3.toString();
+        const data = JSON.stringify({
+          accountType: this.selected.valueOf(),
+          ownerId: this.ownerId,
+          balance: parseFloat(this.balance),
+          absLimit: parseFloat(this.abs),
+          pinCode: parseInt(stringCode),
+          active: true,
         });
+        let token = localStorage.getItem("token");
+        let config = {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        };
+        axios
+          .post("accounts", data, config)
+          .then((response) => {
+            console.log(response);
+            this.$router.replace("/accounts");
+          })
+          .catch((error) => {
+            console.log(error);
+            this.errMsg = "please fill in all the fields.";
+          });
+      }
     },
   },
 };

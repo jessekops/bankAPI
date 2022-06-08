@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div v-if="isLoggedIn" class="container">
     <h1 class="text-center my-2 text-muted">
       Please select an account in the dropdown
     </h1>
@@ -7,10 +7,12 @@
       <form ref="form">
         <div class="input-group mx-0 text-center mb-3">
           <select
-            class="w-75 text-center mx-0"
+            @change="onChange($event)"
+            class="w-100 text-center mx-0"
             :disabled="disable"
             v-model="selected"
           >
+            <option :value="null" disabled>Select Account</option>
             <option
               v-for="account in accounts"
               v-bind:key="{ value: account.iban }"
@@ -18,19 +20,22 @@
               {{ account.iban }}
             </option>
           </select>
-          <button
-            type="button"
-            :disabled="!disable"
-            @click="searchUser()"
-            class="btn btn-success"
-          >
-            Search User
-          </button>
         </div>
         <div class="input-group mb-3">
-          <input disabled type="text" class="text-center form-control" />
+          <input
+            disabled
+            selected
+            hidden
+            type="text"
+            class="text-center form-control"
+          />
         </div>
       </form>
+    </div>
+    <div class="">
+      <h1 v-if="balance" class="text-center text-muted">
+        Current account balance: €{{ balance }}
+      </h1>
     </div>
   </div>
 </template>
@@ -42,6 +47,7 @@ export default {
   name: "Deposit",
   computed: {
     ...mapGetters(["isAdmin"]),
+    ...mapGetters(["isLoggedIn"]),
   },
   setup() {},
   data() {
@@ -50,6 +56,7 @@ export default {
       disable: false,
       accounts: [],
       userId: "",
+      balance: "",
     };
   },
 
@@ -76,6 +83,27 @@ export default {
       .finally(() => (this.loading = false));
   },
   methods: {
+    onChange(event) {
+      let token = localStorage.getItem("token");
+      axios
+        .request({
+          url: "accounts/getByIban/" + event.target.value,
+          method: "get",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json; charset=UTF-8",
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          this.balance = response.data.balance;
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => (this.loading = false));
+    },
     apiDropCall() {
       let token = localStorage.getItem("token");
       axios

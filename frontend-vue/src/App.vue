@@ -1,12 +1,11 @@
 <template>
-<navigation></navigation>
+  <navigation></navigation>
   <router-view />
   <!-- Add a router view -->
 </template>
 
 <script>
-import Navigation from './components/Navigation.vue';
-
+import Navigation from "./components/Navigation.vue";
 export default {
   components: { Navigation },
   name: "App",
@@ -25,5 +24,4 @@ export default {
 </script>
 
 <style>
-
 </style>
