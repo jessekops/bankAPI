@@ -48,6 +48,7 @@ export default {
   computed: {
     ...mapGetters(["isAdmin"]),
     ...mapGetters(["isLoggedIn"]),
+    ...mapGetters(["getuserID"]),
   },
   setup() {},
   data() {
@@ -55,16 +56,17 @@ export default {
       selected: "current",
       disable: false,
       accounts: [],
-      userId: "",
+      userID: "",
       balance: "",
     };
   },
 
   mounted() {
     let token = localStorage.getItem("token");
+    let userID = localStorage.getItem("userID");
     axios
       .request({
-        url: "users/getByUsername/" + localStorage.getItem("username"),
+        url: "accounts/getByUserID/" + userID,
         method: "get",
         headers: {
           Accept: "application/json",
@@ -73,8 +75,8 @@ export default {
         },
       })
       .then((response) => {
-        this.userId = response.data.id;
-        this.apiDropCall();
+        console.log(response.data);
+        this.accounts = response.data;
       })
       .catch((error) => {
         console.log(error);
@@ -108,7 +110,7 @@ export default {
       let token = localStorage.getItem("token");
       axios
         .request({
-          url: "accounts/getByUserID/" + this.userId,
+          url: "accounts/getByUserID/" + localStorage.getItem("token"),
           method: "get",
           headers: {
             Accept: "application/json",

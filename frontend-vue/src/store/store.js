@@ -5,7 +5,8 @@ const store = createStore({
         return {
             token: null,
             username: null,
-            userrole: null
+            userrole: null,
+            userID: null
         }
     },
     getters: {
@@ -29,12 +30,16 @@ const store = createStore({
         getUserRole(state) {
             return state.userrole;
         },
+        getuserID(state) {
+            return state.userID;
+        },
     },
     mutations: {
         authenticateUser(state, parameters) {
             state.token = parameters.token
             state.username = parameters.username
             state.userrole = parameters.userrole
+            state.userID = parameters.userID
         }
     },
     actions: {
@@ -52,10 +57,13 @@ const store = createStore({
                         commit('authenticateUser', result.data);
                         localStorage.setItem('token', result.data.token);
 
-                        console.log(result.data);
+
 
                         localStorage.setItem('userrole', result.data.userrole);
+                        localStorage.setItem('userID', result.data.userID);
                         localStorage.setItem('username', result.data.username);
+
+
 
 
 
@@ -71,13 +79,15 @@ const store = createStore({
             const token = localStorage.getItem('token');
             const username = localStorage.getItem('username');
             const userrole = localStorage.getItem('userrole');
+            const userID = localStorage.getItem('userID');
             if (token && username) {
                 axios.defaults.headers.common["Authorization"] =
                     "Bearer " + token;
                 commit('authenticateUser', {
                     token: token,
                     username: username,
-                    userrole: userrole
+                    userrole: userrole,
+                    userID: userID
                 });
             }
         }
