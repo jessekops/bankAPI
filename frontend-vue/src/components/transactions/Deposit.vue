@@ -133,6 +133,8 @@ export default {
       balance: "",
       balInput: "",
       errorMsg: "",
+      myIban: "",
+      token: "",
     };
   },
   watch: {
@@ -159,16 +161,16 @@ export default {
     },
   },
   mounted() {
-    let token = localStorage.getItem("token");
-    let userID = localStorage.getItem("userID");
+    this.token = localStorage.getItem("token");
+    this.userID = localStorage.getItem("userID");
     axios
       .request({
-        url: "accounts/getByUserID/" + userID,
+        url: "accounts/getByUserID/" + this.userID,
         method: "get",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json; charset=UTF-8",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${this.token}`,
         },
       })
       .then((response) => {
@@ -244,9 +246,40 @@ export default {
         this.errorMsg = "please fill in all the fields";
       }
     },
-    depositAxios() {},
+
+    depositAxios() {
+      const today = new Date();
+      const date =
+        today.getFullYear() +
+        "-" +
+        ("0" + (today.getMonth() + 1)).slice(-2) +
+        "-" +
+        ("0" + (today.getDate() + 1)).slice(-2);
+      const data = JSON.stringify({
+        timestamp: date,
+        amount: this.balInput,
+        userPerforming: this.userID,
+        from: "NL01INHO0000000001",
+        to: this.myIban,
+      });
+      let config = {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.token}`,
+        },
+      };
+      axios
+        .post("transactions/Regular", data, config)
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log(error);
+          console.log(data);
+        });
+    },
     onChange(event) {
-      let token = localStorage.getItem("token");
       axios
         .request({
           url: "accounts/getByIban/" + event.target.value,
@@ -254,7 +287,7 @@ export default {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json; charset=UTF-8",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${this.token}`,
           },
         })
         .then((response) => {
@@ -266,6 +299,7 @@ export default {
           this.errorMsg = "";
           this.balance = response.data.balance;
           this.pintoCheck = response.data.pinCode;
+          this.myIban = response.data.iban;
           this.$refs.depoform.reset();
         })
         .catch((error) => {
@@ -274,7 +308,6 @@ export default {
         .finally(() => (this.loading = false));
     },
     apiDropCall() {
-      let token = localStorage.getItem("token");
       axios
         .request({
           url: "accounts/getByUserID/" + localStorage.getItem("token"),
@@ -282,7 +315,7 @@ export default {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json; charset=UTF-8",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${this.token}`,
           },
         })
         .then((response) => {
