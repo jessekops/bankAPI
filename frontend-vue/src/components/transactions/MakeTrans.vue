@@ -9,7 +9,6 @@
           Current account balance: €{{ balance }}
         </h1>
       </div>
-
       <div class="input-group mx-0 text-center mb-3">
         <select
           @change="onChange($event)"
@@ -26,10 +25,27 @@
           </option>
         </select>
       </div>
+      <div class="input-group mb-3">
+        <span class="input-group-text">Iban to make a deposit to</span>
+        <input
+          :disabled="disable"
+          type="text"
+          v-model="ibanSearch"
+          class="form-control"
+        />
+        <button
+          type="button"
+          :disabled="disable"
+          @click="searchAccount()"
+          class="btn btn-success"
+        >
+          Search Iban
+        </button>
+      </div>
       <form v-on:submit.prevent="login" ref="depoform">
         <div v-if="balance" class="form-hider">
           <div class="input-group mb-3">
-            <span class="input-group-text">Amount to deposit: €</span>
+            <span class="input-group-text">Amount to transfer: €</span>
             <input
               @keypress="isNumber($event)"
               selected
@@ -40,64 +56,12 @@
             />
           </div>
           <div class="input-group mb-3">
-            <span class="input-group-text">Pincode</span>
-            <div class="input-wrapper">
-              <div>
-                <div class="input-group">
-                  <input
-                    class="form-control"
-                    :disabled="disable"
-                    v-model.number="pin_0"
-                    v-on:keyup.right="pin_focus('pin_1')"
-                    v-on:keypress="is_valid_pin_value($event, 'pin_0')"
-                    ref="pin_0"
-                    type="text"
-                    placeholder="0"
-                  />
-                  <input
-                    class="form-control"
-                    :disabled="disable"
-                    v-model.number="pin_1"
-                    v-on:keyup.left="pin_focus('pin_0')"
-                    v-on:keyup.right="pin_focus('pin_2')"
-                    v-on:keypress="is_valid_pin_value($event, 'pin_1')"
-                    ref="pin_1"
-                    type="text"
-                    placeholder="0"
-                  />
-
-                  <input
-                    class="form-control"
-                    :disabled="disable"
-                    v-model.number="pin_2"
-                    v-on:keyup.left="pin_focus('pin_1')"
-                    v-on:keyup.right="pin_focus('pin_3')"
-                    v-on:keypress="is_valid_pin_value($event, 'pin_2')"
-                    ref="pin_2"
-                    type="text"
-                    placeholder="0"
-                  />
-                  <input
-                    class="form-control"
-                    :disabled="disable"
-                    v-model.number="pin_3"
-                    v-on:keyup.left="pin_focus('pin_2')"
-                    v-on:keypress="is_valid_pin_value($event, 'pin_3')"
-                    ref="pin_3"
-                    type="text"
-                    placeholder="0"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="input-group mb-3">
             <button
               type="button"
               class="w-100 btn btn-primary"
-              @click="deposit()"
+              @click="makeTrans()"
             >
-              Deposit
+              Transfer
             </button>
           </div>
           <p v-if="errorMsg" class="text-danger">{{ errorMsg }}</p>
@@ -111,7 +75,7 @@
 import axios from "../../axios-auth";
 import { mapGetters } from "vuex";
 export default {
-  name: "Deposit",
+  name: "MakeTrans",
   computed: {
     ...mapGetters(["isAdmin"]),
     ...mapGetters(["isLoggedIn"]),
@@ -120,12 +84,6 @@ export default {
   setup() {},
   data() {
     return {
-      pin_0: null,
-      pin_1: null,
-      pin_2: null,
-      pin_3: null,
-      pinfull: null,
-      pintoCheck: null,
       selected: "current",
       disable: false,
       accounts: [],
@@ -134,31 +92,11 @@ export default {
       balInput: "",
       errorMsg: "",
       myIban: "",
+      toIban: "",
       token: "",
+      ibanSearch: "",
+      fetchedAccount: [],
     };
-  },
-  watch: {
-    pin: function () {
-      this.$bus.$emit("PIN/change", this.pin);
-    },
-    pin_0: function (nv) {
-      if (nv.toString().length !== 0) {
-        this.$refs.pin_1.focus();
-        this.$refs.pin_1.select();
-      }
-    },
-    pin_1: function (nv) {
-      if (nv.toString().length !== 0) {
-        this.$refs.pin_2.focus();
-        this.$refs.pin_2.select();
-      }
-    },
-    pin_2: function (nv) {
-      if (nv.toString().length !== 0) {
-        this.$refs.pin_3.focus();
-        this.$refs.pin_3.select();
-      }
-    },
   },
   mounted() {
     this.token = localStorage.getItem("token");
@@ -184,6 +122,21 @@ export default {
       .finally(() => (this.loading = false));
   },
   methods: {
+    searchAccount() {
+      axios
+        .get("accounts/getByIban/" + this.ibanSearch)
+        .then((res) => {
+          this.fetchedAccount = res.data;
+          this.toIban = res.data.iban;
+          this.disable = true;
+          console.log(this.fetchedAccount);
+        })
+        .catch(function (error) {
+          // this.errMsg = "User not found";
+
+          console.log(error);
+        });
+    },
     isNumber: function (evt) {
       evt = evt ? evt : window.event;
       var charCode = evt.which ? evt.which : evt.keyCode;
@@ -197,57 +150,29 @@ export default {
         return true;
       }
     },
-    pin_focus: function (ref) {
-      this.$refs[ref].focus();
-      this.$refs[ref].select();
-    },
-    is_valid_pin_value: function (e, pin_N) {
-      const char = String.fromCharCode(e.keyCode);
-      const is_value_selected =
-        this[pin_N] !== null &&
-        this.$refs[pin_N].selectionStart === 0 &&
-        this.$refs[pin_N].selectionEnd === this[pin_N].toString().length;
-      if (
-        (this[pin_N] === null ||
-          this[pin_N].toString().length === 0 ||
-          is_value_selected) &&
-        parseInt(char, 10) >= 0 &&
-        parseInt(char, 10) <= 9
-      ) {
-        return true;
-      }
-
-      e.preventDefault();
-    },
-
-    deposit() {
-      if (
-        this.balInput != "" &&
-        this.pin_0 != null &&
-        this.pin_1 != null &&
-        this.pin_2 != null &&
-        this.pin_3 != null
-      ) {
-        const stringCode =
-          this.pin_0.toString() +
-          this.pin_1.toString() +
-          this.pin_2.toString() +
-          this.pin_3.toString();
-        const balFloat = parseFloat(this.balInput);
-        if (stringCode == this.pintoCheck && balFloat) {
-          //deposit axios method here
-          this.depositAxios();
-          console.log("nice" + this.balInput);
+    makeTrans() {
+      const balFloat = parseFloat(this.balInput);
+      if (this.myIban != this.toIban) {
+        if (this.toIban) {
+          if (balFloat) {
+            if (this.myIban) {
+              this.makeTransAxios();
+            } else {
+              this.errorMsg = "Something went wrong selecting your iban.";
+            }
+          } else {
+            this.errorMsg = "Your balance is too low";
+          }
         } else {
-          this.errorMsg = "pincode is incorrect";
+          this.errorMsg = "No correct iban has been set to make a transaction";
         }
-        console.log(stringCode + this.pintoCheck);
+        console.log(balFloat);
       } else {
-        this.errorMsg = "please fill in all the fields";
+        this.errorMsg = "Iban cant be the same you are transfering to";
       }
     },
 
-    depositAxios() {
+    makeTransAxios() {
       const today = new Date();
       const date =
         today.getFullYear() +
@@ -259,7 +184,7 @@ export default {
         timestamp: date,
         amount: this.balInput,
         userPerforming: this.userID,
-        from: "NL01INHO0000000001",
+        from: this.myIban,
         to: this.myIban,
       });
       let config = {
@@ -275,7 +200,7 @@ export default {
           console.log(response);
         })
         .catch((error) => {
-          console.log(error);
+          this.errorMsg = error;
           console.log(data);
         });
     },
@@ -291,14 +216,9 @@ export default {
           },
         })
         .then((response) => {
-          this.pin_0 = null;
-          this.pin_1 = null;
-          this.pin_2 = null;
-          this.pin_3 = null;
           this.balInput = null;
           this.errorMsg = "";
           this.balance = response.data.balance;
-          this.pintoCheck = response.data.pinCode;
           this.myIban = response.data.iban;
           this.$refs.depoform.reset();
         })
