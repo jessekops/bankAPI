@@ -12,7 +12,9 @@
                 <p class="card-text">
                   This is quick access to manage the accounts
                 </p>
-                <a href="/accounts" class="btn btn-primary">Go somewhere</a>
+                <router-link to="/accounts" class="btn btn-primary"
+                  >Accounts view</router-link
+                >
               </div>
             </div>
           </div>
@@ -34,7 +36,9 @@
                 <p class="card-text">
                   This is quick access to manage the users
                 </p>
-                <a href="/users" class="btn btn-primary">Go somewhere</a>
+                <router-link to="/users" class="btn btn-primary"
+                  >User view</router-link
+                >
               </div>
             </div>
           </div>

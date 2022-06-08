@@ -22,6 +22,9 @@ public class Transaction {
 
     @ManyToOne
     private Account from;
+    public void setFrom(Account from) {
+        this.from = from;
+    }
 
     private String to;
     private Double amount;

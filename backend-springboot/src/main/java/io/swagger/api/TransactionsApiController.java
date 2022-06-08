@@ -54,14 +54,28 @@ public class TransactionsApiController implements TransactionsApi {
         this.modelMapper = new ModelMapper();
     }
 
-    public ResponseEntity<TransactionDTO> createTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "New transaction object", required = true, schema = @Schema()) @Valid @RequestBody TransactionDTO body) {
+    public ResponseEntity<TransactionDTO> createTransaction(@Parameter(in = ParameterIn.PATH, description = "Method input; specify if transaction is Regular, Withdrawal or Deposit", required=true, schema=@Schema()) @PathVariable("transactionMethod") String transactionMethod,@Parameter(in = ParameterIn.DEFAULT, description = "New transaction object", required=true, schema=@Schema()) @Valid @RequestBody TransactionDTO body) {
 
         try {
             Transaction trans = modelMapper.map(body, Transaction.class);
+            Account a = accountService.findAccountByIban(body.getFrom());
+            trans.setFrom(a);
+//            switch (transactionMethod){
+//                case "Regular":
+//                    trans = transService.createTransaction(trans);
+//                    break;
+//                case "Withdrawal":
+//                    trans = transService.createWithdrawal(trans);
+//                    break;
+//                case "Deposit":
+//                    trans = transService.createDeposit(trans);
+//                    break;
+//            }
 
-            trans = transService.createTransaction(trans);
+
 
             TransactionDTO response = modelMapper.map(trans, TransactionDTO.class);
+            response.setFrom(a.getIban());
             return new ResponseEntity<TransactionDTO>(response, HttpStatus.CREATED);
         } catch (IllegalArgumentException exception) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
