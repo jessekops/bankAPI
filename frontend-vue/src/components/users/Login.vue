@@ -1,5 +1,5 @@
-<template :v-if="!isLoggedIn">
-  <section class="ftco-section">
+<template >
+  <section v-if="!isLoggedIn" class="ftco-section">
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-md-7 col-lg-5">
@@ -54,8 +54,27 @@
                   >
                     <span>Sign in 🔓</span>
                   </button>
+
+                  <span :v-if="errorms" class="w-100 text-danger">{{
+                    errorms
+                  }}</span>
                 </div>
               </form>
+              <a
+                @click="register()"
+                style=""
+                class="
+                  mt-2
+                  btn
+                  w-100
+                  text-center
+                  submit
+                  vue-butt
+                  btn-primary btn-lg
+                "
+              >
+                <span>Register</span>
+              </a>
             </div>
           </div>
         </div>
@@ -71,6 +90,7 @@ export default {
     return {
       username: "",
       password: "",
+      errorms: "",
     };
   },
   computed: {
@@ -79,6 +99,9 @@ export default {
   },
 
   methods: {
+    register() {
+      this.$router.replace("/register");
+    },
     login() {
       this.$store
         .dispatch("login", {
@@ -88,8 +111,8 @@ export default {
         .then(() => {
           this.$router.replace("/home");
         })
-        .catch(function (error) {
-          console.log(error);
+        .catch((error) => {
+          this.errorms = error.response.data.reason;
         });
     },
   },

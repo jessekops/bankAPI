@@ -13,6 +13,7 @@ public class Account {
 
     @Id
     private String iban;
+    private Integer pinCode;
 
     private AccountType accountType;
 

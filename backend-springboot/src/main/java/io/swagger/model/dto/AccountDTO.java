@@ -22,8 +22,20 @@ public class AccountDTO   {
   @JsonProperty("iban")
   private String iban = null;
 
+  @JsonProperty("pinCode")
+  private Integer pinCode = null;
+
+
   @JsonProperty("accountType")
   private AccountType accountType = null;
+
+  public void setPinCode(int pinCode) {
+    this.pinCode = pinCode;
+  }
+
+  public int getPinCode() {
+    return pinCode;
+  }
 
   @JsonProperty("ownerId")
   private UUID ownerId = null;
@@ -33,6 +45,8 @@ public class AccountDTO   {
 
   @JsonProperty("absLimit")
   private Double absLimit = null;
+
+
 
   @JsonProperty("active")
   private Boolean active = null;

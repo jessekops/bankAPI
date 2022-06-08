@@ -1,5 +1,5 @@
 <template>
-  <section class="table-accounts mx-4 p-4">
+  <section v-if="isAdmin" class="table-accounts mx-4 p-4">
     <div class="container">
       <div class="button-container p-2 my-2">
         <button

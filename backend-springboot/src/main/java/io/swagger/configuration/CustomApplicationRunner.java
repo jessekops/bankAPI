@@ -30,7 +30,7 @@ public class CustomApplicationRunner implements ApplicationRunner {
         List<UserType> userTypes = new ArrayList<>();
         userTypes.add(UserType.ROLE_EMPLOYEE);
         User Bank = new User();
-        Bank.setId(UUID.fromString("00000000-0000-0000-0000-00000000"));
+//        Bank.setId(UUID.fromString("00000000-0000-0000-0000-00000000"));
         Bank.setActive(true);
 //        Bank.setUserTypes();
         Bank.setUsername("InhollandBank");
