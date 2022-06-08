@@ -24,56 +24,56 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.validation.Valid;
 import java.util.UUID;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-23T13:04:25.984Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-06-08T15:06:00.679Z[GMT]")
 @Validated
 public interface TransactionsApi {
 
     @Operation(summary = "Create a new transaction", description = "", security = {
-        @SecurityRequirement(name = "bearerAuth")    }, tags={ "Employee", "Customer" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "201", description = "Transaction created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TransactionDTO.class))),
-        
-        @ApiResponse(responseCode = "400", description = "Invalid transaction") })
-    @RequestMapping(value = "/transactions",
-        produces = { "application/json" }, 
-        consumes = { "application/json" }, 
-        method = RequestMethod.POST)
-    ResponseEntity<TransactionDTO> createTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "New transaction object", required=true, schema=@Schema()) @Valid @RequestBody TransactionDTO body);
+            @SecurityRequirement(name = "bearerAuth")    }, tags={ "Employee", "Customer" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Transaction created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TransactionDTO.class))),
+
+            @ApiResponse(responseCode = "400", description = "Invalid transaction") })
+    @RequestMapping(value = "/transactions/{transactionMethod}",
+            produces = { "application/json" },
+            consumes = { "application/json" },
+            method = RequestMethod.POST)
+    ResponseEntity<TransactionDTO> createTransaction(@Parameter(in = ParameterIn.PATH, description = "Method input; specify if transaction is Regular, Withdrawal or Deposit", required=true, schema=@Schema()) @PathVariable("transactionMethod") String transactionMethod, @Parameter(in = ParameterIn.DEFAULT, description = "New transaction object", required=true, schema=@Schema()) @Valid @RequestBody TransactionDTO body);
 
 
     @Operation(summary = "Delete a scheduled transaction", description = "", security = {
-        @SecurityRequirement(name = "bearerAuth")    }, tags={ "Employee", "Customer" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "204", description = "Scheduled transaction deleted"),
-        
-        @ApiResponse(responseCode = "404", description = "Transaction not found") })
+            @SecurityRequirement(name = "bearerAuth")    }, tags={ "Employee", "Customer" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Scheduled transaction deleted"),
+
+            @ApiResponse(responseCode = "404", description = "Transaction not found") })
     @RequestMapping(value = "/transactions/{id}",
-        method = RequestMethod.DELETE)
+            method = RequestMethod.DELETE)
     ResponseEntity<Void> deleteTransaction(@Parameter(in = ParameterIn.PATH, description = "Transaction ID input", required=true, schema=@Schema()) @PathVariable("id") UUID id);
 
 
     @Operation(summary = "Get one transaction on Id", description = "", security = {
-        @SecurityRequirement(name = "bearerAuth")    }, tags={ "Employee", "Customer" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Transaction found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TransactionDTO.class))),
-        
-        @ApiResponse(responseCode = "404", description = "Transaction not found") })
+            @SecurityRequirement(name = "bearerAuth")    }, tags={ "Employee", "Customer" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Transaction found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TransactionDTO.class))),
+
+            @ApiResponse(responseCode = "404", description = "Transaction not found") })
     @RequestMapping(value = "/transactions/{id}",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
+            produces = { "application/json" },
+            method = RequestMethod.GET)
     ResponseEntity<TransactionDTO> getTransaction(@Parameter(in = ParameterIn.PATH, description = "Transaction ID input", required=true, schema=@Schema()) @PathVariable("id") UUID id);
 
 
     @Operation(summary = "Updates a scheduled transaction", description = "By sending this request, an employee or customer can update a scheduled transaction ", security = {
-        @SecurityRequirement(name = "bearerAuth")    }, tags={ "Employee", "Customer" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Transaction found and updated", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TransactionDTO.class))),
-        
-        @ApiResponse(responseCode = "404", description = "Transaction not found") })
+            @SecurityRequirement(name = "bearerAuth")    }, tags={ "Employee", "Customer" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Transaction found and updated", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TransactionDTO.class))),
+
+            @ApiResponse(responseCode = "404", description = "Transaction not found") })
     @RequestMapping(value = "/transactions/{id}",
-        produces = { "application/json" }, 
-        consumes = { "application/json" }, 
-        method = RequestMethod.PUT)
+            produces = { "application/json" },
+            consumes = { "application/json" },
+            method = RequestMethod.PUT)
     ResponseEntity<TransactionDTO> updateTransaction(@Parameter(in = ParameterIn.PATH, description = "Transaction ID input", required=true, schema=@Schema()) @PathVariable("id") UUID id, @Parameter(in = ParameterIn.DEFAULT, description = "Updated transaction object", required=true, schema=@Schema()) @Valid @RequestBody TransactionDTO body);
 
 }

@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Request body for login responses with JWT
@@ -22,12 +23,22 @@ public class TokenDTO   {
   private String token = null;
   @JsonProperty("username")
   private String username = null;
+  @JsonProperty("userID")
+  private UUID userId = null;
   @JsonProperty("userrole")
   private List<UserType> userrole = null;
 
   public TokenDTO token(String token) {
     this.token = token;
     return this;
+  }
+
+  public UUID getUserId() {
+    return userId;
+  }
+
+  public void setUserId(UUID userId) {
+    this.userId = userId;
   }
 
   /**

@@ -6,6 +6,7 @@ import store from './store/store'
 //Users
 import Login from './components/users/Login.vue';
 import Register from './components/users/Register.vue';
+import Users from './components/users/Users.vue';
 
 import HomePage from './components/HomePage.vue';
 //Accounts
@@ -18,12 +19,17 @@ import Deposit from './components/transactions/Deposit.vue';
 
 const routes = [
 
+    //user routes
     { path: '/', component: Login },
     { path: '/login', component: Login },
     { path: '/register', component: Register },
+    { path: '/users', component: Users },
     { path: '/home', component: HomePage },
+
+    //account routes
     { path: '/accounts', component: Index },
     { path: '/addaccount', component: AddAccount },
+    //transaction routes
     { path: '/deposit', component: Deposit },
 
 ];

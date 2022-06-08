@@ -4,6 +4,8 @@ import io.swagger.model.entity.Account;
 import io.swagger.model.entity.Transaction;
 import io.swagger.model.entity.User;
 import io.swagger.model.enumeration.AccountType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.threeten.bp.LocalDate;
 
 import java.time.OffsetDateTime;
@@ -11,14 +13,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Service
 public class TransactionValidatorService {
-
+    @Autowired
     private TransactionService transactionService;
+    @Autowired
     private AccountService accountService;
+    @Autowired
     private UserService userService;
-    private Transaction transaction;
-    private Account account;
-    private User user;
+
 
 
     // Method to check if it is current or savings account
@@ -31,9 +34,9 @@ public class TransactionValidatorService {
     }
     // Method to check if the user is the owner of the account
 
-    public boolean isUserOwner(User user, Account account) {
+    public boolean isUserOwner(User user, Account from, Account to) {
 
-        if (account.getUser() != user) {
+        if (from.getUser() != user || to.getUser() != user) {
             return false;
         } else return true;
     }
@@ -45,30 +48,29 @@ public class TransactionValidatorService {
             return false;
         } else return true;
     }
-    // Method to check if there is sufficient funds
-
-    public boolean checkSufficientFund(Account iban, double amount) {
-        double balance = iban.getBalance();
-        if (balance - amount < 0) {
-            return false;
-        } else return true;
-    }
+//    // Method to check if there is sufficient funds
+//
+//    public boolean checkSufficientFund(Account accountFrom, double amount) {
+//        double balance = accountFrom.getBalance();
+//        if ((balance - amount) < 0) {
+//            return false;
+//        } else return true;
+//    }
 
     // Method to check if there is sufficient funds (absolute limit)
 
-    public boolean checkAbsLimit(Account iban, double amount) {
-        double balance = iban.getBalance();
-        double absLimit = iban.getAbsLimit();//
+    public boolean checkAbsLimit(Account accountFrom, double amount) {
+        double balance = accountFrom.getBalance();
+        double absLimit = accountFrom.getAbsLimit();
 
-        if (balance - amount < absLimit) {
+        if ((balance - amount) < absLimit) {
             return false;
         } else return true;
     }
 
     // Method to check if it does not override day limit
 
-    public boolean checkDayLimit(String userName) {
-        User user = userService.findByUsername(userName);
+    public boolean checkDayLimit(User user) {
         double dayLimit = user.getDayLimit();
 
         List<Transaction> transToday = transactionService.getTransactionsFromToday(LocalDate.now());
@@ -76,8 +78,17 @@ public class TransactionValidatorService {
         for (Transaction transaction : transToday) {
             total += transaction.getAmount();
         }
+
         if (total > dayLimit) {
             return false;
         } else return true;
+    }
+
+    public boolean checkActive(String ibanFrom, String ibanTo) {
+        Account from = accountService.findAccountByIban(ibanFrom);
+        Account to = accountService.findAccountByIban(ibanTo);
+        if (from.getActive() && to.getActive()) {
+            return true;
+        } else return false;
     }
 }
