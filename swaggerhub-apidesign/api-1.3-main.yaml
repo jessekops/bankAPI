@@ -283,7 +283,14 @@ paths:
                 $ref: "#/components/schemas/AccountDTO"
         404:
           description: Account IBAN not found
-  /transactions:
+  /transactions/{transactionMethod}:
+    parameters:
+      - in: path
+        name: transactionMethod
+        required: true
+        description: Method input; specify if transaction is Regular, Withdrawal or Deposit
+        schema:
+          type: string
     post:
       tags:
         - Employee
