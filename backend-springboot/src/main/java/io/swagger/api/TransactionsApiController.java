@@ -112,9 +112,13 @@ public class TransactionsApiController implements TransactionsApi {
     public ResponseEntity<TransactionDTO> updateTransaction(@Parameter(in = ParameterIn.PATH, description = "Transaction ID input", required = true, schema = @Schema()) @PathVariable("id") UUID id, @Parameter(in = ParameterIn.DEFAULT, description = "Updated transaction object", required = true, schema = @Schema()) @Valid @RequestBody TransactionDTO body) {
         try {
             Transaction trans = modelMapper.map(body, Transaction.class);
+            trans.setFrom(accountService.findAccountByIban(body.getFrom()));
+
             trans = transService.updateTransaction(trans);
 
             TransactionDTO response = modelMapper.map(trans, TransactionDTO.class);
+            response.setFrom(body.getFrom());
+
             return new ResponseEntity<TransactionDTO>(response, HttpStatus.CREATED);
         } catch (IllegalArgumentException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No transactions found with given ID");

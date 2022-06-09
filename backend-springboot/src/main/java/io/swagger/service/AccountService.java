@@ -21,22 +21,21 @@ public class AccountService {
     //account validation
     public Account addAccount(Account a) {
 
-        if(a.getBalance() == null || a.getUser() == null || a.getAccountType() == null || a.getAbsLimit() == null) {
+        if (a.getBalance() == null || a.getUser() == null || a.getAccountType() == null || a.getAbsLimit() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please fill in all fields.");
-        }
-        else if (!accountIbanGenService.pinCheck(a.getPinCode())) {
+        } else if (!accountIbanGenService.pinCheck(a.getPinCode())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Pin code has to be 4 digits long and of type Integer.");
-        }
-        else {
+        } else {
             String iban = accountIbanGenService.generateIban();
-            if(a.getActive() == null) {
+            if (a.getActive() == null) {
                 a.setActive(true);
             }
-            if(iban.length() != 0) {
-                a.setIban(iban);
+            if (iban.length() != 0) {
+                if (a.getIban() == null) {
+                    a.setIban(iban);
+                }
                 return accountRepo.save(a);
-            }
-            else {
+            } else {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong generating your iban.");
             }
         }
@@ -44,26 +43,27 @@ public class AccountService {
 
 
     public List<Account> findAccountsByUserId(UUID userId) {
-        if(!accountRepo.findAccountsByUserId(userId).isEmpty()) {
+        if (!accountRepo.findAccountsByUserId(userId).isEmpty()) {
             return accountRepo.findAccountsByUserId(userId);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
 
-    public Account updateAccount(Account updatedAccount){
+    public Account updateAccount(Account updatedAccount) {
         return accountRepo.save(updatedAccount);
     }
 
     public Account findAccountByIban(String iban) {
         //find account by iban logic
-        if(accountRepo.findAccountByIban(iban) != null) {
+        if (accountRepo.findAccountByIban(iban) != null) {
             return accountRepo.findAccountByIban(iban);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
     }
+
     public List<Account> getAll() {
         return accountRepo.findAll();
     }
