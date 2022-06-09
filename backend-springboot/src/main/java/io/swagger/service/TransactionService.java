@@ -39,7 +39,7 @@ public class TransactionService {
             // At least one account is a savings account
 
             // Check if user is owner of both accounts
-            if (!transactionValidatorService.isUserOwner(userService.findById(trans.getUserPerforming()), accountService.findAccountByIban(trans.getFrom().getIban()), accountService.findAccountByIban(trans.getTo()))) {
+            if (!transactionValidatorService.isUserOwner(trans.getUserPerforming(), accountService.findAccountByIban(trans.getFrom().getIban()), accountService.findAccountByIban(trans.getTo()))) {
                 // User is not the owner of both accounts
                 throw new IllegalArgumentException("Cannot create transaction; cannot transfer from or to savings account that does not belong to you.");
             } else {
@@ -123,7 +123,7 @@ public class TransactionService {
                     } else {
                         // Check if day limit is exceeded
                         User userPerforming = userService.findById(trans.getUserPerforming());
-                        if (!transactionValidatorService.checkDayLimit(userPerforming)) {
+                        if (!transactionValidatorService.checkDayLimit(userPerforming, trans)) {
                             throw new IllegalArgumentException("Cannot create transaction; Cannot exceed day limit " + "(" + userPerforming.getDayLimit() + ").");
                         }
                     }

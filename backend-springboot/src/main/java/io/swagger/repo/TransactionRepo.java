@@ -12,5 +12,6 @@ import java.util.UUID;
 public interface TransactionRepo extends JpaRepository<Transaction, UUID> {
 
     Transaction findTransactionById(UUID id);
+
     List<Transaction> findAllByTimestamp(LocalDate timeStamp);
 }
