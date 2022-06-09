@@ -3,9 +3,8 @@ package io.swagger.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.model.dto.TransactionDTO;
-import io.swagger.model.entity.Account;
 import io.swagger.model.entity.Transaction;
-import io.swagger.model.entity.User;
+import io.swagger.model.enumeration.TransactionType;
 import io.swagger.service.AccountService;
 import io.swagger.service.TransactionService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -22,11 +21,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-import org.threeten.bp.LocalDate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.Date;
 import java.util.UUID;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-23T13:04:25.984Z[GMT]")
@@ -56,7 +53,7 @@ public class TransactionsApiController implements TransactionsApi {
         this.modelMapper = new ModelMapper();
     }
 
-    public ResponseEntity<TransactionDTO> createTransaction(@Parameter(in = ParameterIn.PATH, description = "Method input; specify if transaction is Regular, Withdrawal or Deposit", required=true, schema=@Schema()) @PathVariable("transactionMethod") String transactionMethod,@Parameter(in = ParameterIn.DEFAULT, description = "New transaction object", required=true, schema=@Schema()) @Valid @RequestBody TransactionDTO body) {
+    public ResponseEntity<TransactionDTO> createTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "New transaction object", required=true, schema=@Schema()) @Valid @RequestBody TransactionDTO body) {
 
         try {
 
@@ -64,14 +61,14 @@ public class TransactionsApiController implements TransactionsApi {
             trans.setId(UUID.randomUUID());
             trans.setFrom(accountService.findAccountByIban(body.getFrom()));
 
-            switch (transactionMethod){
-                case "Regular":
+            switch (trans.getTransactionType()){
+                case REGULAR:
                     trans = transService.createTransaction(trans);
                     break;
-                case "Withdrawal":
+                case WITHDRAW:
                     trans = transService.createWithdrawal(trans);
                     break;
-                case "Deposit":
+                case DEPOSIT:
                     trans = transService.createDeposit(trans);
                     break;
             }

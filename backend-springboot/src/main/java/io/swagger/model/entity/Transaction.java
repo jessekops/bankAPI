@@ -1,5 +1,7 @@
 package io.swagger.model.entity;
 
+import io.swagger.model.enumeration.AccountType;
+import io.swagger.model.enumeration.TransactionType;
 import lombok.Data;
 import lombok.ToString;
 import java.time.LocalDate;
@@ -17,11 +19,8 @@ public class Transaction {
 
     private LocalDate timestamp;
 
-//    private String from;
-//
-//    public void setFrom(String from) {
-//        this.from = from;
-//    }
+    private TransactionType transactionType;
+
     @ToString.Exclude
     @ManyToOne(cascade = CascadeType.ALL)
     private Account from;
