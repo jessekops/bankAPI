@@ -83,6 +83,7 @@
               <div>
                 <div class="input-group">
                   <input
+                    class="form-control"
                     :disabled="disable"
                     v-model.number="pin_0"
                     v-on:keyup.right="pin_focus('pin_1')"
@@ -92,6 +93,7 @@
                     placeholder="0"
                   />
                   <input
+                    class="form-control"
                     :disabled="disable"
                     v-model.number="pin_1"
                     v-on:keyup.left="pin_focus('pin_0')"
@@ -103,6 +105,7 @@
                   />
 
                   <input
+                    class="form-control"
                     :disabled="disable"
                     v-model.number="pin_2"
                     v-on:keyup.left="pin_focus('pin_1')"
@@ -113,6 +116,7 @@
                     placeholder="0"
                   />
                   <input
+                    class="form-control"
                     :disabled="disable"
                     v-model.number="pin_3"
                     v-on:keyup.left="pin_focus('pin_2')"

@@ -47,7 +47,7 @@
       <div class="admin-menu">
         <h2 class="text-center text-muted">Customer menu</h2>
         <div class="row">
-          <div class="col-sm-6">
+          <div class="col-sm-4">
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">Deposit</h5>
@@ -58,7 +58,7 @@
               </div>
             </div>
           </div>
-          <div class="col-sm-6">
+          <div class="col-sm-4">
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">Withdraw</h5>
@@ -66,6 +66,21 @@
                   This is quick access to make a withdrawal
                 </p>
                 <a href="/withdraw" class="btn btn-info text-white">Withdraw</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Make a transaction</h5>
+                <p class="card-text">
+                  This is quick access to make a transaction
+                </p>
+                <router-link
+                  to="/transaction"
+                  class="btn btn-warning text-white"
+                  >Make transaction</router-link
+                >
               </div>
             </div>
           </div>

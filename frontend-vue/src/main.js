@@ -14,6 +14,7 @@ import Index from './components/accounts/Index.vue';
 import AddAccount from './components/accounts/AddAccount.vue';
 //Transactions
 import Deposit from './components/transactions/Deposit.vue';
+import MakeTrans from './components/transactions/MakeTrans.vue';
 
 
 
@@ -31,6 +32,8 @@ const routes = [
     { path: '/addaccount', component: AddAccount },
     //transaction routes
     { path: '/deposit', component: Deposit },
+    { path: '/transaction', component: MakeTrans },
+
 
 ];
 
