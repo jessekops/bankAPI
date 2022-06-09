@@ -60,46 +60,21 @@ public class AccountsApiController implements AccountsApi {
     }
 
     public ResponseEntity<AccountDTO> addAccount(@Parameter(in = ParameterIn.DEFAULT, description = "New account object", required=true, schema=@Schema()) @Valid @RequestBody AccountDTO body) {
-
-
-        Account a = modelMapper.map(body, Account.class);
-
-
-        //get all accounts to make a check to add a new account
-        List<Account> accountList = accountService.getAll();
-        String iban = accountIbanService.generateIban();
-        while (!accountList.contains(iban)) {
             try {
+                Account a = modelMapper.map(body, Account.class);
                 User u = userService.findById(body.getOwnerId());
                 a.setUser(u);
 
-                //generate the iban here
-                iban = accountIbanService.generateIban();
-                Integer pin = body.getPinCode();
-                if(String.valueOf(pin).length() != 4) {
-                    throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "pin needs to be 4 digits.");
-                }
-                if (pin != (int)pin)
-                {
-                    throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "pin needs to be an int.");
-                }
-                a.setPinCode(body.getPinCode());
-                a.setAccountType(body.getAccountType());
-                a.setIban(iban);
                 a = accountService.addAccount(a);
 
                 AccountDTO resp = modelMapper.map(a, AccountDTO.class);
-
                 resp.setOwnerId(u.getId());
 
                 return new ResponseEntity<AccountDTO>(resp, HttpStatus.CREATED);
-
             }
             catch (IllegalArgumentException ex) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account with generated iban already exists.");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Something went wrong");
             }
-        }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Something went wrong with generating your iban please try again.");
     }
 
     public ResponseEntity<List<AccountDTO>> getAccountsByOwnerID(@Parameter(in = ParameterIn.PATH, description = "User ID input", required=true, schema=@Schema()) @PathVariable("userID") UUID userID) {
@@ -113,7 +88,6 @@ public class AccountsApiController implements AccountsApi {
         for (int i = 0; i < responsedto.size(); i++) {
             responsedto.get(i).setOwnerId(accountList.get(i).getUser().getId());
         }
-
 
         return new ResponseEntity<List<AccountDTO>>(responsedto, HttpStatus.OK);
     }
