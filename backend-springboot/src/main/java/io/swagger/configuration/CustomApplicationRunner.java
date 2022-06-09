@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Configuration
 public class CustomApplicationRunner implements ApplicationRunner {
@@ -32,9 +31,7 @@ public class CustomApplicationRunner implements ApplicationRunner {
         List<UserType> userTypes = new ArrayList<>();
         userTypes.add(UserType.ROLE_EMPLOYEE);
         User Bank = new User();
-        //Bank.setId(UUID.fromString("00000000-0000-0000-0000-00000000"));
         Bank.setActive(true);
-//        Bank.setUserTypes();
         Bank.setUsername("InhollandBank");
         Bank.setPassword("welkom");
         Bank.setEmail("info@inhollandbank.nl");
@@ -42,11 +39,10 @@ public class CustomApplicationRunner implements ApplicationRunner {
         Bank.setDayLimit(0.00);
         Bank.setUserTypes(userTypes);
 
-        // max double value = 9007199254740992
-        Double max = 9007199254740992.00;
+        double max = 1000000000000.00;
         Account bankAccount = new Account();
         bankAccount.setUser(Bank);
-        bankAccount.setAbsLimit(0.00 - max);
+        bankAccount.setAbsLimit(0.00 - Double.MAX_VALUE);
         bankAccount.setBalance(max);
         bankAccount.setIban("NL01INHO0000000001");
         bankAccount.setAccountType(AccountType.CURRENT);
@@ -55,20 +51,6 @@ public class CustomApplicationRunner implements ApplicationRunner {
 
         userService.addUser(Bank);
         accountService.addAccount(bankAccount);
-
-
-
-//        //Add a test Customer & Employee to the DB when the application starts running
-//        User testCustomer = new User();
-//        User testEmployee = new User();
-//        //Add user info here
-//        testCustomer.setUsername("customer");
-//        testCustomer.setPassword("customer");
-//        testCustomer.s
-//
-//
-//        userService.addUser(testCustomer);
-//        userService.addUser(testCustomer);
 
     }
 }

@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -24,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -59,6 +59,7 @@ public class AccountsApiController implements AccountsApi {
         this.request = request;
     }
 
+    @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<AccountDTO> addAccount(@Parameter(in = ParameterIn.DEFAULT, description = "New account object", required=true, schema=@Schema()) @Valid @RequestBody AccountDTO body) {
             try {
                 Account a = modelMapper.map(body, Account.class);
@@ -77,6 +78,7 @@ public class AccountsApiController implements AccountsApi {
             }
     }
 
+    @PreAuthorize("hasAnyRole('EMPLOYEE', 'CUSTOMER')")
     public ResponseEntity<List<AccountDTO>> getAccountsByOwnerID(@Parameter(in = ParameterIn.PATH, description = "User ID input", required=true, schema=@Schema()) @PathVariable("userID") UUID userID) {
 
         List<Account> accountList = accountService.findAccountsByUserId(userID);
@@ -92,6 +94,7 @@ public class AccountsApiController implements AccountsApi {
         return new ResponseEntity<List<AccountDTO>>(responsedto, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyRole('EMPLOYEE', 'CUSTOMER')")
     public ResponseEntity<AccountDTO> getAccountByIban(@Parameter(in = ParameterIn.PATH, description = "IBAN input", required=true, schema=@Schema()) @PathVariable("iban") String iban) {
 
         try{
@@ -108,30 +111,37 @@ public class AccountsApiController implements AccountsApi {
         }
 
     }
+    @PreAuthorize("hasAnyRole('EMPLOYEE')")
     public ResponseEntity<List<AccountDTO>> getAccounts(@Min(0)@Parameter(in = ParameterIn.QUERY, description = "Number of records to skip for pagination" ,schema=@Schema(allowableValues={  }
 )) @Valid @RequestParam(value = "skip", required = false) Integer skip,@Min(1) @Max(200000) @Parameter(in = ParameterIn.QUERY, description = "Maximum number of records to return" ,schema=@Schema(allowableValues={  }, minimum="1", maximum="200000"
 )) @Valid @RequestParam(value = "limit", required = false) Integer limit) {
 
         List<Account> accountList = accountService.getAll();
-
+        //logic for skip limit
+        Long newLimit = null;
+        if(skip == null ) skip = 0;
+        if(limit == null) {
+             newLimit = Long.MAX_VALUE;
+        }
+        else {
+             newLimit = limit.longValue();
+        }
         List<AccountDTO> dtos = accountList
-                .stream()
-                .map(user -> modelMapper.map(user, AccountDTO.class))
-                .collect(Collectors.toList());
-
+                    .stream()
+                    .map(user -> modelMapper.map(user, AccountDTO.class))
+                    .skip(skip).limit(newLimit)
+                    .collect(Collectors.toList());
         for (int i = 0; i < dtos.size(); i++) {
             dtos.get(i).setOwnerId(accountList.get(i).getUser().getId());
         }
 
         return new ResponseEntity<List<AccountDTO>>(dtos, HttpStatus.OK);
     }
-
+    @PreAuthorize("hasAnyRole('EMPLOYEE', 'CUSTOMER')")
     public ResponseEntity<AccountDTO> updateAccount(@Parameter(in = ParameterIn.PATH, description = "IBAN input", required=true, schema=@Schema()) @PathVariable("iban") String iban,@Parameter(in = ParameterIn.DEFAULT, description = "Updated account object", required=true, schema=@Schema()) @Valid @RequestBody AccountDTO body) {
-
 
         Account account = modelMapper.map(body, Account.class);
         account = accountService.updateAccount(account);
-
         AccountDTO response = modelMapper.map(account, AccountDTO.class);
 
 

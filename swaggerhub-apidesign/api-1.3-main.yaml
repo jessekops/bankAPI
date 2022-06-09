@@ -283,14 +283,7 @@ paths:
                 $ref: "#/components/schemas/AccountDTO"
         404:
           description: Account IBAN not found
-  /transactions/{transactionMethod}:
-    parameters:
-      - in: path
-        name: transactionMethod
-        required: true
-        description: Method input; specify if transaction is Regular, Withdrawal or Deposit
-        schema:
-          type: string
+  /transactions:
     post:
       tags:
         - Employee
@@ -516,6 +509,8 @@ components:
           type: string
           format: uuid
           example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        transactionType:
+          $ref: "#/components/schemas/TransactionType"
         timestamp:
           type: string
           format: date-time
@@ -538,3 +533,9 @@ components:
         pincode:
           type: integer
           example: 1234
+    TransactionType:
+      type: string
+      enum:
+        - regular
+        - deposit
+        - withdraw
