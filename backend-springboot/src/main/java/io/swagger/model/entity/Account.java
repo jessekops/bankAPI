@@ -2,6 +2,7 @@ package io.swagger.model.entity;
 
 import io.swagger.model.enumeration.AccountType;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.List;
@@ -21,6 +22,7 @@ public class Account {
     private Double absLimit;
     private Boolean active;
 
+    @ToString.Exclude
     @ManyToOne(cascade = CascadeType.ALL)
     private User user;
 
@@ -28,8 +30,11 @@ public class Account {
         this.user = user;
     }
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "from")
     private List<Transaction> transactions;
+
+
 
 
 
