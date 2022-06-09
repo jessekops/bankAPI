@@ -72,6 +72,7 @@ public class AccountsApiController implements AccountsApi {
             try {
                 User u = userService.findById(body.getOwnerId());
                 a.setUser(u);
+
                 //generate the iban here
                 iban = accountIbanService.generateIban();
                 Integer pin = body.getPinCode();
@@ -90,6 +91,7 @@ public class AccountsApiController implements AccountsApi {
                 AccountDTO resp = modelMapper.map(a, AccountDTO.class);
 
                 resp.setOwnerId(u.getId());
+
                 return new ResponseEntity<AccountDTO>(resp, HttpStatus.CREATED);
 
             }
@@ -122,6 +124,8 @@ public class AccountsApiController implements AccountsApi {
             Account foundAccount = accountService.findAccountByIban(iban);
 
             AccountDTO response = modelMapper.map(foundAccount, AccountDTO.class);
+
+            response.setOwnerId(foundAccount.getUser().getId());
 
             return new ResponseEntity<AccountDTO>(response, HttpStatus.OK);
         }
