@@ -26,7 +26,7 @@ public class TransactionValidatorService {
 
     // Method to check if it is current or savings account
 
-    public boolean checkCurrentOrSavings(Account accountTo, Account accountFrom) {
+    public boolean checkCurrentOrSavings(Account accountFrom, Account accountTo) {
 
         if (!Objects.equals(accountFrom.getAccountType(), AccountType.SAVINGS) || !Objects.equals(accountTo.getAccountType(), AccountType.SAVINGS)) {
             return false;
