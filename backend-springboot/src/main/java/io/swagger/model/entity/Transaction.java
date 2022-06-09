@@ -20,14 +20,17 @@ public class Transaction {
 
     private LocalDate timestamp;
 
-    @ManyToOne
-    private Account from;
-    public void setFrom(Account from) {
+    private String from;
+
+    public void setFrom(String from) {
         this.from = from;
     }
 
+
     private String to;
+
     private Double amount;
+
     private UUID userPerforming;
 
 
