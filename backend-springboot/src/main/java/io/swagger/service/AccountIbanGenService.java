@@ -24,7 +24,6 @@ public class AccountIbanGenService extends AccountService {
         }
     }
     public String generateIban() {
-
             StringBuilder iban = new StringBuilder("NL");
             Random prefix = new Random();
             int max = 100;
@@ -40,11 +39,5 @@ public class AccountIbanGenService extends AccountService {
             else {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong generating your iban.");
             }
-
-
-
-
-
-
     }
 }
