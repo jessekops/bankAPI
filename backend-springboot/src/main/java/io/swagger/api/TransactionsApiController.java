@@ -22,9 +22,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import org.threeten.bp.LocalDate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.Date;
 import java.util.UUID;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-23T13:04:25.984Z[GMT]")
@@ -57,9 +59,17 @@ public class TransactionsApiController implements TransactionsApi {
     public ResponseEntity<TransactionDTO> createTransaction(@Parameter(in = ParameterIn.PATH, description = "Method input; specify if transaction is Regular, Withdrawal or Deposit", required=true, schema=@Schema()) @PathVariable("transactionMethod") String transactionMethod,@Parameter(in = ParameterIn.DEFAULT, description = "New transaction object", required=true, schema=@Schema()) @Valid @RequestBody TransactionDTO body) {
 
         try {
+
             Transaction trans = modelMapper.map(body, Transaction.class);
-            Account a = accountService.findAccountByIban(body.getFrom());
-            trans.setFrom(a);
+
+
+            trans.setId(UUID.randomUUID());
+//            trans.setUserPerforming(body.getUserPerforming());
+//            trans.setFrom(body.getFrom());
+
+            TransactionDTO response = modelMapper.map(trans, TransactionDTO.class);
+
+            response.setFrom(body.getFrom());
 //            switch (transactionMethod){
 //                case "Regular":
 //                    trans = transService.createTransaction(trans);
@@ -74,9 +84,10 @@ public class TransactionsApiController implements TransactionsApi {
 
 
 
-            TransactionDTO response = modelMapper.map(trans, TransactionDTO.class);
-            response.setFrom(a.getIban());
+
+
             return new ResponseEntity<TransactionDTO>(response, HttpStatus.CREATED);
+
         } catch (IllegalArgumentException exception) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
         }
