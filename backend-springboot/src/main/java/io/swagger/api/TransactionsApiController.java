@@ -61,30 +61,26 @@ public class TransactionsApiController implements TransactionsApi {
         try {
 
             Transaction trans = modelMapper.map(body, Transaction.class);
-
-
             trans.setId(UUID.randomUUID());
-//            trans.setUserPerforming(body.getUserPerforming());
-//            trans.setFrom(body.getFrom());
+            trans.setFrom(accountService.findAccountByIban(body.getFrom()));
+
+            switch (transactionMethod){
+                case "Regular":
+                    trans = transService.createTransaction(trans);
+                    break;
+                case "Withdrawal":
+                    trans = transService.createWithdrawal(trans);
+                    break;
+                case "Deposit":
+                    trans = transService.createDeposit(trans);
+                    break;
+            }
+
+//            trans.setFrom(null);
 
             TransactionDTO response = modelMapper.map(trans, TransactionDTO.class);
 
             response.setFrom(body.getFrom());
-//            switch (transactionMethod){
-//                case "Regular":
-//                    trans = transService.createTransaction(trans);
-//                    break;
-//                case "Withdrawal":
-//                    trans = transService.createWithdrawal(trans);
-//                    break;
-//                case "Deposit":
-//                    trans = transService.createDeposit(trans);
-//                    break;
-//            }
-
-
-
-
 
             return new ResponseEntity<TransactionDTO>(response, HttpStatus.CREATED);
 

@@ -1,21 +1,21 @@
 package io.swagger.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.v3.oas.annotations.media.Schema;
-import org.springframework.validation.annotation.Validated;
-import org.threeten.bp.LocalDate;
-import org.threeten.bp.OffsetDateTime;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.UUID;
+import org.threeten.bp.OffsetDateTime;
+import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * TransactionDTO
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-18T15:53:51.610Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-06-09T07:05:13.477Z[GMT]")
 
 
 public class TransactionDTO   {
@@ -37,6 +37,9 @@ public class TransactionDTO   {
   @JsonProperty("userPerforming")
   private UUID userPerforming = null;
 
+  @JsonProperty("pincode")
+  private Integer pincode = null;
+
   public TransactionDTO id(UUID id) {
     this.id = id;
     return this;
@@ -47,9 +50,9 @@ public class TransactionDTO   {
    * @return id
    **/
   @Schema(example = "d290f1ee-6c54-4b01-90e6-d701748f0851", description = "")
-  
-    @Valid
-    public UUID getId() {
+
+  @Valid
+  public UUID getId() {
     return id;
   }
 
@@ -67,9 +70,9 @@ public class TransactionDTO   {
    * @return timestamp
    **/
   @Schema(description = "")
-  
-    @Valid
-    public LocalDate getTimestamp() {
+
+  @Valid
+  public LocalDate getTimestamp() {
     return timestamp;
   }
 
@@ -87,9 +90,9 @@ public class TransactionDTO   {
    * @return from
    **/
   @Schema(example = "NLxxINHO0xxxxxxxxx", required = true, description = "")
-      @NotNull
+  @NotNull
 
-    public String getFrom() {
+  public String getFrom() {
     return from;
   }
 
@@ -107,9 +110,9 @@ public class TransactionDTO   {
    * @return to
    **/
   @Schema(example = "NLxxINHO0xxxxxxxxx", required = true, description = "")
-      @NotNull
+  @NotNull
 
-    public String getTo() {
+  public String getTo() {
     return to;
   }
 
@@ -127,9 +130,9 @@ public class TransactionDTO   {
    * @return amount
    **/
   @Schema(example = "3.2", required = true, description = "Amount of Euros")
-      @NotNull
+  @NotNull
 
-    public Double getAmount() {
+  public Double getAmount() {
     return amount;
   }
 
@@ -147,14 +150,33 @@ public class TransactionDTO   {
    * @return userPerforming
    **/
   @Schema(example = "d290f1ee-6c54-4b01-90e6-d701748f0851", description = "")
-  
-    @Valid
-    public UUID getUserPerforming() {
+
+  @Valid
+  public UUID getUserPerforming() {
     return userPerforming;
   }
 
   public void setUserPerforming(UUID userPerforming) {
     this.userPerforming = userPerforming;
+  }
+
+  public TransactionDTO pincode(Integer pincode) {
+    this.pincode = pincode;
+    return this;
+  }
+
+  /**
+   * Get pincode
+   * @return pincode
+   **/
+  @Schema(example = "1234", description = "")
+
+  public Integer getPincode() {
+    return pincode;
+  }
+
+  public void setPincode(Integer pincode) {
+    this.pincode = pincode;
   }
 
 
@@ -168,29 +190,31 @@ public class TransactionDTO   {
     }
     TransactionDTO transactionDTO = (TransactionDTO) o;
     return Objects.equals(this.id, transactionDTO.id) &&
-        Objects.equals(this.timestamp, transactionDTO.timestamp) &&
-        Objects.equals(this.from, transactionDTO.from) &&
-        Objects.equals(this.to, transactionDTO.to) &&
-        Objects.equals(this.amount, transactionDTO.amount) &&
-        Objects.equals(this.userPerforming, transactionDTO.userPerforming);
+            Objects.equals(this.timestamp, transactionDTO.timestamp) &&
+            Objects.equals(this.from, transactionDTO.from) &&
+            Objects.equals(this.to, transactionDTO.to) &&
+            Objects.equals(this.amount, transactionDTO.amount) &&
+            Objects.equals(this.userPerforming, transactionDTO.userPerforming) &&
+            Objects.equals(this.pincode, transactionDTO.pincode);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, timestamp, from, to, amount, userPerforming);
+    return Objects.hash(id, timestamp, from, to, amount, userPerforming, pincode);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class TransactionDTO {\n");
-    
+
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    timestamp: ").append(toIndentedString(timestamp)).append("\n");
     sb.append("    from: ").append(toIndentedString(from)).append("\n");
     sb.append("    to: ").append(toIndentedString(to)).append("\n");
     sb.append("    amount: ").append(toIndentedString(amount)).append("\n");
     sb.append("    userPerforming: ").append(toIndentedString(userPerforming)).append("\n");
+    sb.append("    pincode: ").append(toIndentedString(pincode)).append("\n");
     sb.append("}");
     return sb.toString();
   }

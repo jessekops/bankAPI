@@ -6,10 +6,8 @@ import io.swagger.model.entity.User;
 import io.swagger.model.enumeration.AccountType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.threeten.bp.LocalDate;
+import java.time.LocalDate;
 
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -26,7 +24,7 @@ public class TransactionValidatorService {
 
     // Method to check if it is current or savings account
 
-    public boolean checkCurrentOrSavings(Account accountTo, Account accountFrom) {
+    public boolean checkCurrentOrSavings(Account accountFrom, Account accountTo) {
 
         if (!Objects.equals(accountFrom.getAccountType(), AccountType.SAVINGS) || !Objects.equals(accountTo.getAccountType(), AccountType.SAVINGS)) {
             return false;
