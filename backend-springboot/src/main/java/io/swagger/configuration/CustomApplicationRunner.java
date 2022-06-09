@@ -42,11 +42,10 @@ public class CustomApplicationRunner implements ApplicationRunner {
         Bank.setDayLimit(0.00);
         Bank.setUserTypes(userTypes);
 
-        // max double value = 9007199254740992
-        Double max = 9007199254740992.00;
+        Double max = 1000000000000.00;
         Account bankAccount = new Account();
         bankAccount.setUser(Bank);
-        bankAccount.setAbsLimit(0.00 - max);
+        bankAccount.setAbsLimit(0.00 - Double.MAX_VALUE);
         bankAccount.setBalance(max);
         bankAccount.setIban("NL01INHO0000000001");
         bankAccount.setAccountType(AccountType.CURRENT);
@@ -55,20 +54,6 @@ public class CustomApplicationRunner implements ApplicationRunner {
 
         userService.addUser(Bank);
         accountService.addAccount(bankAccount);
-
-
-
-//        //Add a test Customer & Employee to the DB when the application starts running
-//        User testCustomer = new User();
-//        User testEmployee = new User();
-//        //Add user info here
-//        testCustomer.setUsername("customer");
-//        testCustomer.setPassword("customer");
-//        testCustomer.s
-//
-//
-//        userService.addUser(testCustomer);
-//        userService.addUser(testCustomer);
 
     }
 }
