@@ -10,6 +10,7 @@ import java.time.LocalDate;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @Service
 public class TransactionValidatorService {
@@ -32,9 +33,9 @@ public class TransactionValidatorService {
     }
     // Method to check if the user is the owner of the account
 
-    public boolean isUserOwner(User user, Account from, Account to) {
+    public boolean isUserOwner(UUID userId, Account from, Account to) {
 
-        if (from.getUser() != user || to.getUser() != user) {
+        if (!from.getUser().getId().equals(userId) || !to.getUser().getId().equals(userId)) {
             return false;
         } else return true;
     }
@@ -68,7 +69,7 @@ public class TransactionValidatorService {
 
     // Method to check if it does not override day limit
 
-    public boolean checkDayLimit(User user) {
+    public boolean checkDayLimit(User user, Transaction trans) {
         double dayLimit = user.getDayLimit();
 
         List<Transaction> transToday = transactionService.getTransactionsFromToday(LocalDate.now());
@@ -77,6 +78,8 @@ public class TransactionValidatorService {
             total += transaction.getAmount();
         }
 
+        // Add the amount of the new transaction to the total
+        total += trans.getAmount();
         if (total > dayLimit) {
             return false;
         } else return true;
