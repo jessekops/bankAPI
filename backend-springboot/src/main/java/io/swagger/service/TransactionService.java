@@ -5,11 +5,9 @@ import io.swagger.model.entity.Transaction;
 import io.swagger.model.entity.User;
 import io.swagger.repo.AccountRepo;
 import io.swagger.repo.TransactionRepo;
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.stereotype.Service;
-import org.threeten.bp.LocalDate;
+import java.time.LocalDate;
 
 import java.util.List;
 import java.util.UUID;

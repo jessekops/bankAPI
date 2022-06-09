@@ -2,8 +2,7 @@ package io.swagger.model.entity;
 
 import lombok.Data;
 import lombok.ToString;
-import org.threeten.bp.LocalDate;
-import org.threeten.bp.OffsetDateTime;
+import java.time.LocalDate;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -26,6 +25,10 @@ public class Transaction {
     @ToString.Exclude
     @ManyToOne(cascade = CascadeType.ALL)
     private Account from;
+
+    public void setFrom(Account from) {
+        this.from = from;
+    }
 
     private String to;
 
