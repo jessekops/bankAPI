@@ -28,23 +28,21 @@ public class AccountService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Pin code has to be 4 digits long and of type Integer.");
         }
         else {
-            String iban = accountIbanGenService.generateIban();
             if(a.getActive() == null) {
                 a.setActive(true);
             }
-            if(iban.length() != 0) {
-                a.setIban(iban);
-                return accountRepo.save(a);
+            if(a.getIban() == null) {
+                a.setIban(accountIbanGenService.generateIban());
             }
-            else {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong generating your iban.");
-            }
+            return accountRepo.save(a);
+
         }
     }
 
 
     public List<Account> findAccountsByUserId(UUID userId) {
         if(!accountRepo.findAccountsByUserId(userId).isEmpty()) {
+
             return accountRepo.findAccountsByUserId(userId);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -65,6 +63,9 @@ public class AccountService {
 
     }
     public List<Account> getAll() {
-        return accountRepo.findAll();
+        //this deletes the bank account from the list
+        List<Account> accountList =  accountRepo.findAll();
+        accountList.removeIf(account -> account.getIban().equals("NL01INHO0000000001"));
+        return accountList;
     }
 }
