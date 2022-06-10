@@ -39,7 +39,6 @@ public class AccountService {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong generating your iban.");
 
             }
-            return accountRepo.save(a);
 
         }
     }
@@ -54,7 +53,9 @@ public class AccountService {
     }
 
     public Account updateAccount(Account updatedAccount) {
-        return accountRepo.save(updatedAccount);
+            return accountRepo.save(updatedAccount);
+
+
     }
 
     public Account findAccountByIban(String iban) {

@@ -25,7 +25,7 @@
           </option>
         </select>
       </div>
-      <div class="input-group mb-3">
+      <div v-if="balance" class="input-group mb-3">
         <span class="input-group-text">Iban to make a deposit to</span>
         <input
           :disabled="disable"
@@ -131,8 +131,8 @@ export default {
           this.disable = true;
           console.log(this.fetchedAccount);
         })
-        .catch(function (error) {
-          // this.errMsg = "User not found";
+        .catch((error) => {
+          this.errorMsg = error;
 
           console.log(error);
         });
@@ -181,11 +181,13 @@ export default {
         "-" +
         ("0" + (today.getDate() + 1)).slice(-2);
       const data = JSON.stringify({
+        transactionType: "regular",
         timestamp: date,
         amount: this.balInput,
         userPerforming: this.userID,
         from: this.myIban,
-        to: this.myIban,
+        to: this.toIban,
+        pincode: null,
       });
       let config = {
         headers: {
@@ -195,13 +197,14 @@ export default {
         },
       };
       axios
-        .post("transactions/Regular", data, config)
+        .post("transactions", data, config)
         .then((response) => {
           console.log(response);
+          this.$router.replace("/accounts");
         })
         .catch((error) => {
-          this.errorMsg = error;
-          console.log(data);
+          this.errorMsg = error.response.data.reason;
+          console.log(error);
         });
     },
     onChange(event) {

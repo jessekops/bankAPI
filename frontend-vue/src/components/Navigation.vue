@@ -17,9 +17,12 @@
           <router-link to="/deposit" class="nav-link nav-item">
             Deposit
           </router-link>
-          <li class="nav-item">
-            <a class="nav-link" href="">Withdraw</a>
-          </li>
+          <router-link to="/withdraw" class="nav-link nav-item">
+            Withdraw
+          </router-link>
+          <router-link to="/transaction" class="nav-link nav-item">
+            Transaction
+          </router-link>
         </ul>
         <ul class="navbar-nav ms-auto">
           <li v-if="isAdmin" class="nav-item dropdown">
@@ -40,8 +43,16 @@
                   >Accounts</router-link
                 >
               </li>
-              <li><a class="dropdown-item" href="#">Transactions</a></li>
-              <li><a class="dropdown-item" href="#">Users</a></li>
+              <li>
+                <router-link class="dropdown-item" to="/transaction"
+                  >Transactions</router-link
+                >
+              </li>
+              <li>
+                <router-link to="/users" class="dropdown-item"
+                  >Users</router-link
+                >
+              </li>
             </ul>
           </li>
           <li class="nav-item" v-if="!isLoggedIn">
