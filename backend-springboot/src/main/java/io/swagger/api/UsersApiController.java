@@ -54,34 +54,24 @@ public class UsersApiController implements UsersApi {
     // No role is needed for this endpoint, since there isn't a token yet.
     public ResponseEntity<UserDTO> addUser(@Parameter(in = ParameterIn.DEFAULT, description = "New user object", required = true, schema = @Schema()) @Valid @RequestBody UserDTO body) {
 
-        // Map the UserDTO object from the body to a new User object
-        User user = mapper.map(body, User.class);
+        try{
+            // Map the UserDTO object from the body to a new User object
+            User user = mapper.map(body, User.class);
 
-        // Get a list of all the existing user in the DB
-        List<User> existingUsers = userService.getAll();
-        for (User u : existingUsers) {
-            // Check if the chosen username is already in use
-            if (u.getUsername().equals(user.getUsername())) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT, "Username is already in use! Please try again");
-            }
+            // Check if user exist with the given user's username, email or phone number
+            userService.doesUserExist(user);
 
-            // Check if the chosen email address is already in use
-            if (u.getEmail().equals(user.getEmail())) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT, "Email address is already in use! Please try again");
-            }
+            // Add the user to the DB
+            user = userService.addUser(user);
 
-            // Check if the chosen phone number is already in use
-            if (u.getPhone().equals(user.getPhone())) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT, "Phone number is already in use! Please try again");
-            }
+            // Respond with the new User, mapped to a UserDTO object
+            UserDTO response = mapper.map(user, UserDTO.class);
+            return new ResponseEntity<UserDTO>(response, HttpStatus.CREATED);
+        }
+        catch(IllegalArgumentException ex){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, ex.getMessage());
         }
 
-        // Add the user to the DB
-        user = userService.addUser(user);
-
-        // Respond with the new User, mapped to a UserDTO object
-        UserDTO response = mapper.map(user, UserDTO.class);
-        return new ResponseEntity<UserDTO>(response, HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'CUSTOMER')")

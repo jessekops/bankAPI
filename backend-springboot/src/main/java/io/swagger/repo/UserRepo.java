@@ -15,11 +15,13 @@ public interface UserRepo extends JpaRepository<User, UUID> {
 
     // UpdateUser (uses .save() in UserService)
 
-    User findUserById(UUID ID);
+    User findUserById(UUID id);
 
     User findByUsername(String username);
 
     User findByEmail(String email);
+
+    User findByPhone(String phone);
 
     // Select all Users who do not have an account
     @Query(value = "SELECT * FROM `USER` WHERE ID NOT IN (SELECT USER_ID FROM ACCOUNT);", nativeQuery = true)

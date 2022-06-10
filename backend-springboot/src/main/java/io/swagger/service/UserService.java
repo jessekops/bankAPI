@@ -56,14 +56,6 @@ public class UserService {
         return userRepo.save(user);
     }
 
-    public User findByUsername(String username) {
-        return userRepo.findByUsername(username);
-    }
-
-    public User findByEmail(String email) {
-        return userRepo.findByEmail(email);
-    }
-
     public User updateUser(User updatedUser) {
 
         updatedUser.setPassword(encoder.encode(updatedUser.getPassword()));
@@ -79,7 +71,36 @@ public class UserService {
         return userRepo.findAllWithoutAccount();
     }
 
-    public User findById(UUID Id) {
-        return userRepo.findUserById(Id);
+    public User findByUsername(String username) {
+        return userRepo.findByUsername(username);
+    }
+
+    public User findByEmail(String email) {
+        return userRepo.findByEmail(email);
+    }
+
+    public User findByPhone(String phone){
+        return userRepo.findByPhone(phone);
+    }
+
+    public User findById(UUID id) {
+        return userRepo.findUserById(id);
+    }
+
+    public void doesUserExist(User user){
+
+        if(findByUsername(user.getUsername()) != null){
+            throw new IllegalArgumentException("Username is already in use! Please try again");
+        }
+
+        if(findByEmail(user.getEmail()) != null){
+            throw new IllegalArgumentException("Email is already in use! Please try again");
+        }
+
+        if(findByPhone(user.getPhone()) != null){
+            throw new IllegalArgumentException("Phone number is already in use! Please try again");
+        }
+
+//        return findByUsername(user.getUsername()) != null && findByEmail(user.getEmail()) != null && findByPhone(user.getPhone()) != null;
     }
 }
