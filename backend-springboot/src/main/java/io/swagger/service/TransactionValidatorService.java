@@ -59,12 +59,7 @@ public class TransactionValidatorService {
     // Method to check if there is sufficient funds (absolute limit)
 
     public boolean checkAbsLimit(Account accountFrom, double amount) {
-        double balance = accountFrom.getBalance();
-        double absLimit = accountFrom.getAbsLimit();
-
-        if ((balance - amount) < absLimit) {
-            return false;
-        } else return true;
+       return isAbsoluteLimitExceeded(accountFrom.getBalance(), amount, accountFrom.getAbsLimit());
     }
 
     // Method to check if it does not override day limit
@@ -91,5 +86,9 @@ public class TransactionValidatorService {
         if (from.getActive() && to.getActive()) {
             return true;
         } else return false;
+    }
+
+    private boolean isAbsoluteLimitExceeded(double balance, double amount, double absLimit) {
+        return balance - amount < absLimit;
     }
 }
