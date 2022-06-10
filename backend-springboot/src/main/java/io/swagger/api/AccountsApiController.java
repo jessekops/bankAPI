@@ -140,12 +140,25 @@ public class AccountsApiController implements AccountsApi {
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'CUSTOMER')")
     public ResponseEntity<AccountDTO> updateAccount(@Parameter(in = ParameterIn.PATH, description = "IBAN input", required=true, schema=@Schema()) @PathVariable("iban") String iban,@Parameter(in = ParameterIn.DEFAULT, description = "Updated account object", required=true, schema=@Schema()) @Valid @RequestBody AccountDTO body) {
 
-        Account account = modelMapper.map(body, Account.class);
-        account = accountService.updateAccount(account);
-        AccountDTO response = modelMapper.map(account, AccountDTO.class);
+        Account foundaccount = accountService.findAccountByIban(iban);
+        if(foundaccount != null) {
+            //map account from body
+            Account account = modelMapper.map(body, Account.class);
+            //map account from iban
+            //preset 2 things that never should be able to change
+            account.setIban(foundaccount.getIban());
+            account.setUser(foundaccount.getUser());
+
+            account = accountService.updateAccount(account);
+            AccountDTO response = modelMapper.map(account, AccountDTO.class);
+            //set response owner id
+            response.setOwnerId(account.getUser().getId());
+            return new ResponseEntity<AccountDTO>(response, HttpStatus.CREATED);
+        }
+        else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Could not find an account to update.");
+        }
 
 
-        return new ResponseEntity<AccountDTO>(response, HttpStatus.CREATED);
     }
-
 }
