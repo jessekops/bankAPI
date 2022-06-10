@@ -27,15 +27,15 @@ public class TransactionValidatorService {
 
     public boolean checkCurrentOrSavings(Account accountFrom, Account accountTo) {
 
-        if (!Objects.equals(accountFrom.getAccountType(), AccountType.SAVINGS) || !Objects.equals(accountTo.getAccountType(), AccountType.SAVINGS)) {
+        if (!accountFrom.getAccountType().equals(AccountType.SAVINGS) || !accountTo.getAccountType().equals(AccountType.SAVINGS)) {
             return false;
         } else return true;
     }
     // Method to check if the user is the owner of the account
 
-    public boolean isUserOwner(UUID userId, Account from, Account to) {
+    public boolean isUserOwner(Account from, Account to) {
 
-        if (!from.getUser().getId().equals(userId) || !to.getUser().getId().equals(userId)) {
+        if (!from.getUser().getId().equals(to.getUser().getId())) {
             return false;
         } else return true;
     }
