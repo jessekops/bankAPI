@@ -29,7 +29,7 @@
       <form v-on:submit.prevent="login" ref="depoform">
         <div v-if="balance" class="form-hider">
           <div class="input-group mb-3">
-            <span class="input-group-text">Amount to deposit: €</span>
+            <span class="input-group-text">Amount to withdraw: €</span>
             <input
               @keypress="isNumber($event)"
               selected
@@ -95,9 +95,9 @@
             <button
               type="button"
               class="w-100 btn btn-primary"
-              @click="deposit()"
+              @click="withdraw()"
             >
-              Deposit
+              Withdraw
             </button>
           </div>
           <p v-if="errorMsg" class="text-danger">{{ errorMsg }}</p>
@@ -111,7 +111,7 @@
 import axios from "../../axios-auth";
 import { mapGetters } from "vuex";
 export default {
-  name: "Deposit",
+  name: "Withdraw",
   computed: {
     ...mapGetters(["isAdmin"]),
     ...mapGetters(["isLoggedIn"]),
@@ -134,6 +134,7 @@ export default {
       errorMsg: "",
       myIban: "",
       token: "",
+      absLimit: "",
     };
   },
   watch: {
@@ -217,7 +218,7 @@ export default {
       }
       e.preventDefault();
     },
-    deposit() {
+    withdraw() {
       if (
         this.balInput != "" &&
         this.pin_0 != null &&
@@ -231,19 +232,22 @@ export default {
           this.pin_2.toString() +
           this.pin_3.toString();
         const balFloat = parseFloat(this.balInput);
-        if (stringCode == this.pintoCheck && balFloat) {
-          //deposit axios method here
-          this.pinfull = parseInt(stringCode);
-          this.depositAxios();
+        if (this.balance - balFloat < this.absLimit) {
+          this.errorMsg = "you dont have enough money to withdraw that amount.";
         } else {
-          this.errorMsg = "pincode is incorrect";
+          if (stringCode == this.pintoCheck && balFloat) {
+            //deposit+ axios method here
+            this.pinfull = parseInt(stringCode);
+            this.withdrawAxios();
+          } else {
+            this.errorMsg = "pincode is incorrect";
+          }
         }
-        console.log(stringCode + this.pintoCheck);
       } else {
         this.errorMsg = "please fill in all the fields";
       }
     },
-    depositAxios() {
+    withdrawAxios() {
       const today = new Date();
       const date =
         today.getFullYear() +
@@ -252,12 +256,12 @@ export default {
         "-" +
         ("0" + (today.getDate() + 1)).slice(-2);
       const data = JSON.stringify({
-        transactionType: "deposit",
+        transactionType: "withdraw",
         timestamp: date,
         amount: parseFloat(this.balInput),
         userPerforming: this.userID,
-        from: "NL01INHO0000000001",
-        to: this.myIban,
+        to: "NL01INHO0000000001",
+        from: this.myIban,
         pincode: this.pinfull,
       });
       let config = {
@@ -274,6 +278,8 @@ export default {
           this.$router.replace("/accounts");
         })
         .catch((error) => {
+          console.log(data);
+          console.log(error);
           this.errorMsg = error.response.data.reason;
         });
     },
@@ -298,6 +304,7 @@ export default {
           this.balance = response.data.balance;
           this.pintoCheck = response.data.pinCode;
           this.myIban = response.data.iban;
+          this.absLimit = response.data.absLimit;
           this.$refs.depoform.reset();
         })
         .catch((error) => {

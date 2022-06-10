@@ -65,7 +65,9 @@
                 <p class="card-text">
                   This is quick access to make a withdrawal
                 </p>
-                <a href="/withdraw" class="btn btn-info text-white">Withdraw</a>
+                <router-link to="/withdraw" class="btn btn-info text-white"
+                  >Withdraw</router-link
+                >
               </div>
             </div>
           </div>
