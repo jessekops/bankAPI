@@ -17,15 +17,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-06-07T12:51:42.133Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-06-13T15:28:15.134Z[GMT]")
 @Validated
 public interface UsersApi {
 
@@ -39,6 +38,20 @@ public interface UsersApi {
             consumes = {"application/json"},
             method = RequestMethod.POST)
     ResponseEntity<UserDTO> addUser(@Parameter(in = ParameterIn.DEFAULT, description = "New user object", required = true, schema = @Schema()) @Valid @RequestBody UserDTO body);
+
+
+    @Operation(summary = "Search a user list with pagination", description = "By passing in the appropriate options, you can search for users in the DB ", security = {
+            @SecurityRequirement(name = "bearerAuth")}, tags = {"Employee"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Users found", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserDTO.class)))),
+
+            @ApiResponse(responseCode = "404", description = "No users found")})
+    @RequestMapping(value = "/users",
+            produces = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<List<UserDTO>> getAllUsers(@Min(0) @Parameter(in = ParameterIn.QUERY, description = "Number of records to skip for pagination", schema = @Schema(allowableValues = {}
+    )) @Valid @RequestParam(value = "skip", required = false) Integer skip, @Min(1) @Max(200000) @Parameter(in = ParameterIn.QUERY, description = "Maximum number of records to return", schema = @Schema(allowableValues = {}, minimum = "1", maximum = "200000"
+    )) @Valid @RequestParam(value = "limit", required = false) Integer limit);
 
 
     @Operation(summary = "Find all user without an account", description = "", security = {

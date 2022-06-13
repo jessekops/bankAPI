@@ -5,6 +5,10 @@ import io.swagger.model.dto.TokenDTO;
 import io.swagger.model.entity.User;
 import io.swagger.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -62,8 +66,10 @@ public class UserService {
         return userRepo.save(updatedUser);
     }
 
-    public List<User> getAll() {
-        return userRepo.findAll();
+    public List<User> getAll(Integer skip, Integer limit) {
+
+        Pageable pageable = PageRequest.of(skip, limit);
+        return userRepo.findAll(pageable).getContent();
     }
 
     public List<User> getAllWithoutAccount() {
