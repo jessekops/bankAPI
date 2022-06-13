@@ -23,14 +23,13 @@ public class UserService {
     private UserRepo userRepo;
 
     @Autowired
-    JwtTokenProvider provider;
+    private JwtTokenProvider provider;
 
     @Autowired
-    AuthenticationManager authManager;
+    private AuthenticationManager authManager;
 
     @Autowired
-    PasswordEncoder encoder;
-
+    private PasswordEncoder encoder;
 
     public TokenDTO login(String username, String password) {
 
@@ -67,7 +66,7 @@ public class UserService {
         return userRepo.findAll();
     }
 
-    public List<User> getAllWithoutAccount(){
+    public List<User> getAllWithoutAccount() {
         return userRepo.findAllWithoutAccount();
     }
 
@@ -79,7 +78,7 @@ public class UserService {
         return userRepo.findByEmail(email);
     }
 
-    public User findByPhone(String phone){
+    private User findByPhone(String phone) {
         return userRepo.findByPhone(phone);
     }
 
@@ -87,20 +86,18 @@ public class UserService {
         return userRepo.findUserById(id);
     }
 
-    public void doesUserExist(User user){
+    public void doesUserDataExist(User user) {
 
-        if(findByUsername(user.getUsername()) != null){
+        if (findByUsername(user.getUsername()) != null) {
             throw new IllegalArgumentException("Username is already in use! Please try again");
         }
 
-        if(findByEmail(user.getEmail()) != null){
+        if (findByEmail(user.getEmail()) != null) {
             throw new IllegalArgumentException("Email is already in use! Please try again");
         }
 
-        if(findByPhone(user.getPhone()) != null){
+        if (findByPhone(user.getPhone()) != null) {
             throw new IllegalArgumentException("Phone number is already in use! Please try again");
         }
-
-//        return findByUsername(user.getUsername()) != null && findByEmail(user.getEmail()) != null && findByPhone(user.getPhone()) != null;
     }
 }

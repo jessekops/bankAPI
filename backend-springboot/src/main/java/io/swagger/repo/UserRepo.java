@@ -23,8 +23,8 @@ public interface UserRepo extends JpaRepository<User, UUID> {
 
     User findByPhone(String phone);
 
-    // Select all Users who do not have an account
-    @Query(value = "SELECT * FROM `USER` WHERE ID NOT IN (SELECT USER_ID FROM ACCOUNT);", nativeQuery = true)
+    // Select all Users who do not have an account via JPQL
+    @Query(value = "SELECT u FROM User u WHERE NOT EXISTS (SELECT a FROM u.accounts a)")
     List<User> findAllWithoutAccount();
 
 }

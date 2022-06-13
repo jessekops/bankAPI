@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.persistence.PersistenceException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
@@ -54,12 +55,12 @@ public class UsersApiController implements UsersApi {
     // No role is needed for this endpoint, since there isn't a token yet.
     public ResponseEntity<UserDTO> addUser(@Parameter(in = ParameterIn.DEFAULT, description = "New user object", required = true, schema = @Schema()) @Valid @RequestBody UserDTO body) {
 
-        try{
+        try {
             // Map the UserDTO object from the body to a new User object
             User user = mapper.map(body, User.class);
 
-            // Check if user exist with the given user's username, email or phone number
-            userService.doesUserExist(user);
+            // Check if a user exist with the given user's username, email or phone number
+//            userService.doesUserDataExist(user);
 
             // Add the user to the DB
             user = userService.addUser(user);
@@ -67,8 +68,7 @@ public class UsersApiController implements UsersApi {
             // Respond with the new User, mapped to a UserDTO object
             UserDTO response = mapper.map(user, UserDTO.class);
             return new ResponseEntity<UserDTO>(response, HttpStatus.CREATED);
-        }
-        catch(IllegalArgumentException ex){
+        } catch (IllegalArgumentException | PersistenceException ex) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, ex.getMessage());
         }
 
@@ -79,21 +79,8 @@ public class UsersApiController implements UsersApi {
 
         User user = mapper.map(body, User.class);
 
-        // Get a list of all the existing user in the DB
-        List<User> existingUsers = userService.getAll();
-        boolean userExists = true;
-        for (User u : existingUsers) {
-            // Check if the request user to be updated, exists in the DB
-            if (user.getId().compareTo(u.getId()) != 0) {
-                userExists = false;
-            } else {
-                userExists = true;
-                break;
-            }
-        }
-
         // If the user does not exist, throw an exception
-        if (!userExists) {
+        if (userService.findById(user.getId()) == null) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "The user with the requested ID" + " (" + user.getId() + ") " + "could not be updated; user does not exist");
         }
 
@@ -107,25 +94,21 @@ public class UsersApiController implements UsersApi {
     public ResponseEntity<UserDTO> getByEmail(@Parameter(in = ParameterIn.PATH, description = "Email input", required = true, schema = @Schema()) @PathVariable("email") String email) {
 
         try {
-            User searchResult = userService.findByEmail(email);
 
-            UserDTO response = mapper.map(searchResult, UserDTO.class);
+            UserDTO response = mapper.map(userService.findByEmail(email), UserDTO.class);
 
             return new ResponseEntity<UserDTO>(response, HttpStatus.OK);
         } catch (IllegalArgumentException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with given email address not found.");
         }
-
-
     }
 
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserDTO> getByUsername(@Parameter(in = ParameterIn.PATH, description = "Username input", required = true, schema = @Schema()) @PathVariable("username") String username) {
 
         try {
-            User searchResult = userService.findByUsername(username);
 
-            UserDTO response = mapper.map(searchResult, UserDTO.class);
+            UserDTO response = mapper.map(userService.findByUsername(username), UserDTO.class);
 
             return new ResponseEntity<UserDTO>(response, HttpStatus.OK);
         } catch (IllegalArgumentException ex) {
@@ -136,9 +119,7 @@ public class UsersApiController implements UsersApi {
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<List<UserDTO>> getAllUsersWithoutAccount() {
 
-        List<User> users = userService.getAllWithoutAccount();
-
-        List<UserDTO> dtos = users
+        List<UserDTO> dtos = userService.getAllWithoutAccount()
                 .stream()
                 .map(user -> mapper.map(user, UserDTO.class))
                 .collect(Collectors.toList());
