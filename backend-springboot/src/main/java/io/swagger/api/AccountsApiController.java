@@ -116,20 +116,13 @@ public class AccountsApiController implements AccountsApi {
 )) @Valid @RequestParam(value = "skip", required = false) Integer skip,@Min(1) @Max(200000) @Parameter(in = ParameterIn.QUERY, description = "Maximum number of records to return" ,schema=@Schema(allowableValues={  }, minimum="1", maximum="200000"
 )) @Valid @RequestParam(value = "limit", required = false) Integer limit) {
 
+
         List<Account> accountList = accountService.getAll();
-        //logic for skip limit
-        Long newLimit = null;
-        if(skip == null ) skip = 0;
-        if(limit == null) {
-             newLimit = Long.MAX_VALUE;
-        }
-        else {
-             newLimit = limit.longValue();
-        }
+
+
         List<AccountDTO> dtos = accountList
                     .stream()
                     .map(user -> modelMapper.map(user, AccountDTO.class))
-                    .skip(skip).limit(newLimit)
                     .collect(Collectors.toList());
         for (int i = 0; i < dtos.size(); i++) {
             dtos.get(i).setOwnerId(accountList.get(i).getUser().getId());
@@ -137,6 +130,7 @@ public class AccountsApiController implements AccountsApi {
 
         return new ResponseEntity<List<AccountDTO>>(dtos, HttpStatus.OK);
     }
+
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'CUSTOMER')")
     public ResponseEntity<AccountDTO> updateAccount(@Parameter(in = ParameterIn.PATH, description = "IBAN input", required=true, schema=@Schema()) @PathVariable("iban") String iban,@Parameter(in = ParameterIn.DEFAULT, description = "Updated account object", required=true, schema=@Schema()) @Valid @RequestBody AccountDTO body) {
 
