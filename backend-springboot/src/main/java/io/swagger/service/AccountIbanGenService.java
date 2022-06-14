@@ -1,6 +1,7 @@
 package io.swagger.service;
 
 
+import io.swagger.model.entity.Account;
 import io.swagger.repo.AccountRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,13 +17,12 @@ public class AccountIbanGenService extends AccountService {
 
     //pincode check for integer
     public boolean pinCheck(Integer pin) {
-        if(String.valueOf(pin).length() == 4) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return String.valueOf(pin).length() == 4;
     }
+    public boolean allFieldsFilled(Account a) {
+        return a.getBalance() != null && a.getIban() != null && a.getAccountType() != null && a.getUser() != null;
+    }
+
     public String generateIban() {
             StringBuilder iban = new StringBuilder("NL");
             Random prefix = new Random();

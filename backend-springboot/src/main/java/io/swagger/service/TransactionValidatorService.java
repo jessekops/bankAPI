@@ -6,6 +6,7 @@ import io.swagger.model.entity.User;
 import io.swagger.model.enumeration.AccountType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 
 import java.util.List;
@@ -22,56 +23,59 @@ public class TransactionValidatorService {
     private UserService userService;
 
 
-
     // Method to check if it is current or savings account
 
     public boolean checkCurrentOrSavings(Account accountFrom, Account accountTo) {
-
-        if (!accountFrom.getAccountType().equals(AccountType.SAVINGS) || !accountTo.getAccountType().equals(AccountType.SAVINGS)) {
-            return false;
-        } else return true;
+        return isAccountSavings(accountFrom, accountTo);
     }
     // Method to check if the user is the owner of the account
 
     public boolean isUserOwner(Account from, Account to) {
-
-        if (!from.getUser().getId().equals(to.getUser().getId())) {
-            return false;
-        } else return true;
+        return isUserOwnerOfAccount(from, to);
     }
 
     // Method to check if the from account is not the same as to account
 
     public boolean checkNotSameAccount(String accountFrom, String accountTo) {
-        if (accountFrom.equals(accountTo)) {
-            return false;
-        } else return true;
+        return isFromSameAsTo(accountFrom, accountTo);
     }
-//    // Method to check if there is sufficient funds
-//
-//    public boolean checkSufficientFund(Account accountFrom, double amount) {
-//        double balance = accountFrom.getBalance();
-//        if ((balance - amount) < 0) {
-//            return false;
-//        } else return true;
-//    }
 
     // Method to check if there is sufficient funds (absolute limit)
 
     public boolean checkAbsLimit(Account accountFrom, double amount) {
-        double balance = accountFrom.getBalance();
-        double absLimit = accountFrom.getAbsLimit();
-
-        if ((balance - amount) < absLimit) {
-            return false;
-        } else return true;
+        return isAbsoluteLimitExceeded(accountFrom.getBalance(), amount, accountFrom.getAbsLimit());
     }
 
     // Method to check if it does not override day limit
 
     public boolean checkDayLimit(User user, Transaction trans) {
-        double dayLimit = user.getDayLimit();
 
+        return isDayLimitExceeded(user.getDayLimit(), trans);
+    }
+
+    // Method to check if both accounts are active
+
+    public boolean checkActive(String ibanFrom, String ibanTo) {
+        return areAccountsActive(accountService.findAccountByIban(ibanFrom), accountService.findAccountByIban(ibanTo));
+    }
+
+    private boolean isAccountSavings(Account from, Account to) {
+        return from.getAccountType().equals(AccountType.SAVINGS) && to.getAccountType().equals(AccountType.SAVINGS);
+    }
+
+    private boolean isUserOwnerOfAccount(Account from, Account to) {
+        return from.getUser().getId().equals(to.getUser().getId());
+    }
+
+    private boolean isFromSameAsTo(String from,String to) {
+        return !from.equals(to);
+    }
+
+    private boolean isAbsoluteLimitExceeded(double balance, double amount, double absLimit) {
+        return (balance - amount) > absLimit;
+    }
+
+    private boolean isDayLimitExceeded(Double dayLimit, Transaction trans) {
         List<Transaction> transToday = transactionService.getTransactionsFromToday(LocalDate.now());
         double total = 0;
         for (Transaction transaction : transToday) {
@@ -80,16 +84,14 @@ public class TransactionValidatorService {
 
         // Add the amount of the new transaction to the total
         total += trans.getAmount();
-        if (total > dayLimit) {
-            return false;
-        } else return true;
+        return !(total > dayLimit);
     }
 
-    public boolean checkActive(String ibanFrom, String ibanTo) {
-        Account from = accountService.findAccountByIban(ibanFrom);
-        Account to = accountService.findAccountByIban(ibanTo);
-        if (from.getActive() && to.getActive()) {
-            return true;
-        } else return false;
+    private boolean areAccountsActive(Account from, Account to) {
+        return from.getActive() && to.getActive();
+    }
+
+    private boolean isAbsoluteLimitExceeded(double balance, double amount, double absLimit) {
+        return balance - amount < absLimit;
     }
 }
