@@ -67,6 +67,41 @@ paths:
                 $ref: "#/components/schemas/UserDTO"
         400:
           description: Invalid user object
+    get:
+      description: |
+        By passing in the appropriate options, you can search for
+        users in the DB
+      parameters:
+        - in: query
+          name: skip
+          description: Number of records to skip for pagination
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+        - in: query
+          name: limit
+          description: Maximum number of records to return
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 200000
+      tags:
+        - Employee
+      summary: Search a user list with pagination
+      operationId: getAllUsers
+      responses:
+        200:
+          description: Users found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserDTO"
+        404:
+          description: No users found
   /users/getByEmail/{email}:
     parameters:
       - in: path

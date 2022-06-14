@@ -12,12 +12,12 @@ import org.springframework.stereotype.Service;
 public class CustomUserDetailService implements UserDetailsService {
 
     @Autowired
-    private UserRepo userRepo;
+    private UserService userService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        User user = userRepo.findByUsername(username);
+        User user = userService.findByUsername(username);
 
         if(user == null){
             throw new UsernameNotFoundException("User '" + username + "' not found in DB");
