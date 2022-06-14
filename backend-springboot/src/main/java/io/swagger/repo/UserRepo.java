@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -15,14 +16,16 @@ public interface UserRepo extends JpaRepository<User, UUID> {
 
     // UpdateUser (uses .save() in UserService)
 
-    User findUserById(UUID ID);
+    Optional<User> findUserById(UUID id);
 
-    User findByUsername(String username);
+    Optional<User> findByUsername(String username);
 
-    User findByEmail(String email);
+    Optional<User> findByEmail(String email);
 
-    // Select all Users who do not have an account
-    @Query(value = "SELECT * FROM `USER` WHERE ID NOT IN (SELECT USER_ID FROM ACCOUNT);", nativeQuery = true)
+    Optional<User> findByPhone(String phone);
+
+    // Select all Users who do not have an account via JPQL
+    @Query(value = "SELECT u FROM User u WHERE NOT EXISTS (SELECT a FROM u.accounts a)")
     List<User> findAllWithoutAccount();
 
 }

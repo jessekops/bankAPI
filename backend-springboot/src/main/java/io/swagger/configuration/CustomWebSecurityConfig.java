@@ -15,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
+
 @Component
 @Configuration
 @EnableWebSecurity
@@ -45,17 +46,16 @@ public class CustomWebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers(AUTH_WHITELIST); // Makes sure that the HTML pages of the whitelisted URLs are shown
     }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        /*// Force the use of HTTPS via Heroku. Uncomment this code if you are deploying the application there!
-        http.requiresChannel()
-                .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null)
-                .requiresSecure();*/
+//        // Force the use of HTTPS via Heroku. Uncomment this code if you are deploying the application there!
+//        http.requiresChannel()
+//                .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null)
+//                .requiresSecure();
 
         http.cors().and().csrf().disable();
-
-//        http.cors();
         http.csrf().disable();
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // Creates a session per http request and deletes it afterwards
@@ -66,6 +66,7 @@ public class CustomWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class); // Use the JWT Filter class
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12);
@@ -76,7 +77,6 @@ public class CustomWebSecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
-
 
 
 }
