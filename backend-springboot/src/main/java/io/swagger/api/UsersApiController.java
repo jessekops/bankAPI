@@ -15,14 +15,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.persistence.PersistenceException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,101 +54,85 @@ public class UsersApiController implements UsersApi {
     // No role is needed for this endpoint, since there isn't a token yet.
     public ResponseEntity<UserDTO> addUser(@Parameter(in = ParameterIn.DEFAULT, description = "New user object", required = true, schema = @Schema()) @Valid @RequestBody UserDTO body) {
 
-        // Map the UserDTO object from the body to a new User object
-        User user = mapper.map(body, User.class);
+        try {
+            // Map the UserDTO object from the body to a new User object
+            User user = mapper.map(body, User.class);
 
-        // Get a list of all the existing user in the DB
-        List<User> existingUsers = userService.getAll();
-        for (User u : existingUsers) {
-            // Check if the chosen username is already in use
-            if (u.getUsername().equals(user.getUsername())) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT, "Username is already in use! Please try again");
-            }
+            // Check if a user exist with the given user's username, email or phone number
+//            userService.doesUserDataExist(user);
 
-            // Check if the chosen email address is already in use
-            if (u.getEmail().equals(user.getEmail())) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT, "Email address is already in use! Please try again");
-            }
+            // Add the user to the DB
+            user = userService.addUser(user);
 
-            // Check if the chosen phone number is already in use
-            if (u.getPhone().equals(user.getPhone())) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT, "Phone number is already in use! Please try again");
-            }
+            // Respond with the new User, mapped to a UserDTO object
+            UserDTO response = mapper.map(user, UserDTO.class);
+            return new ResponseEntity<UserDTO>(response, HttpStatus.CREATED);
+        } catch (IllegalArgumentException | PersistenceException ex) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, ex.getMessage());
         }
 
-        // Add the user to the DB
-        user = userService.addUser(user);
-
-        // Respond with the new User, mapped to a UserDTO object
-        UserDTO response = mapper.map(user, UserDTO.class);
-        return new ResponseEntity<UserDTO>(response, HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'CUSTOMER')")
     public ResponseEntity<UserDTO> updateUser(@Parameter(in = ParameterIn.PATH, description = "Username input", required = true, schema = @Schema()) @PathVariable("username") String username, @Parameter(in = ParameterIn.DEFAULT, description = "Updated user object", required = true, schema = @Schema()) @Valid @RequestBody UserDTO body) {
 
-        User user = mapper.map(body, User.class);
-
-        // Get a list of all the existing user in the DB
-        List<User> existingUsers = userService.getAll();
-        boolean userExists = true;
-        for (User u : existingUsers) {
-            // Check if the request user to be updated, exists in the DB
-            if (user.getId().compareTo(u.getId()) != 0) {
-                userExists = false;
-            } else {
-                userExists = true;
-                break;
-            }
-        }
-
         // If the user does not exist, throw an exception
-        if (!userExists) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "The user with the requested ID" + " (" + user.getId() + ") " + "could not be updated; user does not exist");
+        // Check if the returned Optional<User> is null
+        if (userService.findById(body.getId()) == null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "The user with the requested ID" + " (" + body.getId() + ") " + "could not be updated; user does not exist");
         }
+
+        User user = mapper.map(body, User.class);
 
         user = userService.updateUser(user);
 
         UserDTO response = mapper.map(user, UserDTO.class);
         return new ResponseEntity<UserDTO>(response, HttpStatus.CREATED);
+
     }
 
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserDTO> getByEmail(@Parameter(in = ParameterIn.PATH, description = "Email input", required = true, schema = @Schema()) @PathVariable("email") String email) {
 
-        try {
-            User searchResult = userService.findByEmail(email);
-
-            UserDTO response = mapper.map(searchResult, UserDTO.class);
-
-            return new ResponseEntity<UserDTO>(response, HttpStatus.OK);
-        } catch (IllegalArgumentException ex) {
+        // Check if the returned Optional<User> is null
+        if (userService.findByEmail(email) == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with given email address not found.");
         }
 
+        UserDTO response = mapper.map(userService.findByEmail(email), UserDTO.class);
+        return new ResponseEntity<UserDTO>(response, HttpStatus.OK);
 
     }
 
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserDTO> getByUsername(@Parameter(in = ParameterIn.PATH, description = "Username input", required = true, schema = @Schema()) @PathVariable("username") String username) {
 
-        try {
-            User searchResult = userService.findByUsername(username);
-
-            UserDTO response = mapper.map(searchResult, UserDTO.class);
-
-            return new ResponseEntity<UserDTO>(response, HttpStatus.OK);
-        } catch (IllegalArgumentException ex) {
+        // Check if the returned Optional<User> is null
+        if (userService.findByUsername(username) == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with given username not found.");
         }
+
+        UserDTO response = mapper.map(userService.findByUsername(username), UserDTO.class);
+
+        return new ResponseEntity<UserDTO>(response, HttpStatus.OK);
+
+    }
+
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public ResponseEntity<List<UserDTO>> getAllUsers(@Min(0) @Parameter(in = ParameterIn.QUERY, description = "Number of records to skip for pagination", schema = @Schema(allowableValues = {})) @Valid @RequestParam(value = "skip", required = false) Integer skip, @Min(1) @Max(200000) @Parameter(in = ParameterIn.QUERY, description = "Maximum number of records to return", schema = @Schema(allowableValues = {}, minimum = "1", maximum = "200000")) @Valid @RequestParam(value = "limit", required = false) Integer limit) {
+
+        List<UserDTO> dtos = userService.getAll(skip, limit)
+                .stream()
+                .map(user -> mapper.map(user, UserDTO.class))
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<List<UserDTO>>(dtos, HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<List<UserDTO>> getAllUsersWithoutAccount() {
 
-        List<User> users = userService.getAllWithoutAccount();
-
-        List<UserDTO> dtos = users
+        List<UserDTO> dtos = userService.getAllWithoutAccount()
                 .stream()
                 .map(user -> mapper.map(user, UserDTO.class))
                 .collect(Collectors.toList());

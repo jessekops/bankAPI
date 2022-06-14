@@ -20,27 +20,29 @@ public class AccountService {
 
     //account validation
     public Account addAccount(Account a) {
+        //check if all fields have been filled
+        if(!accountIbanGenService.allFieldsFilled(a)) {
+            throw new IllegalArgumentException("Something went wrong creating your account.");
+        }
+        //check if pincode is of type INT and 4 digits long
+        if (!accountIbanGenService.pinCheck(a.getPinCode())) {
+            throw new IllegalArgumentException("Pin code has to be 4 digits long and of type Integer.");
+        }
 
-        if (a.getBalance() == null || a.getUser() == null || a.getAccountType() == null || a.getAbsLimit() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please fill in all fields.");
-        } else if (!accountIbanGenService.pinCheck(a.getPinCode())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Pin code has to be 4 digits long and of type Integer.");
-        } else {
+        if(accountIbanGenService.allFieldsFilled(a) && accountIbanGenService.pinCheck(a.getPinCode())) {
             String iban = accountIbanGenService.generateIban();
-            if (a.getActive() == null) {
-                a.setActive(true);
-            }
-            if (iban.length() != 0) {
-                if (a.getIban() == null) {
+            //check if there is an iban already assigned to the account and if the generated iban is valid to set the generated iban
+                if(iban.length() != 0 && a.getIban().length() != 0) {
                     a.setIban(iban);
                 }
-                return accountRepo.save(a);
-            } else {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong generating your iban.");
-
-            }
-
+                //if the active status is not specified put it on active
+                if (a.getActive() == null) {
+                    a.setActive(true);
+                }
+            return accountRepo.save(a);
         }
+        throw new IllegalArgumentException("Something went wrong trying to add your account.");
+
     }
 
 
@@ -54,8 +56,6 @@ public class AccountService {
 
     public Account updateAccount(Account updatedAccount) {
             return accountRepo.save(updatedAccount);
-
-
     }
 
     public Account findAccountByIban(String iban) {
@@ -67,7 +67,6 @@ public class AccountService {
         }
 
     }
-
     public List<Account> getAll() {
         //this deletes the bank account from the list
         List<Account> accountList =  accountRepo.findAll();
