@@ -5,6 +5,8 @@ import io.swagger.model.dto.TokenDTO;
 import io.swagger.model.entity.User;
 import io.swagger.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -23,21 +26,20 @@ public class UserService {
     private UserRepo userRepo;
 
     @Autowired
-    JwtTokenProvider provider;
+    private JwtTokenProvider provider;
 
     @Autowired
-    AuthenticationManager authManager;
+    private AuthenticationManager authManager;
 
     @Autowired
-    PasswordEncoder encoder;
-
+    private PasswordEncoder encoder;
 
     public TokenDTO login(String username, String password) {
 
         TokenDTO tokenDto = new TokenDTO();
         try {
             authManager.authenticate(new UsernamePasswordAuthenticationToken(username, password)); // Check username and password via Spring Boot Security
-            User user = userRepo.findByUsername(username);
+            User user = this.findByUsername(username);
             tokenDto.setToken(provider.createToken(username, user.getUserTypes()));
             tokenDto.setUserName(user.getUsername());
             tokenDto.setUserrole(user.getUserTypes());
@@ -56,14 +58,6 @@ public class UserService {
         return userRepo.save(user);
     }
 
-    public User findByUsername(String username) {
-        return userRepo.findByUsername(username);
-    }
-
-    public User findByEmail(String email) {
-        return userRepo.findByEmail(email);
-    }
-
     public User updateUser(User updatedUser) {
 
         updatedUser.setPassword(encoder.encode(updatedUser.getPassword()));
@@ -71,15 +65,54 @@ public class UserService {
         return userRepo.save(updatedUser);
     }
 
-    public List<User> getAll() {
-        return userRepo.findAll();
+    public List<User> getAll(Integer skip, Integer limit) {
+
+        Pageable pageable = PageRequest.of(skip, limit);
+        return userRepo.findAll(pageable).getContent();
     }
 
-    public List<User> getAllWithoutAccount(){
+    public List<User> getAllWithoutAccount() {
         return userRepo.findAllWithoutAccount();
     }
 
-    public User findById(UUID Id) {
-        return userRepo.findUserById(Id);
+    // All findBy methods retrieve an Optional<User> from the repo
+
+    public User findByUsername(String username) {
+        Optional<User> optional = userRepo.findByUsername(username);
+
+        return optional.orElse(null);
+    }
+
+    public User findByEmail(String email) {
+        Optional<User> optional = userRepo.findByEmail(email);
+
+        return optional.orElse(null);
+    }
+
+    private User findByPhone(String phone) {
+        Optional<User> optional = userRepo.findByPhone(phone);
+
+        return optional.orElse(null);
+    }
+
+    public User findById(UUID id) {
+        Optional<User> optional = userRepo.findUserById(id);
+
+        return optional.orElse(null);
+    }
+
+    public void doesUserDataExist(User user) {
+
+        if (findByUsername(user.getUsername()) != null) {
+            throw new IllegalArgumentException("Username is already in use! Please try again");
+        }
+
+        if (findByEmail(user.getEmail()) != null) {
+            throw new IllegalArgumentException("Email is already in use! Please try again");
+        }
+
+        if (findByPhone(user.getPhone()) != null) {
+            throw new IllegalArgumentException("Phone number is already in use! Please try again");
+        }
     }
 }
