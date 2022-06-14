@@ -17,12 +17,7 @@ public class AccountIbanGenService extends AccountService {
 
     //pincode check for integer
     public boolean pinCheck(Integer pin) {
-        if(String.valueOf(pin).length() == 4) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return String.valueOf(pin).length() == 4;
     }
     public boolean allFieldsFilled(Account a) {
         return a.getBalance() != null && a.getIban() != null && a.getAccountType() != null && a.getUser() != null;
