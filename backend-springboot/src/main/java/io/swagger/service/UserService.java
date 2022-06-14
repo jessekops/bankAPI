@@ -5,10 +5,8 @@ import io.swagger.model.dto.TokenDTO;
 import io.swagger.model.entity.User;
 import io.swagger.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -40,7 +39,7 @@ public class UserService {
         TokenDTO tokenDto = new TokenDTO();
         try {
             authManager.authenticate(new UsernamePasswordAuthenticationToken(username, password)); // Check username and password via Spring Boot Security
-            User user = userRepo.findByUsername(username);
+            User user = this.findByUsername(username);
             tokenDto.setToken(provider.createToken(username, user.getUserTypes()));
             tokenDto.setUserName(user.getUsername());
             tokenDto.setUserrole(user.getUserTypes());
@@ -76,20 +75,30 @@ public class UserService {
         return userRepo.findAllWithoutAccount();
     }
 
+    // All findBy methods retrieve an Optional<User> from the repo
+
     public User findByUsername(String username) {
-        return userRepo.findByUsername(username);
+        Optional<User> optional = userRepo.findByUsername(username);
+
+        return optional.orElse(null);
     }
 
     public User findByEmail(String email) {
-        return userRepo.findByEmail(email);
+        Optional<User> optional = userRepo.findByEmail(email);
+
+        return optional.orElse(null);
     }
 
     private User findByPhone(String phone) {
-        return userRepo.findByPhone(phone);
+        Optional<User> optional = userRepo.findByPhone(phone);
+
+        return optional.orElse(null);
     }
 
     public User findById(UUID id) {
-        return userRepo.findUserById(id);
+        Optional<User> optional = userRepo.findUserById(id);
+
+        return optional.orElse(null);
     }
 
     public void doesUserDataExist(User user) {
