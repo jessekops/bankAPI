@@ -8,6 +8,7 @@ import io.swagger.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.hibernate.exception.ConstraintViolationException;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-23T13:04:25.984Z[GMT]")
@@ -58,7 +60,7 @@ public class UsersApiController implements UsersApi {
             User user = mapper.map(body, User.class);
 
             // Check if a user exist with the given user's username, email or phone number
-            userService.doesUserDataExist(user);
+//            userService.doesUserDataExist(user);
 
             // Add the user to the DB
             user = userService.addUser(user);
@@ -66,7 +68,7 @@ public class UsersApiController implements UsersApi {
             // Respond with the new User, mapped to a UserDTO object
             UserDTO response = mapper.map(user, UserDTO.class);
             return new ResponseEntity<UserDTO>(response, HttpStatus.CREATED);
-        } catch (IllegalArgumentException ex) {
+        } catch (NoSuchElementException | ConstraintViolationException ex) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, ex.getMessage());
         }
 
@@ -82,7 +84,7 @@ public class UsersApiController implements UsersApi {
 
             UserDTO response = mapper.map(user, UserDTO.class);
             return new ResponseEntity<UserDTO>(response, HttpStatus.CREATED);
-        } catch (IllegalArgumentException ex) {
+        } catch (IllegalArgumentException | NoSuchElementException ex) {
             // If the service throws an Exception, throw a ResponseStatusException to provide the frontend with the right HTTP Status Code & Error Message
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The user with the requested ID" + " (" + user.getId() + ") " + "could not be updated; user does not exist");
         }
@@ -113,6 +115,7 @@ public class UsersApiController implements UsersApi {
     }
 
     // The getAll type methods will always return a List<User> with at least 1 element, because a token is needed for these endpoints and an existing User needs to log in.
+    // There is also a standard User (bank).
 
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<List<UserDTO>> getAllUsers(@Min(0) @Parameter(in = ParameterIn.QUERY, description = "Number of records to skip for pagination", schema = @Schema(allowableValues = {})) @Valid @RequestParam(value = "skip", required = false) Integer skip, @Min(1) @Max(200000) @Parameter(in = ParameterIn.QUERY, description = "Maximum number of records to return", schema = @Schema(allowableValues = {}, minimum = "1", maximum = "200000")) @Valid @RequestParam(value = "limit", required = false) Integer limit) {

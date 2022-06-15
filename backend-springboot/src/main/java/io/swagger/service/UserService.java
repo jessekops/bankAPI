@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -54,7 +56,8 @@ public class UserService {
 
         user.setPassword(encoder.encode(user.getPassword()));
 
-        return userRepo.save(user);
+        return Optional.of(userRepo.save(user)).orElseThrow(
+                () ->  new NoSuchElementException("Something went wrong; the server couldn't respond with new User object"));
     }
 
     public User updateUser(User updatedUser) {
@@ -64,7 +67,8 @@ public class UserService {
 
         updatedUser.setPassword(encoder.encode(updatedUser.getPassword()));
 
-        return userRepo.save(updatedUser);
+        return Optional.of(userRepo.save(updatedUser)).orElseThrow(
+                () ->  new NoSuchElementException("Something went wrong; the server couldn't respond with new User object"));
     }
 
     public List<User> getAll(Integer skip, Integer limit) {
