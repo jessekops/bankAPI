@@ -59,7 +59,7 @@ public class UsersApiController implements UsersApi {
             User user = mapper.map(body, User.class);
 
             // Check if a user exist with the given user's username, email or phone number
-//            userService.doesUserDataExist(user);
+            userService.doesUserDataExist(user);
 
             // Add the user to the DB
             user = userService.addUser(user);
@@ -67,7 +67,7 @@ public class UsersApiController implements UsersApi {
             // Respond with the new User, mapped to a UserDTO object
             UserDTO response = mapper.map(user, UserDTO.class);
             return new ResponseEntity<UserDTO>(response, HttpStatus.CREATED);
-        } catch (IllegalArgumentException | PersistenceException ex) {
+        } catch (IllegalArgumentException ex) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, ex.getMessage());
         }
 
@@ -76,45 +76,40 @@ public class UsersApiController implements UsersApi {
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'CUSTOMER')")
     public ResponseEntity<UserDTO> updateUser(@Parameter(in = ParameterIn.PATH, description = "Username input", required = true, schema = @Schema()) @PathVariable("username") String username, @Parameter(in = ParameterIn.DEFAULT, description = "Updated user object", required = true, schema = @Schema()) @Valid @RequestBody UserDTO body) {
 
-        // If the user does not exist, throw an exception
-        // Check if the returned Optional<User> is null
-        if (userService.findById(body.getId()) == null) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "The user with the requested ID" + " (" + body.getId() + ") " + "could not be updated; user does not exist");
-        }
-
         User user = mapper.map(body, User.class);
 
-        user = userService.updateUser(user);
+        try {
+            user = userService.updateUser(user);
 
-        UserDTO response = mapper.map(user, UserDTO.class);
-        return new ResponseEntity<UserDTO>(response, HttpStatus.CREATED);
+            UserDTO response = mapper.map(user, UserDTO.class);
+            return new ResponseEntity<UserDTO>(response, HttpStatus.CREATED);
+        } catch (IllegalArgumentException ex) {
+            // If the service throws an Exception, throw a ResponseStatusException to provide the frontend with the right HTTP Status Code & Error Message
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The user with the requested ID" + " (" + user.getId() + ") " + "could not be updated; user does not exist");
+        }
 
     }
 
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserDTO> getByEmail(@Parameter(in = ParameterIn.PATH, description = "Email input", required = true, schema = @Schema()) @PathVariable("email") String email) {
-
-        // Check if the returned Optional<User> is null
-        if (userService.findByEmail(email) == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with given email address not found.");
+        try {
+            UserDTO response = mapper.map(userService.findByEmail(email), UserDTO.class);
+            return new ResponseEntity<UserDTO>(response, HttpStatus.OK);
+        } catch (IllegalArgumentException ex) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
-
-        UserDTO response = mapper.map(userService.findByEmail(email), UserDTO.class);
-        return new ResponseEntity<UserDTO>(response, HttpStatus.OK);
 
     }
 
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<UserDTO> getByUsername(@Parameter(in = ParameterIn.PATH, description = "Username input", required = true, schema = @Schema()) @PathVariable("username") String username) {
+        try {
+            UserDTO response = mapper.map(userService.findByUsername(username), UserDTO.class);
 
-        // Check if the returned Optional<User> is null
-        if (userService.findByUsername(username) == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with given username not found.");
+            return new ResponseEntity<UserDTO>(response, HttpStatus.OK);
+        } catch (IllegalArgumentException ex) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
-
-        UserDTO response = mapper.map(userService.findByUsername(username), UserDTO.class);
-
-        return new ResponseEntity<UserDTO>(response, HttpStatus.OK);
 
     }
 
