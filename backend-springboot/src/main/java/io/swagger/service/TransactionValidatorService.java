@@ -46,7 +46,6 @@ public class TransactionValidatorService {
     // Method to check if it does not override day limit
 
     public boolean checkDayLimit(User user, Transaction trans) {
-
         return isDayLimitExceeded(user.getDayLimit(), trans);
     }
 

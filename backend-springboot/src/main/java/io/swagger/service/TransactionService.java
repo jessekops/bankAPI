@@ -57,7 +57,7 @@ public class TransactionService {
 
     public Transaction createWithdrawal(Transaction trans) {
 
-        // Get pincode (given by user) from transaction
+        // Get pin code (given by user) from transaction
         Integer pinCode = trans.getPinCode();
 
         // Check if pincode is filled in
@@ -65,7 +65,7 @@ public class TransactionService {
             throw new IllegalArgumentException("Withdrawal failed; no pincode entered");
         }
 
-        // Check if the given pincode matches the account pincode
+        // Check if the given pin code matches the account pin code
         if (!pinCode.equals(accountService.findAccountByIban(trans.getFrom().getIban()).getPinCode())) {
             throw new IllegalArgumentException("Withdrawal failed; wrong pin code entered");
         } else {
@@ -81,15 +81,15 @@ public class TransactionService {
 
     public Transaction createDeposit(Transaction trans) {
 
-        // Get pincode (given by user) from transaction
+        // Get pin code (given by user) from transaction
         Integer pinCode = trans.getPinCode();
 
-        // Check if pincode is filled in
+        // Check if pin code is filled in
         if (pinCode == null) {
             throw new IllegalArgumentException("Deposit failed; no pincode entered");
         }
 
-        // Check if the given pincode matches the account pincode
+        // Check if the given pin code matches the account pin code
         if (!pinCode.equals(accountService.findAccountByIban(trans.getTo()).getPinCode())) {
             throw new IllegalArgumentException("Deposit failed; wrong pin code entered");
         }
