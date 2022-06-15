@@ -1,4 +1,4 @@
-package io.swagger.bankapi.steps;
+package io.swagger.bankapi.cucumber.steps;
 
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
