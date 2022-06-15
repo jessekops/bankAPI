@@ -18,7 +18,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.persistence.PersistenceException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
@@ -112,6 +111,8 @@ public class UsersApiController implements UsersApi {
         }
 
     }
+
+    // The getAll type methods will always return a List<User> with at least 1 element, because a token is needed for these endpoints and an existing User needs to log in.
 
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<List<UserDTO>> getAllUsers(@Min(0) @Parameter(in = ParameterIn.QUERY, description = "Number of records to skip for pagination", schema = @Schema(allowableValues = {})) @Valid @RequestParam(value = "skip", required = false) Integer skip, @Min(1) @Max(200000) @Parameter(in = ParameterIn.QUERY, description = "Maximum number of records to return", schema = @Schema(allowableValues = {}, minimum = "1", maximum = "200000")) @Valid @RequestParam(value = "limit", required = false) Integer limit) {

@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -53,14 +52,15 @@ public class UserService {
 
     public User addUser(User user) {
 
-        this.findById(user.getId());
-
         user.setPassword(encoder.encode(user.getPassword()));
 
         return userRepo.save(user);
     }
 
     public User updateUser(User updatedUser) {
+
+        // Check if User with given id exists before updating
+        this.findById(updatedUser.getId());
 
         updatedUser.setPassword(encoder.encode(updatedUser.getPassword()));
 

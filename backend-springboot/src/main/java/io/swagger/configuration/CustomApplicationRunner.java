@@ -12,6 +12,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -28,20 +29,18 @@ public class CustomApplicationRunner implements ApplicationRunner {
 
         //Add a standard User and Account for the bank itself to the DB when the application starts running
 
-        List<UserType> userTypes = new ArrayList<>();
-        userTypes.add(UserType.ROLE_EMPLOYEE);
-        User Bank = new User();
-        Bank.setActive(true);
-        Bank.setUsername("InhollandBank");
-        Bank.setPassword("welkom");
-        Bank.setEmail("info@inhollandbank.nl");
-        Bank.setPhone("+316 012345678");
-        Bank.setDayLimit(0.00);
-        Bank.setUserTypes(userTypes);
+        User bank = new User();
+        bank.setActive(true);
+        bank.setUsername("InhollandBank");
+        bank.setPassword("welkom");
+        bank.setEmail("info@inhollandbank.nl");
+        bank.setPhone("+316 012345678");
+        bank.setDayLimit(0.00);
+        bank.setUserTypes(List.of(UserType.ROLE_EMPLOYEE));
 
         double max = 1000000000000.00;
         Account bankAccount = new Account();
-        bankAccount.setUser(Bank);
+        bankAccount.setUser(bank);
         bankAccount.setAbsLimit(0.00 - Double.MAX_VALUE);
         bankAccount.setBalance(max);
         bankAccount.setIban("NL01INHO0000000001");
@@ -49,7 +48,7 @@ public class CustomApplicationRunner implements ApplicationRunner {
         bankAccount.setActive(true);
 
 
-        userService.addUser(Bank);
+        userService.addUser(bank);
         accountService.addAccount(bankAccount);
 
     }

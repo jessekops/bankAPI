@@ -90,8 +90,4 @@ public class TransactionValidatorService {
     private boolean areAccountsActive(Account from, Account to) {
         return from.getActive() && to.getActive();
     }
-
-    private boolean isAbsoluteLimitExceeded(double balance, double amount, double absLimit) {
-        return balance - amount < absLimit;
-    }
 }
