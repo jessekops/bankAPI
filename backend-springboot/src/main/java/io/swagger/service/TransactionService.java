@@ -7,8 +7,8 @@ import io.swagger.repo.AccountRepo;
 import io.swagger.repo.TransactionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.time.LocalDate;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,8 +17,6 @@ public class TransactionService {
 
     @Autowired
     TransactionRepo transactionRepo;
-    @Autowired
-    TransactionService transactionService;
     @Autowired
     TransactionValidatorService transactionValidatorService;
     @Autowired
@@ -63,7 +61,7 @@ public class TransactionService {
         Integer pinCode = trans.getPinCode();
 
         // Check if pincode is filled in
-        if(pinCode == null){
+        if (pinCode == null) {
             throw new IllegalArgumentException("Withdrawal failed; no pincode entered");
         }
 
@@ -87,7 +85,7 @@ public class TransactionService {
         Integer pinCode = trans.getPinCode();
 
         // Check if pincode is filled in
-        if(pinCode == null){
+        if (pinCode == null) {
             throw new IllegalArgumentException("Deposit failed; no pincode entered");
         }
 

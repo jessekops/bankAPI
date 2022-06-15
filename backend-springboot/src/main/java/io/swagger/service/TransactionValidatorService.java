@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-
 import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
 
 @Service
 public class TransactionValidatorService {
@@ -67,7 +64,7 @@ public class TransactionValidatorService {
         return from.getUser().getId().equals(to.getUser().getId());
     }
 
-    private boolean isFromSameAsTo(String from,String to) {
+    private boolean isFromSameAsTo(String from, String to) {
         return !from.equals(to);
     }
 
@@ -84,14 +81,11 @@ public class TransactionValidatorService {
 
         // Add the amount of the new transaction to the total
         total += trans.getAmount();
-        return !(total > dayLimit);
+        return (total <= dayLimit);
     }
 
     private boolean areAccountsActive(Account from, Account to) {
         return from.getActive() && to.getActive();
     }
 
-    private boolean isAbsoluteLimitExceeded(double balance, double amount, double absLimit) {
-        return balance - amount < absLimit;
-    }
 }
