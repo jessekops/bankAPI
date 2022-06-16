@@ -1,4 +1,4 @@
-package io.swagger.bankapi.steps;
+package io.swagger.bankapi.cucumber.steps;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
