@@ -5,7 +5,7 @@ import io.swagger.annotations.Api;
 import io.swagger.model.dto.AccountDTO;
 import io.swagger.model.entity.Account;
 import io.swagger.model.entity.User;
-import io.swagger.service.AccountIbanGenService;
+import io.swagger.service.AccountIbanService;
 import io.swagger.service.AccountService;
 import io.swagger.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -50,7 +50,7 @@ public class AccountsApiController implements AccountsApi {
     @Autowired
     private UserService userService;
     @Autowired
-    private AccountIbanGenService accountIbanService;
+    private AccountIbanService accountIbanService;
 
     @org.springframework.beans.factory.annotation.Autowired
     public AccountsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -62,14 +62,12 @@ public class AccountsApiController implements AccountsApi {
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<AccountDTO> addAccount(@Parameter(in = ParameterIn.DEFAULT, description = "New account object", required = true, schema = @Schema()) @Valid @RequestBody AccountDTO body) {
         try {
-            Account a = modelMapper.map(body, Account.class);
-            User u = userService.findById(body.getOwnerId());
-            a.setUser(u);
+            Account account = modelMapper.map(body, Account.class);
+            User user = userService.findById(body.getOwnerId());
+            account.setUser(user);
 
-            a = accountService.addAccount(a);
-
-            AccountDTO resp = modelMapper.map(a, AccountDTO.class);
-            resp.setOwnerId(u.getId());
+            AccountDTO resp = modelMapper.map(accountService.addAccount(account), AccountDTO.class);
+            resp.setOwnerId(user.getId());
 
             return new ResponseEntity<AccountDTO>(resp, HttpStatus.CREATED);
         } catch (IllegalArgumentException ex) {
@@ -98,7 +96,6 @@ public class AccountsApiController implements AccountsApi {
 
         try {
             Account foundAccount = accountService.findAccountByIban(iban);
-
             AccountDTO response = modelMapper.map(foundAccount, AccountDTO.class);
 
             response.setOwnerId(foundAccount.getUser().getId());
@@ -117,8 +114,6 @@ public class AccountsApiController implements AccountsApi {
 
 
         List<Account> accountList = accountService.getAll();
-
-
         List<AccountDTO> dtos = accountList
                 .stream()
                 .map(user -> modelMapper.map(user, AccountDTO.class))
@@ -137,7 +132,6 @@ public class AccountsApiController implements AccountsApi {
         if (foundaccount != null) {
             //map account from body
             Account account = modelMapper.map(body, Account.class);
-            //map account from iban
             //preset 2 things that never should be able to change
             account.setIban(foundaccount.getIban());
             account.setUser(foundaccount.getUser());

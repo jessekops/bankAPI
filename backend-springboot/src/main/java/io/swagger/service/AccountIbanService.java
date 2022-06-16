@@ -1,26 +1,17 @@
 package io.swagger.service;
 
-
-import io.swagger.model.entity.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
 
 @Service
-public class AccountIbanGenService extends AccountService {
+public class AccountIbanService extends AccountService {
     @Autowired
     private AccountService accountService;
 
-    //pincode check for integer
-    public boolean pinCheck(Integer pin) {
-        return String.valueOf(pin).length() == 4;
-    }
 
-    public boolean allFieldsFilled(Account a) {
-        return a.getBalance() != null && a.getIban() != null && a.getAccountType() != null && a.getUser() != null;
-    }
-
+   //extra uitleg
     public String generateIban() {
         StringBuilder iban = new StringBuilder("NL");
         Random prefix = new Random();
@@ -34,11 +25,9 @@ public class AccountIbanGenService extends AccountService {
         if (accountService.findAccountByIban(finalIban) != null){
             throw new IllegalArgumentException("Something went wrong generating your iban.");
         }
-
         return finalIban;
-
-//            else {
-//                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong generating your iban.");
-//            }
+    }
+    public boolean isIbanPresent(String ibanGiven) {
+        return ibanGiven != null;
     }
 }
