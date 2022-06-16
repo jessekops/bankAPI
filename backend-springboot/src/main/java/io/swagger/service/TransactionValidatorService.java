@@ -16,8 +16,6 @@ public class TransactionValidatorService {
     private TransactionService transactionService;
     @Autowired
     private AccountService accountService;
-    @Autowired
-    private UserService userService;
 
 
     // Method to check if it is current or savings account
@@ -80,7 +78,7 @@ public class TransactionValidatorService {
 
         // Add the amount of the new transaction to the total
         total += trans.getAmount();
-        return (total <= dayLimit);
+        return total <= dayLimit;
     }
 
     private boolean areAccountsActive(Account from, Account to) {

@@ -56,22 +56,8 @@ public class TransactionService {
     }
 
     public Transaction createWithdrawal(Transaction trans) {
-
-        // Get pin code (given by user) from transaction
-        Integer pinCode = trans.getPinCode();
-
-        // Check if pincode is filled in
-        if (pinCode == null) {
-            throw new IllegalArgumentException("Withdrawal failed; no pincode entered");
-        }
-
-        // Check if the given pin code matches the account pin code
-        if (!pinCode.equals(accountService.findAccountByIban(trans.getFrom().getIban()).getPinCode())) {
-            throw new IllegalArgumentException("Withdrawal failed; wrong pin code entered");
-        } else {
-            checkGeneralConditions(trans);
-        }
-
+        checkPinCode(trans);
+        checkGeneralConditions(trans);
         // Update balance account from (Owner is user)
         updateFromBalance(trans);
         // Account to Owner is bank
@@ -132,7 +118,7 @@ public class TransactionService {
 
     // Update account from
     private void updateFromBalance(Transaction trans) {
-        Account account = accountRepo.findAccountByIban(trans.getFrom().getIban());
+        Account account = accountService.findAccountByIban(trans.getFrom().getIban());
 
         // Given that account exists
         account.setBalance((account.getBalance() - trans.getAmount()));
@@ -141,7 +127,7 @@ public class TransactionService {
 
     // Update account to
     private void updateToBalance(Transaction trans) {
-        Account account = accountRepo.findAccountByIban(trans.getTo());
+        Account account = accountService.findAccountByIban(trans.getTo());
 
         // Given that account exists
         account.setBalance((account.getBalance() + trans.getAmount()));
@@ -162,5 +148,26 @@ public class TransactionService {
 
     public List<Transaction> getTransactionsFromToday(LocalDate timeStamp) {
         return transactionRepo.findAllByTimestamp(timeStamp);
+    }
+
+    private boolean isPinCodeNull(Integer pinCode) {
+        // Check if pin code is filled in
+        return pinCode == null;
+    }
+
+    private boolean isPinCodeCorrect(Transaction trans) {
+        // Check if pin code is correct
+        return trans.getPinCode().equals(accountService.findAccountByIban(trans.getFrom().getIban()).getPinCode());
+    }
+
+    private void checkPinCode(Transaction trans) {
+        // Get pin code (given by user) from transaction
+        if (isPinCodeNull(trans.getPinCode())) {
+            throw new IllegalArgumentException("Withdrawal failed; no pin code entered");
+        }
+        // Check if the given pin code matches the account pin code
+        if (!isPinCodeCorrect(trans)) {
+            throw new IllegalArgumentException("Withdrawal failed; wrong pin code entered");
+        }
     }
 }
