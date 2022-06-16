@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -19,7 +20,7 @@ public class AccountService {
     //account validation
     public Account addAccount(Account a) {
         //check if all fields have been filled
-        if(!accountIbanGenService.allFieldsFilled(a)) {
+        if (!accountIbanGenService.allFieldsFilled(a)) {
             throw new IllegalArgumentException("Something went wrong creating your account.");
         }
         //check if pincode is of type INT and 4 digits long
@@ -27,25 +28,25 @@ public class AccountService {
             throw new IllegalArgumentException("Pin code has to be 4 digits long and of type Integer.");
         }
 
-        if(accountIbanGenService.allFieldsFilled(a) && accountIbanGenService.pinCheck(a.getPinCode())) {
+        if (accountIbanGenService.allFieldsFilled(a) && accountIbanGenService.pinCheck(a.getPinCode())) {
             String iban = accountIbanGenService.generateIban();
             //check if there is an iban already assigned to the account and if the generated iban is valid to set the generated iban
-                if(iban.length() != 0 && a.getIban().length() != 0) {
-                    a.setIban(iban);
-                }
-                //if the active status is not specified put it on active
-                if (a.getActive() == null) {
-                    a.setActive(true);
-                }
-            return accountRepo.save(a).orElseThrow(
-                    () ->  new IllegalArgumentException("Something went wrong trying to add your account."));
+            if (iban.length() != 0 && a.getIban().length() != 0) {
+                a.setIban(iban);
+            }
+            //if the active status is not specified put it on active
+            if (a.getActive() == null) {
+                a.setActive(true);
+            }
+            return Optional.of(accountRepo.save(a)).orElseThrow(
+                    () -> new IllegalArgumentException("Something went wrong trying to add your account."));
         }
         throw new IllegalArgumentException("Something went wrong trying to add your account.");
     }
 
     //find an accountlist by using the userid/owner id
     public List<Account> findAccountsByUserId(UUID userId) {
-        if(!accountRepo.findAccountsByUserId(userId).isEmpty()) {
+        if (!accountRepo.findAccountsByUserId(userId).isEmpty()) {
             return accountRepo.findAccountsByUserId(userId);
         } else {
             throw new IllegalArgumentException("Something went wrong trying to find accounts with userid: " + userId);
@@ -54,17 +55,18 @@ public class AccountService {
 
     //update an account with newly inserted account
     public Account updateAccount(Account a) {
-        return accountRepo.save(a).orElseThrow(
-                () ->  new IllegalArgumentException("Something went wrong trying to update your account."));
+        return Optional.of(accountRepo.save(a)).orElseThrow(
+                () -> new IllegalArgumentException("Something went wrong trying to update your account."));
     }
 
     public Account findAccountByIban(String iban) {
-        return accountRepo.findAccountByIban(iban).orElseThrow(
-                () ->  new IllegalArgumentException("Something went wrong trying to find account with iban: " + iban) );
+//        return accountRepo.findAccountByIban(iban).orElseThrow(() -> new IllegalArgumentException("Something went wrong trying to find account with iban: " + iban));
+        return accountRepo.findAccountByIban(iban).orElse(null);
     }
+
     public List<Account> getAll() {
         //this deletes the bank account from the list
-        List<Account> accountList =  accountRepo.findAll();
+        List<Account> accountList = accountRepo.findAll();
         accountList.removeIf(account -> account.getIban().equals("NL01INHO0000000001"));
         return accountList;
     }

@@ -63,7 +63,9 @@ public class UserService {
     public User updateUser(User updatedUser) {
 
         // Check if User with given id exists before updating
-        this.findById(updatedUser.getId());
+        if(this.findById(updatedUser.getId()) == null){
+            throw new IllegalArgumentException("The user with the requested ID" + " (" + updatedUser.getId() + ") " + "could not be updated; user does not exist");
+        }
 
         updatedUser.setPassword(encoder.encode(updatedUser.getPassword()));
 
@@ -84,19 +86,23 @@ public class UserService {
     // All findBy methods retrieve an Optional<User> from the repo
 
     public User findByUsername(String username) {
-        return userRepo.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("User with given username not found."));
+//        return userRepo.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("User with given username not found."));
+        return userRepo.findByUsername(username).orElse(null);
     }
 
     public User findByEmail(String email) {
-        return userRepo.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User with given email address not found."));
+//        return userRepo.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User with given email address not found."));
+        return userRepo.findByEmail(email).orElse(null);
     }
 
     private User findByPhone(String phone) {
-        return userRepo.findByPhone(phone).orElseThrow(() -> new IllegalArgumentException("User with given phone number not found."));
+//        return userRepo.findByPhone(phone).orElseThrow(() -> new IllegalArgumentException("User with given phone number not found."));
+        return userRepo.findByPhone(phone).orElse(null);
     }
 
     public User findById(UUID id) {
-        return userRepo.findUserById(id).orElseThrow(() -> new IllegalArgumentException("User with given ID not found."));
+//        return userRepo.findUserById(id).orElseThrow(() -> new IllegalArgumentException("User with given ID not found."));
+        return userRepo.findById(id).orElse(null);
     }
 
     public void doesUserDataExist(User user) {
