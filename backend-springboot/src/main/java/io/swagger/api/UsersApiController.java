@@ -86,7 +86,7 @@ public class UsersApiController implements UsersApi {
             return new ResponseEntity<UserDTO>(response, HttpStatus.CREATED);
         } catch (IllegalArgumentException | NoSuchElementException ex) {
             // If the service throws an Exception, throw a ResponseStatusException to provide the frontend with the right HTTP Status Code & Error Message
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The user with the requested ID" + " (" + user.getId() + ") " + "could not be updated; user does not exist");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
 
     }
@@ -97,7 +97,7 @@ public class UsersApiController implements UsersApi {
             UserDTO response = mapper.map(userService.findByEmail(email), UserDTO.class);
             return new ResponseEntity<UserDTO>(response, HttpStatus.OK);
         } catch (IllegalArgumentException ex) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with given email not found");
         }
 
     }
@@ -109,7 +109,7 @@ public class UsersApiController implements UsersApi {
 
             return new ResponseEntity<UserDTO>(response, HttpStatus.OK);
         } catch (IllegalArgumentException ex) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with given username not found");
         }
 
     }
