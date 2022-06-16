@@ -1,12 +1,10 @@
-package io.swagger.bankapi.steps.login;
+package io.swagger.bankapi.cucumber.steps.login;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java8.En;
-import io.swagger.bankapi.steps.BaseStepDefinitions;
+import io.swagger.bankapi.cucumber.steps.BaseStepDefinitions;
 import io.swagger.model.dto.LoginDTO;
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONObject;
-import org.junit.jupiter.api.Assertions;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

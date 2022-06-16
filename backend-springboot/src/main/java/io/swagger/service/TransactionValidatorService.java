@@ -86,5 +86,4 @@ public class TransactionValidatorService {
     private boolean areAccountsActive(Account from, Account to) {
         return from.getActive() && to.getActive();
     }
-
 }
