@@ -7,8 +7,8 @@ import io.swagger.repo.AccountRepo;
 import io.swagger.repo.TransactionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.time.LocalDate;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,8 +17,6 @@ public class TransactionService {
 
     @Autowired
     TransactionRepo transactionRepo;
-    @Autowired
-    TransactionService transactionService;
     @Autowired
     TransactionValidatorService transactionValidatorService;
     @Autowired
@@ -59,15 +57,15 @@ public class TransactionService {
 
     public Transaction createWithdrawal(Transaction trans) {
 
-        // Get pincode (given by user) from transaction
+        // Get pin code (given by user) from transaction
         Integer pinCode = trans.getPinCode();
 
         // Check if pincode is filled in
-        if(pinCode == null){
+        if (pinCode == null) {
             throw new IllegalArgumentException("Withdrawal failed; no pincode entered");
         }
 
-        // Check if the given pincode matches the account pincode
+        // Check if the given pin code matches the account pin code
         if (!pinCode.equals(accountService.findAccountByIban(trans.getFrom().getIban()).getPinCode())) {
             throw new IllegalArgumentException("Withdrawal failed; wrong pin code entered");
         } else {
@@ -83,15 +81,15 @@ public class TransactionService {
 
     public Transaction createDeposit(Transaction trans) {
 
-        // Get pincode (given by user) from transaction
+        // Get pin code (given by user) from transaction
         Integer pinCode = trans.getPinCode();
 
-        // Check if pincode is filled in
-        if(pinCode == null){
+        // Check if pin code is filled in
+        if (pinCode == null) {
             throw new IllegalArgumentException("Deposit failed; no pincode entered");
         }
 
-        // Check if the given pincode matches the account pincode
+        // Check if the given pin code matches the account pin code
         if (!pinCode.equals(accountService.findAccountByIban(trans.getTo()).getPinCode())) {
             throw new IllegalArgumentException("Deposit failed; wrong pin code entered");
         }

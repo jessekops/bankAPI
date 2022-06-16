@@ -3,9 +3,7 @@ package io.swagger.service;
 import io.swagger.model.entity.Account;
 import io.swagger.repo.AccountRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
@@ -39,33 +37,30 @@ public class AccountService {
                 if (a.getActive() == null) {
                     a.setActive(true);
                 }
-            return accountRepo.save(a);
+            return accountRepo.save(a).orElseThrow(
+                    () ->  new IllegalArgumentException("Something went wrong trying to add your account."));
         }
         throw new IllegalArgumentException("Something went wrong trying to add your account.");
-
     }
 
-
+    //find an accountlist by using the userid/owner id
     public List<Account> findAccountsByUserId(UUID userId) {
         if(!accountRepo.findAccountsByUserId(userId).isEmpty()) {
             return accountRepo.findAccountsByUserId(userId);
         } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            throw new IllegalArgumentException("Something went wrong trying to find accounts with userid: " + userId);
         }
     }
 
-    public Account updateAccount(Account updatedAccount) {
-            return accountRepo.save(updatedAccount);
+    //update an account with newly inserted account
+    public Account updateAccount(Account a) {
+        return accountRepo.save(a).orElseThrow(
+                () ->  new IllegalArgumentException("Something went wrong trying to update your account."));
     }
 
     public Account findAccountByIban(String iban) {
-        //find account by iban logic
-        if (accountRepo.findAccountByIban(iban) != null) {
-            return accountRepo.findAccountByIban(iban);
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-
+        return accountRepo.findAccountByIban(iban).orElseThrow(
+                () ->  new IllegalArgumentException("Something went wrong trying to find account with iban: " + iban) );
     }
     public List<Account> getAll() {
         //this deletes the bank account from the list
