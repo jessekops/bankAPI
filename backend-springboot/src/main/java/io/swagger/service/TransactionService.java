@@ -132,7 +132,7 @@ public class TransactionService {
 
     // Update account from
     private void updateFromBalance(Transaction trans) {
-        Account account = accountRepo.findAccountByIban(trans.getFrom().getIban());
+        Account account = accountService.findAccountByIban(trans.getFrom().getIban());
 
         // Given that account exists
         account.setBalance((account.getBalance() - trans.getAmount()));
@@ -141,7 +141,7 @@ public class TransactionService {
 
     // Update account to
     private void updateToBalance(Transaction trans) {
-        Account account = accountRepo.findAccountByIban(trans.getTo());
+        Account account = accountService.findAccountByIban(trans.getTo());
 
         // Given that account exists
         account.setBalance((account.getBalance() + trans.getAmount()));
