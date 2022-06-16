@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -55,14 +56,19 @@ public class UserService {
 
         user.setPassword(encoder.encode(user.getPassword()));
 
-        return userRepo.save(user);
+        return Optional.of(userRepo.save(user)).orElseThrow(
+                () ->  new NoSuchElementException("Something went wrong; the server couldn't respond with new User object"));
     }
 
     public User updateUser(User updatedUser) {
 
+        // Check if User with given id exists before updating
+        this.findById(updatedUser.getId());
+
         updatedUser.setPassword(encoder.encode(updatedUser.getPassword()));
 
-        return userRepo.save(updatedUser);
+        return Optional.of(userRepo.save(updatedUser)).orElseThrow(
+                () ->  new NoSuchElementException("Something went wrong; the server couldn't respond with new User object"));
     }
 
     public List<User> getAll(Integer skip, Integer limit) {
@@ -78,27 +84,19 @@ public class UserService {
     // All findBy methods retrieve an Optional<User> from the repo
 
     public User findByUsername(String username) {
-        Optional<User> optional = userRepo.findByUsername(username);
-
-        return optional.orElse(null);
+        return userRepo.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("User with given username not found."));
     }
 
     public User findByEmail(String email) {
-        Optional<User> optional = userRepo.findByEmail(email);
-
-        return optional.orElse(null);
+        return userRepo.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User with given email address not found."));
     }
 
     private User findByPhone(String phone) {
-        Optional<User> optional = userRepo.findByPhone(phone);
-
-        return optional.orElse(null);
+        return userRepo.findByPhone(phone).orElseThrow(() -> new IllegalArgumentException("User with given phone number not found."));
     }
 
     public User findById(UUID id) {
-        Optional<User> optional = userRepo.findUserById(id);
-
-        return optional.orElse(null);
+        return userRepo.findUserById(id).orElseThrow(() -> new IllegalArgumentException("User with given ID not found."));
     }
 
     public void doesUserDataExist(User user) {

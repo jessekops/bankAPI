@@ -56,7 +56,6 @@ public class TransactionsApiController implements TransactionsApi {
     public ResponseEntity<TransactionDTO> createTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "New transaction object", required=true, schema=@Schema()) @Valid @RequestBody TransactionDTO body) {
 
         try {
-
             Transaction trans = modelMapper.map(body, Transaction.class);
             trans.setId(UUID.randomUUID());
             trans.setFrom(accountService.findAccountByIban(body.getFrom()));
@@ -72,8 +71,6 @@ public class TransactionsApiController implements TransactionsApi {
                     trans = transService.createDeposit(trans);
                     break;
             }
-
-//            trans.setFrom(null);
 
             TransactionDTO response = modelMapper.map(trans, TransactionDTO.class);
 
