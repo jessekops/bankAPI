@@ -1,4 +1,4 @@
-package io.swagger.bankapi;
+package io.swagger.bankapi.cucumber;
 
 import io.cucumber.junit.Cucumber;
 import io.cucumber.junit.CucumberOptions;
@@ -7,7 +7,7 @@ import org.junit.runner.RunWith;
 @RunWith(Cucumber.class)
 @CucumberOptions(
         features = "src/test/resources/features",
-        glue = "io.swagger.bankapi.steps",
+        glue = "io.swagger.bankapi.cucumber.steps",
         plugin = "pretty",
         publish = true)
 public class CucumberIT {
