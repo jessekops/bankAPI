@@ -60,26 +60,25 @@ public class AccountsApiController implements AccountsApi {
     }
 
     @PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<AccountDTO> addAccount(@Parameter(in = ParameterIn.DEFAULT, description = "New account object", required=true, schema=@Schema()) @Valid @RequestBody AccountDTO body) {
-            try {
-                Account a = modelMapper.map(body, Account.class);
-                User u = userService.findById(body.getOwnerId());
-                a.setUser(u);
+    public ResponseEntity<AccountDTO> addAccount(@Parameter(in = ParameterIn.DEFAULT, description = "New account object", required = true, schema = @Schema()) @Valid @RequestBody AccountDTO body) {
+        try {
+            Account a = modelMapper.map(body, Account.class);
+            User u = userService.findById(body.getOwnerId());
+            a.setUser(u);
 
-                a = accountService.addAccount(a);
+            a = accountService.addAccount(a);
 
-                AccountDTO resp = modelMapper.map(a, AccountDTO.class);
-                resp.setOwnerId(u.getId());
+            AccountDTO resp = modelMapper.map(a, AccountDTO.class);
+            resp.setOwnerId(u.getId());
 
-                return new ResponseEntity<AccountDTO>(resp, HttpStatus.CREATED);
-            }
-            catch (IllegalArgumentException ex) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Something went wrong");
-            }
+            return new ResponseEntity<AccountDTO>(resp, HttpStatus.CREATED);
+        } catch (IllegalArgumentException ex) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'CUSTOMER')")
-    public ResponseEntity<List<AccountDTO>> getAccountsByOwnerID(@Parameter(in = ParameterIn.PATH, description = "User ID input", required=true, schema=@Schema()) @PathVariable("userID") UUID userID) {
+    public ResponseEntity<List<AccountDTO>> getAccountsByOwnerID(@Parameter(in = ParameterIn.PATH, description = "User ID input", required = true, schema = @Schema()) @PathVariable("userID") UUID userID) {
 
         List<Account> accountList = accountService.findAccountsByUserId(userID);
         List<AccountDTO> responsedto = accountList
@@ -95,9 +94,9 @@ public class AccountsApiController implements AccountsApi {
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'CUSTOMER')")
-    public ResponseEntity<AccountDTO> getAccountByIban(@Parameter(in = ParameterIn.PATH, description = "IBAN input", required=true, schema=@Schema()) @PathVariable("iban") String iban) {
+    public ResponseEntity<AccountDTO> getAccountByIban(@Parameter(in = ParameterIn.PATH, description = "IBAN input", required = true, schema = @Schema()) @PathVariable("iban") String iban) {
 
-        try{
+        try {
             Account foundAccount = accountService.findAccountByIban(iban);
 
             AccountDTO response = modelMapper.map(foundAccount, AccountDTO.class);
@@ -105,25 +104,25 @@ public class AccountsApiController implements AccountsApi {
             response.setOwnerId(foundAccount.getUser().getId());
 
             return new ResponseEntity<AccountDTO>(response, HttpStatus.OK);
-        }
-        catch (IllegalArgumentException ex){
+        } catch (IllegalArgumentException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account with given Iban not found.");
         }
 
     }
+
     @PreAuthorize("hasAnyRole('EMPLOYEE')")
-    public ResponseEntity<List<AccountDTO>> getAccounts(@Min(0)@Parameter(in = ParameterIn.QUERY, description = "Number of records to skip for pagination" ,schema=@Schema(allowableValues={  }
-)) @Valid @RequestParam(value = "skip", required = false) Integer skip,@Min(1) @Max(200000) @Parameter(in = ParameterIn.QUERY, description = "Maximum number of records to return" ,schema=@Schema(allowableValues={  }, minimum="1", maximum="200000"
-)) @Valid @RequestParam(value = "limit", required = false) Integer limit) {
+    public ResponseEntity<List<AccountDTO>> getAccounts(@Min(0) @Parameter(in = ParameterIn.QUERY, description = "Number of records to skip for pagination", schema = @Schema(allowableValues = {}
+    )) @Valid @RequestParam(value = "skip", required = false) Integer skip, @Min(1) @Max(200000) @Parameter(in = ParameterIn.QUERY, description = "Maximum number of records to return", schema = @Schema(allowableValues = {}, minimum = "1", maximum = "200000"
+    )) @Valid @RequestParam(value = "limit", required = false) Integer limit) {
 
 
         List<Account> accountList = accountService.getAll();
 
 
         List<AccountDTO> dtos = accountList
-                    .stream()
-                    .map(user -> modelMapper.map(user, AccountDTO.class))
-                    .collect(Collectors.toList());
+                .stream()
+                .map(user -> modelMapper.map(user, AccountDTO.class))
+                .collect(Collectors.toList());
         for (int i = 0; i < dtos.size(); i++) {
             dtos.get(i).setOwnerId(accountList.get(i).getUser().getId());
         }
@@ -132,10 +131,10 @@ public class AccountsApiController implements AccountsApi {
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'CUSTOMER')")
-    public ResponseEntity<AccountDTO> updateAccount(@Parameter(in = ParameterIn.PATH, description = "IBAN input", required=true, schema=@Schema()) @PathVariable("iban") String iban,@Parameter(in = ParameterIn.DEFAULT, description = "Updated account object", required=true, schema=@Schema()) @Valid @RequestBody AccountDTO body) {
+    public ResponseEntity<AccountDTO> updateAccount(@Parameter(in = ParameterIn.PATH, description = "IBAN input", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.DEFAULT, description = "Updated account object", required = true, schema = @Schema()) @Valid @RequestBody AccountDTO body) {
 
         Account foundaccount = accountService.findAccountByIban(iban);
-        if(foundaccount != null) {
+        if (foundaccount != null) {
             //map account from body
             Account account = modelMapper.map(body, Account.class);
             //map account from iban
@@ -148,8 +147,7 @@ public class AccountsApiController implements AccountsApi {
             //set response owner id
             response.setOwnerId(account.getUser().getId());
             return new ResponseEntity<AccountDTO>(response, HttpStatus.CREATED);
-        }
-        else {
+        } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Could not find an account to update.");
         }
 
