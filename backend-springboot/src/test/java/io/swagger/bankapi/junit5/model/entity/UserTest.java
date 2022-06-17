@@ -1,6 +1,21 @@
 package io.swagger.bankapi.junit5.model.entity;
 
-import static org.junit.jupiter.api.Assertions.*;
+import io.swagger.model.entity.User;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class UserTest {
+class UserTest {
+
+    private User user;
+
+    @BeforeEach
+    void setup() {
+        user = new User();
+    }
+
+    @Test
+    void newUserShouldNotBeNull() {
+        Assertions.assertNotNull(user);
+    }
 }
