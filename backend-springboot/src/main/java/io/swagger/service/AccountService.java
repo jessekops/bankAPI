@@ -61,6 +61,14 @@ public class AccountService {
 
     //get all accounts with pagination
     public List<Account> getAll(Integer skip, Integer limit) {
+
+        if(skip == null) {
+            skip = 0;
+        }
+        if(limit == null) {
+            limit = Integer.MAX_VALUE;
+        }
+
         Pageable pageable = PageRequest.of(skip, limit);
         List<Account> accountList = accountRepo.findAll(pageable).getContent();
         accountList.removeIf(account -> account.getIban().equals("NL01INHO0000000001"));
