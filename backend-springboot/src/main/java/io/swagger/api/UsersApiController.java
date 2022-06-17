@@ -60,7 +60,7 @@ public class UsersApiController implements UsersApi {
             User user = mapper.map(body, User.class);
 
             // Check if a user exist with the given user's username, email or phone number
-//            userService.doesUserDataExist(user);
+            userService.doesUserDataExist(user);
 
             // Add the user to the DB
             user = userService.addUser(user);
@@ -68,7 +68,7 @@ public class UsersApiController implements UsersApi {
             // Respond with the new User, mapped to a UserDTO object
             UserDTO response = mapper.map(user, UserDTO.class);
             return new ResponseEntity<UserDTO>(response, HttpStatus.CREATED);
-        } catch (NoSuchElementException | ConstraintViolationException ex) {
+        } catch (IllegalArgumentException | NoSuchElementException ex) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, ex.getMessage());
         }
 
@@ -80,6 +80,9 @@ public class UsersApiController implements UsersApi {
         User user = mapper.map(body, User.class);
 
         try {
+            // Check if a user exist with the given user's username, email or phone number
+            userService.doesUserDataExist(user);
+
             user = userService.updateUser(user);
 
             UserDTO response = mapper.map(user, UserDTO.class);
