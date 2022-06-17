@@ -113,7 +113,7 @@ public class AccountsApiController implements AccountsApi {
     )) @Valid @RequestParam(value = "limit", required = false) Integer limit) {
 
 
-        List<Account> accountList = accountService.getAll();
+        List<Account> accountList = accountService.getAll(skip, limit);
         List<AccountDTO> dtos = accountList
                 .stream()
                 .map(user -> modelMapper.map(user, AccountDTO.class))

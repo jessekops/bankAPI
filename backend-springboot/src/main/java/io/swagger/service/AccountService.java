@@ -3,6 +3,8 @@ package io.swagger.service;
 import io.swagger.model.entity.Account;
 import io.swagger.repo.AccountRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +19,6 @@ public class AccountService {
 
     @Autowired
     private AccountIbanService accountIbanService;
-
 
     //account validation
     public Account addAccount(Account a) {
@@ -53,18 +54,19 @@ public class AccountService {
                 () -> new IllegalArgumentException("Something went wrong trying to update your account."));
     }
 
+    //find an accountlist by iban input
     public Account findAccountByIban(String iban) {
-//        return accountRepo.findAccountByIban(iban).orElseThrow(() -> new IllegalArgumentException("Something went wrong trying to find account with iban: " + iban));
         return accountRepo.findAccountByIban(iban).orElse(null);
     }
 
-    public List<Account> getAll() {
-        //this deletes the bank account from the list
-        List<Account> accountList = accountRepo.findAll();
+    //get all accounts with pagination
+    public List<Account> getAll(Integer skip, Integer limit) {
+        Pageable pageable = PageRequest.of(skip, limit);
+        List<Account> accountList = accountRepo.findAll(pageable).getContent();
         accountList.removeIf(account -> account.getIban().equals("NL01INHO0000000001"));
+
         return accountList;
     }
-
     //pincode check for integer
     private boolean pinCheck(Integer pin) {
         return String.valueOf(pin).length() == 4;
