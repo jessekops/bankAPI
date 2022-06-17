@@ -75,6 +75,14 @@ public class UserService {
 
     public List<User> getAll(Integer skip, Integer limit) {
 
+        if(skip == null){
+            skip = 0;
+        }
+
+        if(limit == null){
+            limit = Integer.MAX_VALUE;
+        }
+
         Pageable pageable = PageRequest.of(skip, limit);
         return userRepo.findAll(pageable).getContent();
     }
