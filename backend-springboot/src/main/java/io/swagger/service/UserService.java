@@ -75,6 +75,14 @@ public class UserService {
 
     public List<User> getAll(Integer skip, Integer limit) {
 
+        if(skip == null){
+            skip = 0;
+        }
+
+        if(limit == null){
+            limit = Integer.MAX_VALUE;
+        }
+
         Pageable pageable = PageRequest.of(skip, limit);
         return userRepo.findAll(pageable).getContent();
     }
@@ -86,36 +94,35 @@ public class UserService {
     // All findBy methods retrieve an Optional<User> from the repo
 
     public User findByUsername(String username) {
-//        return userRepo.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("User with given username not found."));
         return userRepo.findByUsername(username).orElse(null);
     }
 
     public User findByEmail(String email) {
-//        return userRepo.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User with given email address not found."));
         return userRepo.findByEmail(email).orElse(null);
     }
 
     private User findByPhone(String phone) {
-//        return userRepo.findByPhone(phone).orElseThrow(() -> new IllegalArgumentException("User with given phone number not found."));
         return userRepo.findByPhone(phone).orElse(null);
     }
 
     public User findById(UUID id) {
-//        return userRepo.findUserById(id).orElseThrow(() -> new IllegalArgumentException("User with given ID not found."));
         return userRepo.findById(id).orElse(null);
     }
 
     public void doesUserDataExist(User user) {
 
-        if (findByUsername(user.getUsername()) != null) {
+        // Check if a user exists, that is not the same as the given user, with the given user's username
+        if (findByUsername(user.getUsername()) != null && !findByUsername(user.getUsername()).equals(user)) {
             throw new IllegalArgumentException("Username is already in use! Please try again");
         }
 
-        if (findByEmail(user.getEmail()) != null) {
+        // Check if a user exists, that is not the same as the given user, with the given user's email address
+        if (findByEmail(user.getEmail()) != null && !findByEmail(user.getEmail()).equals(user)) {
             throw new IllegalArgumentException("Email is already in use! Please try again");
         }
 
-        if (findByPhone(user.getPhone()) != null) {
+        // Check if a user exists, that is not the same as the given user, with the given user's phone number
+        if (findByPhone(user.getPhone()) != null && !findByPhone(user.getPhone()).equals(user)) {
             throw new IllegalArgumentException("Phone number is already in use! Please try again");
         }
     }

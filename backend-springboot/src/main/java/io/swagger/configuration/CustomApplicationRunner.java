@@ -43,7 +43,6 @@ public class CustomApplicationRunner implements ApplicationRunner {
         bankAccount.setBalance(max);
         bankAccount.setIban("NL01INHO0000000001");
         bankAccount.setAccountType(AccountType.CURRENT);
-        bankAccount.setActive(true);
 
 
         userService.addUser(bank);
