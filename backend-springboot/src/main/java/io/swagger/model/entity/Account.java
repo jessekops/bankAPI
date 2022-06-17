@@ -6,6 +6,7 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -28,6 +29,9 @@ public class Account {
 
     public void setUser(User user) {
         this.user = user;
+    }
+    public void setActive(Boolean active) {
+        this.active = Objects.requireNonNullElse(active, true);
     }
 
     @ToString.Exclude
