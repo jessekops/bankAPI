@@ -31,5 +31,8 @@ public class UserStepDefinitions extends BaseStepDefinitions implements En {
         Then("^I receive a status of (\\d+)$", (Integer status) -> {
         });
 
+        And("^Get a List<User> of length (\\d+)$", (Integer expectedLength) -> {
+        });
+
     }
 }
