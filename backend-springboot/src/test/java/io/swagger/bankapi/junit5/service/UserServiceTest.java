@@ -1,14 +1,15 @@
 package io.swagger.bankapi.junit5.service;
 
+import io.swagger.Swagger2SpringBoot;
 import io.swagger.model.dto.UserDTO;
 import io.swagger.model.entity.User;
-import io.swagger.repo.UserRepo;
 import io.swagger.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
@@ -16,9 +17,10 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest(classes = {Swagger2SpringBoot.class})
+@AutoConfigureMockMvc
 class UserServiceTest {
 
 //    @Autowired
@@ -36,13 +38,12 @@ class UserServiceTest {
     @Mock
     private User user;
 
-    @InjectMocks
+    @MockBean
     private UserService userService;
 
 
     @BeforeEach
     void setup() {
-//        userService = new UserService();
         user = new User();
 
         user.setUsername("username");
