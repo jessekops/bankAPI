@@ -4,3 +4,4 @@ Feature: User
     Given I have a valid JWT
     When I call the users endpoint
     Then I receive a status of 200
+    And Get a List<User> of length 1
