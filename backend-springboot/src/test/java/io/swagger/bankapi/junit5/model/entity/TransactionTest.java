@@ -26,7 +26,7 @@ class TransactionTest {
     }
 
     @Test
-    void setAmountToPositiveNumberShouldSetThatPrice() {
+    void setAmountToPositiveNumberShouldSetThatAmount() {
         Double newAmount = new Random().nextDouble();
         transaction.setAmount(newAmount);
         assertEquals(newAmount, transaction.getAmount());
