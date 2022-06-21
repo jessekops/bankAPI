@@ -36,9 +36,6 @@ class UsersApiControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private UserRepo accountRepo;
-
     @MockBean
     private UserService userService;
 
