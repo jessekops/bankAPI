@@ -1,7 +1,5 @@
-package io.swagger.bankapi.junit5.model.entity;
+package io.swagger.model.entity;
 
-import io.swagger.model.entity.Account;
-import io.swagger.model.entity.User;
 import io.swagger.service.AccountIbanService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

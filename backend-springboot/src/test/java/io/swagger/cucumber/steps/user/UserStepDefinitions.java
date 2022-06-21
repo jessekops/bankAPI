@@ -1,7 +1,7 @@
-package io.swagger.bankapi.cucumber.steps.user;
+package io.swagger.cucumber.steps.user;
 
 import io.cucumber.java8.En;
-import io.swagger.bankapi.cucumber.steps.BaseStepDefinitions;
+import io.swagger.cucumber.steps.BaseStepDefinitions;
 
 public class UserStepDefinitions extends BaseStepDefinitions implements En {
     public UserStepDefinitions() {
