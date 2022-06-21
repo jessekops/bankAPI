@@ -1,7 +1,9 @@
 package io.swagger.model.entity;
 
 import io.swagger.model.enumeration.UserType;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -12,6 +14,8 @@ import java.util.UUID;
 @Entity
 @Table(uniqueConstraints = {@UniqueConstraint(name = "UniqueUsernameEmailAndPhoneNr", columnNames = {"username", "email", "phone"})})
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
     @Id
@@ -37,6 +41,4 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Account> accounts;
-
-
 }
