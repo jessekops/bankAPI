@@ -1,6 +1,7 @@
 package io.swagger.bankapi.junit5.model.entity;
 
 import io.swagger.model.entity.Transaction;
+import io.swagger.model.entity.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +27,13 @@ class TransactionTest {
     }
 
     @Test
+    void setAmountExpectCorrectAmountBack() {
+        Double amount = 11.11;
+        transaction.setAmount(amount);
+        assertEquals(amount, transaction.getAmount());
+    }
+
+    @Test
     void setAmountToPositiveNumberShouldSetThatAmount() {
         Double newAmount = new Random().nextDouble();
         transaction.setAmount(newAmount);
@@ -35,5 +43,10 @@ class TransactionTest {
     @Test
     void setAmountToNegativeShouldThrowException() {
         assertThrows(IllegalArgumentException.class, () -> transaction.setAmount(-1.0));
+    }
+
+    @Test
+    void setAmountToNullShouldThrowException() {
+        assertThrows(NullPointerException.class, () -> transaction.setAmount(null));
     }
 }
