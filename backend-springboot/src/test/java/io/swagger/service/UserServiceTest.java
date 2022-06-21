@@ -1,5 +1,8 @@
 package io.swagger.service;
 
+
+class UserServiceTest {
+
 import io.swagger.Swagger2SpringBoot;
 import io.swagger.model.dto.UserDTO;
 import io.swagger.model.entity.User;
