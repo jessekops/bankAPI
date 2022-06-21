@@ -1,8 +1,8 @@
-package io.swagger.bankapi.cucumber.steps.login;
+package io.swagger.cucumber.steps.login;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java8.En;
-import io.swagger.bankapi.cucumber.steps.BaseStepDefinitions;
+import io.swagger.cucumber.steps.BaseStepDefinitions;
 import io.swagger.model.dto.LoginDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;

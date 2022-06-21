@@ -1,10 +1,8 @@
-package io.swagger.bankapi.junit5.controller;
+package io.swagger.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.api.UsersApiController;
 import io.swagger.model.dto.UserDTO;
 import io.swagger.model.entity.User;
-import io.swagger.repo.UserRepo;
 import io.swagger.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

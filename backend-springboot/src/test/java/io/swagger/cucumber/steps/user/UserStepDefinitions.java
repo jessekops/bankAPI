@@ -1,16 +1,20 @@
-package io.swagger.bankapi.cucumber.steps.user;
+package io.swagger.cucumber.steps.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 import io.cucumber.java8.En;
-import io.swagger.bankapi.cucumber.steps.BaseStepDefinitions;
+import io.swagger.cucumber.steps.BaseStepDefinitions;
 import io.swagger.model.dto.UserDTO;
+import lombok.extern.slf4j.Slf4j;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Assertions;
+import org.mockito.Mock;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
-
+@Slf4j
 public class UserStepDefinitions extends BaseStepDefinitions implements En {
 
     private static final String VALID_TOKEN_USER = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiYXV0aCI6W10sImlhdCI6MTY1MzMxMTc0NiwiZXhwIjoxNjg0ODQ3NzQ2fQ.itSjs-evCYi2P7JAKwT4DY8u5RIASTghoaeQOa33v_s";
@@ -23,6 +27,8 @@ public class UserStepDefinitions extends BaseStepDefinitions implements En {
     private final HttpHeaders httpHeaders = new HttpHeaders();
     private final TestRestTemplate restTemplate = new TestRestTemplate();
     private ResponseEntity<String> response;
+
+    @Mock
     private UserDTO dto;
 
 
@@ -30,22 +36,27 @@ public class UserStepDefinitions extends BaseStepDefinitions implements En {
 
     public UserStepDefinitions() {
 
-        Given("^I have a valid JWT$", () -> {
-        });
-
         When("^I call the users endpoint$", () -> {
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.add("Content-Type", "application/json");
 
             HttpEntity<String> request = new HttpEntity<String>(mapper.writeValueAsString(dto), httpHeaders);
-            response = restTemplate.postForEntity(getBaseUrl() + "/users", request, String.class, SKIP, LIMIT);
+            response = restTemplate.postForEntity(getBaseUrl() + "/users" + "?skip=" + SKIP + "&limit=" + LIMIT , request, String.class);
         });
 
-        Then("^I receive a status of (\\d+)$", (Integer status) -> {
-            Assertions.assertSame(status, response.getStatusCodeValue());
+        Then("^I receive a http-status of (\\d+)$", (Integer httpStatus) -> {
+            Assertions.assertSame(httpStatus, response.getStatusCodeValue());
         });
 
         And("^Get a List<User> of length (\\d+)$", (Integer expectedLength) -> {
+            Integer actual = JsonPath.read(response.getBody(), "$.size()");
+            Assertions.assertEquals(expectedLength, actual);
+        });
+
+        Given("^I have a valid JWT$", () -> {
+            JSONObject jsonObject = new JSONObject(response.getBody());
+            String token = jsonObject.getString("token");
+            Assertions.assertTrue(token.startsWith("ey"));
         });
 
     }

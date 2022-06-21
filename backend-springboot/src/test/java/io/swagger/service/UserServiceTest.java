@@ -1,9 +1,8 @@
-package io.swagger.bankapi.junit5.service;
+package io.swagger.service;
 
 import io.swagger.Swagger2SpringBoot;
 import io.swagger.model.dto.UserDTO;
 import io.swagger.model.entity.User;
-import io.swagger.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
