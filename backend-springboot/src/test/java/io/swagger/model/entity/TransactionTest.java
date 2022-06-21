@@ -1,12 +1,8 @@
-package io.swagger.bankapi.junit5.model.entity;
+package io.swagger.model.entity;
 
-import io.swagger.model.entity.Transaction;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 
 class TransactionTest {
