@@ -1,7 +1,7 @@
-package io.swagger.bankapi.cucumber.steps.transaction;
+package io.swagger.cucumber.steps.transaction;
 
 import io.cucumber.java8.En;
-import io.swagger.bankapi.cucumber.steps.BaseStepDefinitions;
+import io.swagger.cucumber.steps.BaseStepDefinitions;
 
 public class TransactionStepDefenition extends BaseStepDefinitions implements En {
     public TransactionStepDefenition() {
