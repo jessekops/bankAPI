@@ -9,6 +9,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,20 +23,25 @@ public class AccountService {
 
     //account validation
     public Account addAccount(Account a) {
-        //check if all fields have been filled
-        if (!this.allFieldsFilled(a)) {
-            throw new IllegalArgumentException("Please fill in all the required fields.");
-        }
-        //check if pincode is of type INT and 4 digits long
-        if (!this.pinCheck(a.getPinCode())) {
-            throw new IllegalArgumentException("Pin code has to be 4 digits long and of type Integer.");
-        }
-        //check if there is an iban already assigned to the account and if the generated iban is valid to set the generated iban
+        validateAccount(a);
+
         if (!accountIbanService.isIbanPresent(a.getIban())) {
             String iban = accountIbanService.generateIban();
             a.setIban(iban);
         }
-        return accountRepo.save(a);
+
+        return Optional.of(accountRepo.save(a)).orElseThrow(
+                () ->  new NoSuchElementException("Something went wrong; the server couldn't respond with new account object"));
+    }
+
+    private void validateAccount(Account a) {
+        if (!allFieldsFilled(a)) {
+            throw new IllegalArgumentException("Please fill in all the required fields.");
+        }
+
+        if (!pinCheck(a.getPinCode())) {
+            throw new IllegalArgumentException("Pin code has to be 4 digits long and of type Integer.");
+        }
     }
 
     //find an accountlist by using the userid/owner id
@@ -54,30 +60,30 @@ public class AccountService {
     }
 
     //find an accountlist by iban input
-    public Account findAccountByIban(String iban) {
-        return accountRepo.findAccountByIban(iban).orElse(null);
+    public Optional<Account> findAccountByIban(String iban) {
+        return accountRepo.findAccountByIban(iban);
     }
 
-    //get all accounts with pagination
     public List<Account> getAll(Integer skip, Integer limit) {
+        if (skip == null && limit == null) {
+            return getAll();
+        }
 
-        if(skip == null) {
+        if (skip == null) {
             skip = 0;
         }
-        if(limit == null) {
+        if (limit == null) {
             limit = Integer.MAX_VALUE;
         }
 
         Pageable pageable = PageRequest.of(skip, limit);
-        List<Account> accountList = accountRepo.findAll(pageable).getContent();
-
-//        accountList.removeIf(account -> account.getIban().equals("NL01INHO0000000001"));
-
-        return accountList;
+        return accountRepo.findAll(pageable).getContent();
     }
+
     public List<Account> getAll() {
         return accountRepo.findAll();
     }
+
     //pincode check for integer
     private boolean pinCheck(Integer pin) {
         return String.valueOf(pin).length() == 4;

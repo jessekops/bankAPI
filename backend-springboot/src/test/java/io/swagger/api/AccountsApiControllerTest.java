@@ -29,13 +29,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
-
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 class AccountsApiControllerTest {
-
 
     @Autowired
     private MockMvc mvc;
@@ -45,7 +42,6 @@ class AccountsApiControllerTest {
     @Autowired
     AccountService accountService;
 
-
     @Autowired
     UserService userService;
 
@@ -53,7 +49,6 @@ class AccountsApiControllerTest {
     private ObjectMapper objectMapper;
     @Autowired
     private WebApplicationContext context;
-
 
     List<Account> accounts;
 
@@ -73,8 +68,6 @@ class AccountsApiControllerTest {
 
     @BeforeEach
     public void setup() throws Exception {
-
-
         List<Account> accountList = new ArrayList<>();
 
         User frank = new User();
@@ -98,7 +91,6 @@ class AccountsApiControllerTest {
 
         accountList.add(franksAccount);
 
-
         //init wim and his account
         User wim = new User();
         wim.setActive(true);
@@ -108,8 +100,6 @@ class AccountsApiControllerTest {
         wim.setPhone("+316 512345678");
         wim.setDayLimit(0.00);
         wim.setUserTypes(List.of(UserType.ROLE_CUSTOMER));
-
-
 
         Account wimsAccount = new Account();
         wimsAccount.setUser(wim);
@@ -139,7 +129,6 @@ class AccountsApiControllerTest {
 
         accountList.add(bankAccount);
 
-
         frankAccountMock = franksAccount;
         wimAccountMock = wimsAccount;
         frankMock = frank;
@@ -150,7 +139,6 @@ class AccountsApiControllerTest {
         this.login();
 
     }
-
 
     @BeforeEach
     public void login() throws Exception {
@@ -217,5 +205,4 @@ class AccountsApiControllerTest {
                 .header("Authorization", "Bearer " + this.jwt))
         ).andExpect(status().isOk());
     }
-
 }

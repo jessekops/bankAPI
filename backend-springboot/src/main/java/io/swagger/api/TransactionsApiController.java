@@ -59,7 +59,7 @@ public class TransactionsApiController implements TransactionsApi {
         try {
             Transaction trans = modelMapper.map(body, Transaction.class);
             trans.setId(UUID.randomUUID());
-            trans.setFrom(accountService.findAccountByIban(body.getFrom()));
+            trans.setFrom(accountService.findAccountByIban(body.getFrom()).orElseThrow());
 
             switch (trans.getTransactionType()){
                 case REGULAR:
@@ -107,7 +107,7 @@ public class TransactionsApiController implements TransactionsApi {
     public ResponseEntity<TransactionDTO> updateTransaction(@Parameter(in = ParameterIn.PATH, description = "Transaction ID input", required = true, schema = @Schema()) @PathVariable("id") UUID id, @Parameter(in = ParameterIn.DEFAULT, description = "Updated transaction object", required = true, schema = @Schema()) @Valid @RequestBody TransactionDTO body) {
         try {
             Transaction trans = modelMapper.map(body, Transaction.class);
-            trans.setFrom(accountService.findAccountByIban(body.getFrom()));
+            trans.setFrom(accountService.findAccountByIban(body.getFrom()).orElseThrow());
 
             trans = transService.updateTransaction(trans);
 

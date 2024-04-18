@@ -41,10 +41,7 @@ public interface AccountsApi {
             method = RequestMethod.POST)
     ResponseEntity<AccountDTO> addAccount(@Parameter(in = ParameterIn.DEFAULT, description = "New account object", required=true, schema=@Schema()) @Valid @RequestBody AccountDTO body);
 
-
-
-
-    @Operation(summary = "Search an account list on IBAN", description = "", security = {
+    @Operation(summary = "Search an account basesd on IBAN", description = "", security = {
             @SecurityRequirement(name = "bearerAuth")    }, tags={ "Employee", "Customer" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Account found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AccountDTO.class))),
@@ -54,7 +51,6 @@ public interface AccountsApi {
             produces = { "application/json" },
             method = RequestMethod.GET)
     ResponseEntity<AccountDTO> getAccountByIban(@Parameter(in = ParameterIn.PATH, description = "IBAN input", required=true, schema=@Schema()) @PathVariable("iban") String iban);
-
 
     @Operation(summary = "Search account list with pagination", description = "By passing in the appropriate options, you can search for accounts in the DB ", security = {
             @SecurityRequirement(name = "bearerAuth")    }, tags={ "Employee" })
@@ -78,6 +74,7 @@ public interface AccountsApi {
     @RequestMapping(value = "/accounts/getByUserID/{userID}",
             produces = { "application/json" },
             method = RequestMethod.GET)
+
     ResponseEntity<List<AccountDTO>> getAccountsByOwnerID(@Parameter(in = ParameterIn.PATH, description = "User ID input", required=true, schema=@Schema()) @PathVariable("userID") UUID userID);
 
 

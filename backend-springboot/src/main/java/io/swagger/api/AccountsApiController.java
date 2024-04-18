@@ -11,6 +11,7 @@ import io.swagger.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,29 +21,27 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-06-01T10:34:07.804Z[GMT]")
 @RestController
+@SecurityRequirement(name="javainuseapi")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Api(tags = {"Employee", "Customer"})
 public class AccountsApiController implements AccountsApi {
-
-
     private static final Logger log = LoggerFactory.getLogger(AccountsApiController.class);
-
     private final ObjectMapper objectMapper;
-
     private final HttpServletRequest request;
-
     private ModelMapper modelMapper;
 
     @Autowired
@@ -77,74 +76,77 @@ public class AccountsApiController implements AccountsApi {
 
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'CUSTOMER')")
     public ResponseEntity<List<AccountDTO>> getAccountsByOwnerID(@Parameter(in = ParameterIn.PATH, description = "User ID input", required = true, schema = @Schema()) @PathVariable("userID") UUID userID) {
-
         List<Account> accountList = accountService.findAccountsByUserId(userID);
-        List<AccountDTO> responsedto = accountList
+        List<AccountDTO> responseDto = accountList
                 .stream()
                 .map(user -> modelMapper.map(user, AccountDTO.class))
                 .collect(Collectors.toList());
 
-        for (int i = 0; i < responsedto.size(); i++) {
-            responsedto.get(i).setOwnerId(accountList.get(i).getUser().getId());
+        for (int i = 0; i < responseDto.size(); i++) {
+            responseDto.get(i).setOwnerId(accountList.get(i).getUser().getId());
         }
 
-        return new ResponseEntity<List<AccountDTO>>(responsedto, HttpStatus.OK);
+        return new ResponseEntity<List<AccountDTO>>(responseDto, HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'CUSTOMER')")
-    public ResponseEntity<AccountDTO> getAccountByIban(@Parameter(in = ParameterIn.PATH, description = "IBAN input", required = true, schema = @Schema()) @PathVariable("iban") String iban) {
+    public ResponseEntity<AccountDTO> getAccountByIban(@PathVariable("iban") String iban) {
+        Optional<Account> optionalAccount = accountService.findAccountByIban(iban);
 
-        try {
-            Account foundAccount = accountService.findAccountByIban(iban);
-            AccountDTO response = modelMapper.map(foundAccount, AccountDTO.class);
-
-            response.setOwnerId(foundAccount.getUser().getId());
-
-            return new ResponseEntity<AccountDTO>(response, HttpStatus.OK);
-        } catch (IllegalArgumentException ex) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account with given Iban not found.");
+        if (optionalAccount.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account with the given IBAN not found.");
         }
 
+        Account foundAccount = optionalAccount.get();
+        AccountDTO response = modelMapper.map(foundAccount, AccountDTO.class);
+        response.setOwnerId(foundAccount.getUser().getId());
+
+        return ResponseEntity.ok(response);
+    }
+
+    private boolean hasRole(Authentication authentication, String roleName) {
+        return authentication.getAuthorities().stream()
+                .anyMatch(authority -> authority.getAuthority().equals("ROLE_" + roleName));
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYEE')")
-    public ResponseEntity<List<AccountDTO>> getAccounts(@Min(0) @Parameter(in = ParameterIn.QUERY, description = "Number of records to skip for pagination", schema = @Schema(allowableValues = {}
-    )) @Valid @RequestParam(value = "skip", required = false) Integer skip, @Min(1) @Max(200000) @Parameter(in = ParameterIn.QUERY, description = "Maximum number of records to return", schema = @Schema(allowableValues = {}, minimum = "1", maximum = "200000"
-    )) @Valid @RequestParam(value = "limit", required = false) Integer limit) {
-
+    public ResponseEntity<List<AccountDTO>> getAccounts(
+            @Min(0) @Parameter(in = ParameterIn.QUERY, description = "Number of records to skip for pagination",
+                    schema = @Schema(allowableValues = {})) @Valid @RequestParam(value = "skip", required = false) Integer skip,
+            @Min(1) @Max(200000) @Parameter(in = ParameterIn.QUERY, description = "Maximum number of records to return",
+                    schema = @Schema(allowableValues = {}, minimum = "1", maximum = "200000")) @Valid @RequestParam(value = "limit", required = false) Integer limit) {
 
         List<Account> accountList = accountService.getAll(skip, limit);
-        List<AccountDTO> dtos = accountList
-                .stream()
-                .map(user -> modelMapper.map(user, AccountDTO.class))
-                .collect(Collectors.toList());
-        for (int i = 0; i < dtos.size(); i++) {
-            dtos.get(i).setOwnerId(accountList.get(i).getUser().getId());
-        }
 
-        return new ResponseEntity<List<AccountDTO>>(dtos, HttpStatus.OK);
+        List<AccountDTO> dtos = accountList.stream()
+                .map(account -> {
+                    AccountDTO dto = modelMapper.map(account, AccountDTO.class);
+                    dto.setOwnerId(account.getUser().getId());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(dtos);
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'CUSTOMER')")
-    public ResponseEntity<AccountDTO> updateAccount(@Parameter(in = ParameterIn.PATH, description = "IBAN input", required = true, schema = @Schema()) @PathVariable("iban") String iban, @Parameter(in = ParameterIn.DEFAULT, description = "Updated account object", required = true, schema = @Schema()) @Valid @RequestBody AccountDTO body) {
+    public ResponseEntity<AccountDTO> updateAccount(@PathVariable("iban") String iban, @Valid @RequestBody AccountDTO body) {
+        Optional<Account> optionalAccount = accountService.findAccountByIban(iban);
 
-        Account foundaccount = accountService.findAccountByIban(iban);
-        if (foundaccount != null) {
-            //map account from body
+        if (optionalAccount.isPresent()) {
+            Account foundAccount = optionalAccount.get();
+            // Map account from the request body
             Account account = modelMapper.map(body, Account.class);
-            //preset 2 things that never should be able to change
-            account.setIban(foundaccount.getIban());
-            account.setUser(foundaccount.getUser());
+            // Preset properties that should not be changed
+            account.setIban(foundAccount.getIban());
+            account.setUser(foundAccount.getUser());
 
             account = accountService.updateAccount(account);
             AccountDTO response = modelMapper.map(account, AccountDTO.class);
-            //set response owner id
             response.setOwnerId(account.getUser().getId());
-            return new ResponseEntity<AccountDTO>(response, HttpStatus.CREATED);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Could not find an account to update.");
         }
-
-
     }
 }

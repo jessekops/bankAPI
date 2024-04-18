@@ -10,8 +10,6 @@ public class AccountIbanService extends AccountService {
     @Autowired
     private AccountService accountService;
 
-
-   //extra uitleg
     public String generateIban() {
         StringBuilder iban = new StringBuilder("NL");
         Random prefix = new Random();
@@ -22,11 +20,14 @@ public class AccountIbanService extends AccountService {
         long number = (long) Math.floor(Math.random() * 9_000_000_000L) + 1_000_000_000L;
         iban.append(number);
         String finalIban = iban.toString();
-        if (accountService.findAccountByIban(finalIban) != null){
+
+        if (accountService.findAccountByIban(finalIban).isPresent()){
             throw new IllegalArgumentException("Something went wrong generating your iban.");
         }
+
         return finalIban;
     }
+
     public boolean isIbanPresent(String ibanGiven) {
         return ibanGiven != null;
     }
