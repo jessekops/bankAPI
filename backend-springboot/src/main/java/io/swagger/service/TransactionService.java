@@ -7,15 +7,17 @@ import io.swagger.repo.AccountRepo;
 import io.swagger.repo.TransactionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.time.LocalDate;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public class TransactionService {
+
+    private static final Logger logger = LoggerFactory.getLogger(TransactionService.class);
 
     @Autowired
     TransactionRepo transactionRepo;
@@ -64,10 +66,10 @@ public class TransactionService {
             throw new IllegalArgumentException("Cannot create transaction; Cannot exceed absolute limit.");
         }
 
-//        User userPerforming = userService.findById(trans.getUserPerforming());
-//        if (!transactionValidatorService.doesNotExceedDayLimit(userPerforming, trans)) {
-//            throw new IllegalArgumentException("Cannot create transaction; Cannot exceed day limit.");
-//        }
+        User userPerforming = userService.findById(trans.getUserPerforming());
+        if (!transactionValidatorService.doesNotExceedDayLimit(userPerforming, trans)) {
+            throw new IllegalArgumentException("Cannot create transaction; Cannot exceed day limit.");
+        }
     }
 
     private void updateToBalance(Account account, double amount) {
@@ -105,10 +107,6 @@ public class TransactionService {
 
     public Transaction updateTransaction(Transaction transaction) {
         return transactionRepo.save(transaction);
-    }
-
-    public List<Transaction> getTransactionsFromToday(LocalDate timeStamp) {
-        return transactionRepo.findAllByTimestamp(timeStamp);
     }
 
     private boolean isPinCodeNull(Integer pinCode) {

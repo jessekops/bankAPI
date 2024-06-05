@@ -21,6 +21,7 @@ public class Transaction {
 
     private TransactionType transactionType;
 
+
     @ToString.Exclude
     @ManyToOne(cascade = CascadeType.ALL)
     private Account from;

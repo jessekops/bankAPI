@@ -4,6 +4,7 @@ import io.swagger.model.entity.Account;
 import io.swagger.model.entity.Transaction;
 import io.swagger.model.entity.User;
 import io.swagger.model.enumeration.AccountType;
+import io.swagger.repo.TransactionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,8 @@ public class TransactionValidatorService {
     private TransactionService transactionService;
     @Autowired
     private AccountService accountService;
+    @Autowired
+    private TransactionRepo transactionRepo;
 
     public boolean areBothAccountsSavings(Account from, Account to) {
         return from.getAccountType().equals(AccountType.SAVINGS) && to.getAccountType().equals(AccountType.SAVINGS);
@@ -36,12 +39,18 @@ public class TransactionValidatorService {
         return (accountFrom.getBalance() - amount) >= accountFrom.getAbsLimit();
     }
 
-    public boolean doesNotExceedDayLimit(User user, Transaction trans) {
-        List<Transaction> transToday = transactionService.getTransactionsFromToday(LocalDate.now());
-        double total = transToday.stream().mapToDouble(Transaction::getAmount).sum();
-        total += trans.getAmount();
-        return total <= user.getDayLimit();
+    public boolean doesNotExceedDayLimit(User user, Transaction transaction) {
+        double dailyLimit = user.getDayLimit();
+        LocalDate today = LocalDate.now();
+
+        double totalAmountToday = transactionRepo.findAllByUserPerformingAndTimestamp(user.getId(), today)
+                .stream()
+                .mapToDouble(Transaction::getAmount)
+                .sum();
+
+        return (totalAmountToday + transaction.getAmount()) <= dailyLimit;
     }
+
 
     public boolean areAccountsActive(String ibanFrom, String ibanTo) {
         Account from = accountService.findAccountByIban(ibanFrom).orElseThrow(() -> new NoSuchElementException("From account not found."));
@@ -49,7 +58,4 @@ public class TransactionValidatorService {
         return from.getActive() && to.getActive();
     }
 
-    public boolean isNotSavingsToOtherCurrent(Account from, Account to) {
-        return !(from.getAccountType().equals(AccountType.SAVINGS) && !isUserOwnerOfAccounts(from, to) && to.getAccountType().equals(AccountType.CURRENT));
-    }
 }
