@@ -3,6 +3,7 @@ package io.swagger.service;
 import io.swagger.model.entity.Account;
 import io.swagger.model.entity.Transaction;
 import io.swagger.model.entity.User;
+import io.swagger.model.enumeration.TransactionType;
 import io.swagger.repo.AccountRepo;
 import io.swagger.repo.TransactionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,13 +36,19 @@ public class TransactionService {
         Account accountFrom = getAccountByIban(trans.getFrom().getIban());
         Account accountTo = getAccountByIban(trans.getTo());
 
-        if (!transactionValidatorService.areBothAccountsSavings(accountFrom, accountTo)) {
-            checkGeneralConditions(trans);
-            updateFromBalance(accountFrom, trans.getAmount());
-            updateToBalance(accountTo, trans.getAmount());
-        } else {
-            throw new IllegalArgumentException("Cannot transfer between two savings accounts.");
+        if (transactionValidatorService.areBothAccountsSavings(accountFrom, accountTo)) {
+            throw new IllegalArgumentException("Cannot create transaction; Cannot transfer between two savings accounts.");
         }
+
+        if (transactionValidatorService.isOneAccountSavings(accountFrom, accountTo)) {
+            if (!transactionValidatorService.isUserOwnerOfAccounts(accountFrom, accountTo)) {
+                throw new IllegalArgumentException("Cannot create transaction; Cannot transfer to or from a savings account that does not belong to you.");
+            }
+        }
+
+        checkGeneralConditions(trans);
+        updateFromBalance(accountFrom, trans.getAmount());
+        updateToBalance(accountTo, trans.getAmount());
 
         return transactionRepo.save(trans);
     }
@@ -110,8 +117,13 @@ public class TransactionService {
         return pinCode == null;
     }
 
-    private boolean isPinCodeCorrect(Transaction trans) {
+    private boolean isFromPinCodeCorrect(Transaction trans) {
         Account account = getAccountByIban(trans.getFrom().getIban());
+        return trans.getPinCode().equals(account.getPinCode());
+    }
+
+    private boolean isToPinCodeCorrect(Transaction trans) {
+        Account account = getAccountByIban(trans.getTo());
         return trans.getPinCode().equals(account.getPinCode());
     }
 
@@ -119,7 +131,7 @@ public class TransactionService {
         if (isPinCodeNull(trans.getPinCode())) {
             throw new IllegalArgumentException("Operation failed; no pin code entered");
         }
-        if (!isPinCodeCorrect(trans)) {
+        if (!isFromPinCodeCorrect(trans) && !isToPinCodeCorrect(trans)) {
             throw new IllegalArgumentException("Operation failed; wrong pin code entered");
         }
     }

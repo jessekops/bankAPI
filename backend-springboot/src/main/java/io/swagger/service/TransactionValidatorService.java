@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -26,6 +27,10 @@ public class TransactionValidatorService {
         return from.getAccountType().equals(AccountType.SAVINGS) && to.getAccountType().equals(AccountType.SAVINGS);
     }
 
+    public boolean isOneAccountSavings(Account from, Account to) {
+        return from.getAccountType().equals(AccountType.SAVINGS) || to.getAccountType().equals(AccountType.SAVINGS);
+    }
+
     public boolean isUserOwnerOfAccounts(Account from, Account to) {
         return from.getUser().getId().equals(to.getUser().getId());
     }
@@ -41,7 +46,7 @@ public class TransactionValidatorService {
 
     public boolean doesNotExceedDayLimit(User user, Transaction transaction) {
         double dailyLimit = user.getDayLimit();
-        LocalDate today = LocalDate.now();
+        LocalDateTime today = LocalDateTime.now();
 
         double totalAmountToday = transactionRepo.findAllByUserPerformingAndTimestamp(user.getId(), today)
                 .stream()

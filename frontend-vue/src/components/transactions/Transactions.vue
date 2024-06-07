@@ -47,15 +47,15 @@ export default {
   methods: {
     formatDate(dateString) {
       const date = new Date(dateString);
-      return date.toLocaleDateString();
+      return date.toLocaleString();
     },
     extractIBAN(fromField) {
-      // Extract IBAN from the "from" field
       const startIndex = fromField.indexOf("iban=") + 5;
       const endIndex = fromField.indexOf(",", startIndex);
       return fromField.substring(startIndex, endIndex);
     },
   },
+
   mounted() {
     let token = localStorage.getItem("token");
     axios

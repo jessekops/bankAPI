@@ -104,25 +104,21 @@ public class TransactionsApiController implements TransactionsApi {
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'CUSTOMER')")
     @GetMapping("/transactions/user")
     public ResponseEntity<List<TransactionDTO>> getTransactionsByUser() {
-        // Retrieve the authenticated username from the security context
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        // Use the username to fetch the user object
         User user = userService.findByUsername(username);
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
 
-        // Call the service method to fetch transactions by the user's UUID
         List<Transaction> transactions = transService.findTransactionsByUserId(user.getId());
 
-        // Map the retrieved transactions to DTOs
         List<TransactionDTO> transactionDTOs = transactions.stream()
                 .map(transaction -> modelMapper.map(transaction, TransactionDTO.class))
                 .collect(Collectors.toList());
 
-        // Return the list of DTOs in the response
         return ResponseEntity.ok(transactionDTOs);
     }
 
