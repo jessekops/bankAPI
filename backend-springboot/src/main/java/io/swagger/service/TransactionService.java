@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
@@ -101,12 +102,8 @@ public class TransactionService {
         return transactionRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Transaction with the given ID not found."));
     }
 
-    public void deleteTransaction(UUID id) {
-        transactionRepo.delete(findTransactionById(id));
-    }
-
-    public Transaction updateTransaction(Transaction transaction) {
-        return transactionRepo.save(transaction);
+    public List<Transaction> findTransactionsByUserId(UUID userId) {
+        return transactionRepo.findByUserPerforming(userId);
     }
 
     private boolean isPinCodeNull(Integer pinCode) {
