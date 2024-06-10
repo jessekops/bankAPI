@@ -8,16 +8,12 @@ import io.swagger.repo.TransactionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
 public class TransactionValidatorService {
-    @Autowired
-    private TransactionService transactionService;
     @Autowired
     private AccountService accountService;
     @Autowired

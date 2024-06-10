@@ -3,7 +3,6 @@ package io.swagger.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.model.dto.TransactionDTO;
-import io.swagger.model.dto.UserDTO;
 import io.swagger.model.entity.Transaction;
 import io.swagger.model.entity.User;
 import io.swagger.service.AccountService;

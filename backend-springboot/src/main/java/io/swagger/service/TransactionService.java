@@ -3,13 +3,10 @@ package io.swagger.service;
 import io.swagger.model.entity.Account;
 import io.swagger.model.entity.Transaction;
 import io.swagger.model.entity.User;
-import io.swagger.model.enumeration.TransactionType;
 import io.swagger.repo.AccountRepo;
 import io.swagger.repo.TransactionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -18,8 +15,6 @@ import java.util.UUID;
 
 @Service
 public class TransactionService {
-
-    private static final Logger logger = LoggerFactory.getLogger(TransactionService.class);
 
     @Autowired
     TransactionRepo transactionRepo;
