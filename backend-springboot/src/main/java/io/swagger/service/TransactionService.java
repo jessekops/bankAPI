@@ -101,7 +101,7 @@ public class TransactionService {
     }
 
     public Transaction findTransactionById(UUID id) {
-        return transactionRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Transaction with the given ID not found."));
+        return transactionRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Transaction with the given id not found."));
     }
 
     public List<Transaction> findTransactionsByUserId(UUID userId) {
