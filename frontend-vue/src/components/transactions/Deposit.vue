@@ -237,7 +237,7 @@ export default {
           this.pinfull = parseInt(stringCode);
           this.depositAxios();
         } else {
-          this.errorMsg = "pincode is incorrect";
+          this.errorMsg = "Pincode is incorrect";
         }
         console.log(stringCode + this.pintoCheck);
       } else {

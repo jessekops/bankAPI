@@ -9,15 +9,15 @@
       <table class="table align-middle mb-0 bg-white shadow-sm">
         <thead class="bg-light">
         <tr>
-          <th>From</th>
-          <th>To</th>
-          <th>Amount</th>
-          <th>Date</th>
-          <th>Type</th>
+          <th @click="sortBy('from')">From</th>
+          <th @click="sortBy('to')">To</th>
+          <th @click="sortBy('amount')">Amount</th>
+          <th @click="sortBy('timestamp')">Date</th>
+          <th @click="sortBy('transactionType')">Type</th>
         </tr>
         </thead>
         <tbody>
-        <tr v-for="transaction in transactions" :key="transaction.id">
+        <tr v-for="transaction in sortedTransactions" :key="transaction.id">
           <td>{{ extractIBAN(transaction.from) }}</td>
           <td>{{ transaction.to }}</td>
           <td>€{{ transaction.amount }}</td>
@@ -38,10 +38,15 @@ export default {
   name: "UserTransactions",
   computed: {
     ...mapGetters(["getUserName"]),
+    sortedTransactions() {
+      return [...this.transactions];
+    },
   },
   data() {
     return {
       transactions: [],
+      sortKey: '',
+      sortOrder: 1,
     };
   },
   methods: {
@@ -54,8 +59,20 @@ export default {
       const endIndex = fromField.indexOf(",", startIndex);
       return fromField.substring(startIndex, endIndex);
     },
+    sortBy(key) {
+      if (this.sortKey === key) {
+        this.sortOrder = -this.sortOrder;
+      } else {
+        this.sortKey = key;
+        this.sortOrder = 1;
+      }
+      this.transactions.sort((a, b) => {
+        const x = a[key];
+        const y = b[key];
+        return this.sortOrder * ((x < y) ? -1 : ((x > y) ? 1 : 0));
+      });
+    },
   },
-
   mounted() {
     let token = localStorage.getItem("token");
     axios

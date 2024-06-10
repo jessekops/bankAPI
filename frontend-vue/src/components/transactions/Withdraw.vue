@@ -233,14 +233,14 @@ export default {
             this.pin_3.toString();
         const balFloat = parseFloat(this.balInput);
         if (this.balance - balFloat < this.absLimit) {
-          this.errorMsg = "you dont have enough money to withdraw that amount.";
+          this.errorMsg = "Cannot create transaction; Cannot exceed absolute limit.";
         } else {
           if (stringCode == this.pintoCheck && balFloat) {
             //deposit+ axios method here
             this.pinfull = parseInt(stringCode);
             this.withdrawAxios();
           } else {
-            this.errorMsg = "pincode is incorrect";
+            this.errorMsg = "Pincode is incorrect";
           }
         }
       } else {
